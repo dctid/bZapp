@@ -14,7 +14,7 @@ Resources:
   SlackSlashFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: build/
+      CodeUri: bin/
       Handler: slash
       Runtime: go1.x
       Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
@@ -23,6 +23,22 @@ Resources:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /slash
+            Method: GET
+      Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+        Variables:
+          PARAM1: VALUE
+  SlackInteractiveFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: bin/
+      Handler: interactive
+      Runtime: go1.x
+      Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
+      Events:
+        CatchAll:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /interactive
             Method: GET
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
@@ -36,8 +52,14 @@ Outputs:
     Description: "API Gateway endpoint URL for Prod environment for First Function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/slash/"
   SlackSlashFunction:
-    Description: "First Lambda Function ARN"
+    Description: "Slash Lambda Function ARN"
     Value: !GetAtt SlackSlashFunction.Arn
   SlackSlashFunctionIamRole:
     Description: "Implicit IAM Role created for bZapp slash function"
     Value: !GetAtt SlackSlashFunctionRole.Arn
+  SlackInteractiveFunction:
+    Description: "Interactive Lambda Function ARN"
+    Value: !GetAtt SlackInteractiveFunction.Arn
+  SlackInteractiveFunctionIamRole:
+    Description: "Implicit IAM Role created for bZapp interactive function"
+    Value: !GetAtt SlackInteractiveFunctionRole.Arn

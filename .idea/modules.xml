@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/bZapp.iml" filepath="$PROJECT_DIR$/bZapp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/interactive/interactive.iml" filepath="$PROJECT_DIR$/interactive/interactive.iml" />
       <module fileurl="file://$PROJECT_DIR$/slash/slash.iml" filepath="$PROJECT_DIR$/slash/slash.iml" />
     </modules>
   </component>

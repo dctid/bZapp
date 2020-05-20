@@ -37,7 +37,7 @@ Golang is a statically compiled language, meaning that in order to run it you ha
 You can issue the following command in a shell to build it:
 
 ```shell
-GOOS=linux GOARCH=amd64 go build -o build/slash ./slash
+GOOS=linux GOARCH=amd64 go build -o bin/slash ./slash
 ```
 
 **NOTE**: If you're not building the function on a Linux machine, you will need to specify the `GOOS` and `GOARCH` environment variables, this allows Golang to build your function for another system architecture and ensure compatibility.
