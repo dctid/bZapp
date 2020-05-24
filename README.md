@@ -1,150 +1,288 @@
-# bZapp
+# Go Functions-as-a-Service
 
-This is a sample template for bZapp - Below is a brief explanation of what we have generated for you:
+Running a Go application on AWS Lambda is easier than ever, once you figure out how to configure Lambda, API Gateway and 10 or other "serverless" services to support the Go functions.
 
-```bash
-.
-├── Makefile                    <-- Make to automate build
-├── README.md                   <-- This instructions file
-├── slash                       <-- Source code for a lambda function
-│   ├── main.go                 <-- Lambda function code
-│   └── main_test.go            <-- Unit tests
-└── template.yaml
+This is a boilerplate app with all the AWS pieces configured correctly and explained in depth. See [the docs folder](docs/) for detailed guides about functions, tracing, security, automation and more with AWS and Go.
+
+With this foundation you can skip over all the undifferentiated setup, and focus entirely on your Go code.
+
+## Motivation
+
+Functions-as-a-Service (FaaS) like AWS Lambda are one of the latest advances in cloud Infrastructure-as-a-Service (IaaS). Go is particularly well-suited to run in Lambda due to its speed, size and cross-compiler. Check out the [Intro to Go Functions-as-a-Service and Lambda](docs/intro-go-faas.md) doc for more explanation.
+
+For a long time, Go in Lambda was only possible through hacks -- execution shims, 3rd party frameworks and middleware, and little dev/prod parity. But in January 2018, [AWS launched official Go support for Lambda](https://aws.amazon.com/blogs/compute/announcing-go-support-for-aws-lambda/) and [Go released v1.10](https://golang.org/doc/go1.10) paving the clearest path yet for us Gophers.
+
+This project demonstrates a simple and clean foundation for Go in Lambda. You can clone and deploy it with a few commands to get a feel for the stack. Or you can fork and rework it to turn it into your own web app.
+
+It demonstrates:
+
+| Component                                      | Via                                     | Config, Code            |
+| ---------------------------------------------- |-----------------------------------------|:-----------------------:|
+| [HTTP functions][1]                            | Lambda, API Gateway                     | [💾](dashboard.go)      |
+| [Worker functions (one-off and periodic)][2]   | Lambda, Invoke API, CloudWatch Events   | [💾](worker.go)         |
+| [Development, packaging and deployment][3]     | make, go, aws-sam-cli, CloudFormation   | [⚙️](Makefile)          |
+| [Per-function environment and policies][4]     | Lambda, IAM                             | [⚙️](template.yml)      |
+| [Custom domains][5]                            | CloudFront, ACM                         | [⚙️](template.yml)      |
+| [Static web content][6]                        | S3, CloudFront, ACM                     | [⚙️](template.yml)      |
+| [Static web security with Google OAuth 2.0][7] | CloudFront, Lambda@Edge, SSM Parameters | [💾](web-auth/index.js) |
+| [Function security with CORS and JWT][8]       | API Gateway, jwt-go                     | [💾](jwt.go)            |
+| [Function traces and logs][9]                  | CloudWatch Logs, X-Ray, AWS SDKs for Go | [💾](aws.go)            |
+| [Notifications][10]                            | SNS                                     | [💾](notify.go)         |
+| [Databases and encryption at rest][11]         | DynamoDB, KMS                           | [💾](user.go)           |
+| [Testing with mock AWS clients][12]            | Go interfaces, aws-sdk-go               | [💾](aws_test.go)       |
+
+[1]: docs/http-functions.md
+[2]: docs/worker-functions.md
+[3]: docs/dev-package-deploy.md
+[4]: docs/per-function-policies.md
+[5]: docs/custom-domains.md
+[6]: docs/static-sites.md
+[7]: docs/lambda-at-edge-oauth.md
+[8]: docs/security-cors-jwt.md
+[9]: docs/traces-logs.md
+[10]: docs/notifications.md
+[11]: docs/databases-encryption.md
+[12]: docs/mock-aws-client.md
+
+What's remarkable is how little work is required to get all functionality for our app. We don't need a framework, platform-as-a-service, or even any 3rd party software-as-a-service. And no, we don't need servers. By standing on the shoulders of Go and AWS, all the undifferentiated heavy lifting is managed for us.
+
+We just need an expert [CloudFormation config file](template.yml) and a simple [Makefile](Makefile), then we can focus entirely on writing Go functions.
+
+## Quick Start
+
+This project uses :
+
+- [AWS CLI](https://aws.amazon.com/cli/)
+- [AWS SAM CLI](https://github.com/awslabs/aws-sam-cli)
+- [Docker CE](https://www.docker.com/community-edition)
+- [Go 1.10](https://golang.org/)
+- [watchexec](https://github.com/mattgreen/watchexec)
+
+Install the CLI tools and Docker CE
+
+```console
+$ brew install awscli go node python@2 watchexec
+$ pip2 install aws-sam-cli
+$ open https://store.docker.com/search?type=edition&offering=community
 ```
 
-## Requirements
+<details>
+<summary>We may want to upgrade existing tools...</summary>
+&nbsp;
 
-* AWS CLI already configured with Administrator permission
-* [Docker installed](https://www.docker.com/community-edition)
-* [Golang](https://golang.org)
-
-## Setup process
-
-### Installing dependencies
-
-In this example we use the built-in `go get` and the only dependency we need is AWS Lambda Go SDK:
-
-```shell
-go get -u github.com/aws/aws-lambda-go/...
+```console
+$ brew upgrade awscli go node python@2 watchexec
+$ pip2 install --upgrade aws-sam-cli
 ```
+</details>
 
-**NOTE:** As you change your application code as well as dependencies during development, you might want to research how to handle dependencies in Golang at scale.
+<details>
+<summary>We may want to double check the installed versions...</summary>
+&nbsp;
 
-### Building
+```console
+$ aws --version
+aws-cli/1.16.20 Python/3.7.0 Darwin/17.7.0 botocore/1.12.10
 
-Golang is a statically compiled language, meaning that in order to run it you have to build the executable target.
+$ sam --version
+SAM CLI, version 0.6.0
 
-You can issue the following command in a shell to build it:
+$ docker version
+Client:
+ Version:           18.06.1-ce
+ API version:       1.38
+ Go version:        go1.10.3
+ Git commit:        e68fc7a
+ Built:             Tue Aug 21 17:21:31 2018
+ OS/Arch:           darwin/amd64
+ Experimental:      false
 
-```shell
-GOOS=linux GOARCH=amd64 go build -o bin/slash ./slash
+Server:
+ Engine:
+  Version:          18.06.1-ce
+  API version:      1.38 (minimum version 1.12)
+  Go version:       go1.10.3
+  Git commit:       e68fc7a
+  Built:            Tue Aug 21 17:29:02 2018
+  OS/Arch:          linux/amd64
+  Experimental:     true
+
+
+$ go version
+go version go1.11.1 darwin/amd64
+
+$ watchexec --version
+watchexec 1.9.2
 ```
+</details>
 
-**NOTE**: If you're not building the function on a Linux machine, you will need to specify the `GOOS` and `GOARCH` environment variables, this allows Golang to build your function for another system architecture and ensure compatibility.
+<details>
+<summary>We may also want to configure the AWS CLI with IAM keys to develop and deploy our application...</summary>
+&nbsp;
 
-### Local development
+Follow the [Creating an IAM User in Your AWS Account](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html) doc to create a IAM user with programmatic access. Call the user `gofaas-admin` and attach the "Administrator Access" policy for now.
 
-**Invoking function locally through local API Gateway**
+Then configure the CLI. Here we are creating a new profile that we can switch to with `export AWS_PROFILE=gofaas`. This will help us isolate our experiments from other AWS work.
 
-```bash
-sam local start-api
+Configure an AWS profile with keys and switch to the profile:
+
+```console
+$ aws configure --profile gofaas
+AWS Access Key ID [None]: AKIA................
+AWS Secret Access Key [None]: PQN4CWZXXbJEgnrom2fP0Z+z................
+Default region name [None]: us-east-1
+Default output format [None]: json
+
+$ export AWS_PROFILE=gofaas
+$ aws iam get-user
+{
+    "User": {
+        "Path": "/",
+        "UserName": "gofaas-admin",
+        "UserId": "AIDAJA44LJEOECDPZ3S5U",
+        "Arn": "arn:aws:iam::572007530218:user/gofaas-admin",
+        "CreateDate": "2018-02-16T16:17:24Z"
+    }
+}
 ```
+</details>
 
-If the previous command ran successfully you should now be able to hit the following local endpoint to invoke your function `http://localhost:3000/slash`
+### Get the App
 
-**SAM CLI** is used to emulate both Lambda and API Gateway locally and uses our `template.yaml` to understand how to bootstrap this environment (runtime, where the source code is, etc.) - The following excerpt is what the CLI will read in order to initialize an API and its routes:
+We start by getting and testing the `github.com/nzoschke/gofaas`.
 
-```yaml
+```console
+$ git clone https://github.com/nzoschke/gofaas.git ~/dev/gofaas
+$ cd ~/dev/gofaas
+
+$ make test
+go test -v ./...
+go: finding github.com/aws/aws-xray-sdk-go v1.0.0-rc.8
+go: finding github.com/aws/aws-lambda-go v1.6.0
+go: finding github.com/aws/aws-sdk-go v1.15.49
 ...
-Events:
-    Slash:
-        Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-        Properties:
-            Path: /slash
-            Method: get
-```
-
-## Packaging and deployment
-
-AWS Lambda Golang runtime requires a flat folder with the executable generated on build step. SAM will use `CodeUri` property to know where to look up for the application:
-
-```yaml
+=== RUN   TestUserCreate
+--- PASS: TestUserCreate (0.00s)
 ...
-    FirstFunction:
-        Type: AWS::Serverless::Function
-        Properties:
-            CodeUri: slash/
-            ...
+ok     github.com/nzoschke/gofaas      0.014s
+PASS
 ```
 
-To deploy your application for the first time, run the following in your shell:
+This gives us confidence in our Go environment.
 
-```bash
-sam deploy --guided
+### Develop the App
+
+We can then build the app and start a development server:
+
+```console
+$ make dev
+cd ./handlers/dashboard && GOOS=linux go build...
+2018/02/25 08:03:12 Connected to Docker 1.35
+2018/02/16 07:40:32 Fetching lambci/lambda:go1.x image for go1.x runtime...
+
+Mounting handler (go1.x) at http://127.0.0.1:3000/users/{id} [DELETE]
+Mounting handler (go1.x) at http://127.0.0.1:3000/users/{id} [PUT]
+Mounting handler (go1.x) at http://127.0.0.1:3000/users/{id} [GET]
+Mounting handler (go1.x) at http://127.0.0.1:3000/ [GET]
+Mounting handler (go1.x) at http://127.0.0.1:3000/users [POST]
 ```
 
-The command will package and deploy your application to AWS, with a series of prompts:
+Now we can access our HTTP functions on port 3000:
 
-* **Stack Name**: The name of the stack to deploy to CloudFormation. This should be unique to your account and region, and a good starting point would be something matching your project name.
-* **AWS Region**: The AWS region you want to deploy your app to.
-* **Confirm changes before deploy**: If set to yes, any change sets will be shown to you before execution for manual review. If set to no, the AWS SAM CLI will automatically deploy application changes.
-* **Allow SAM CLI IAM role creation**: Many AWS SAM templates, including this example, create AWS IAM roles required for the AWS Lambda function(s) included to access AWS services. By default, these are scoped down to minimum required permissions. To deploy an AWS CloudFormation stack which creates or modified IAM roles, the `CAPABILITY_IAM` value for `capabilities` must be provided. If permission isn't provided through this prompt, to deploy this example you must explicitly pass `--capabilities CAPABILITY_IAM` to the `sam deploy` command.
-* **Save arguments to samconfig.toml**: If set to yes, your choices will be saved to a configuration file inside the project, so that in the future you can just re-run `sam deploy` without parameters to deploy changes to your application.
-
-You can find your API Gateway Endpoint URL in the output values displayed after deployment.
-
-### Testing
-
-We use `testing` package that is built-in in Golang and you can simply run the following command to run our tests:
-
-```shell
-go test -v ./slash/
-```
-# Appendix
-
-### Golang installation
-
-Please ensure Go 1.x (where 'x' is the latest version) is installed as per the instructions on the official golang website: https://golang.org/doc/install
-
-A quickstart way would be to use Homebrew, chocolatey or your linux package manager.
-
-#### Homebrew (Mac)
-
-Issue the following command from the terminal:
-
-```shell
-brew install golang
+```console
+$ curl http://localhost:3000
+<html><body><h1>gofaas dashboard</h1></body></html>
 ```
 
-If it's already installed, run the following command to ensure it's the latest version:
+We can also invoke a function directly:
 
-```shell
-brew update
-brew upgrade golang
+```
+$ echo '{}' | sam local invoke WorkerFunction
+...
+START RequestId: 36d6d40e-0d4b-168c-63d5-76b25f543d21 Version: $LATEST
+2018/02/25 16:05:21 Worker Event: {SourceIP: TimeEnd:0001-01-01 00:00:00 +0000 UTC TimeStart:0001-01-01 00:00:00 +0000 UTC}
+END RequestId: 36d6d40e-0d4b-168c-63d5-76b25f543d21
+REPORT RequestId: 36d6d40e-0d4b-168c-63d5-76b25f543d21  Duration: 681.67 ms  Billed Duration: 700 ms  Memory Size: 128 MB  Max Memory Used: 14 MB
 ```
 
-#### Chocolatey (Windows)
+Note: if you see `No AWS credentials found. Missing credentials may lead to slow startup...`, review `aws configure list` and your `AWS_PROFILE` env var.
 
-Issue the following command from the powershell:
+This gives us confidence in our development environment.
 
-```shell
-choco install golang
+### Deploy the App
+
+Now we can package and deploy the app:
+
+```console
+$ make deploy
+make_bucket: pkgs-572007530218-us-east-1
+Uploading to 59d2ea5b6bdf38fcbcf62236f4c26f21  3018471 / 3018471.0  (100.00%)
+Waiting for changeset to be created
+Waiting for stack create/update to complete
+Successfully created/updated stack - gofaas
+
+ApiUrl	https://x19vpdk568.execute-api.us-east-1.amazonaws.com/Prod
 ```
 
-If it's already installed, run the following command to ensure it's the latest version:
+Now we can access our HTTP functions on AWS:
 
-```shell
-choco upgrade golang
+```console
+$ curl https://x19vpdk568.execute-api.us-east-1.amazonaws.com/Prod
+<html><body><h1>gofaas dashboard</h1></body></html>
 ```
 
-## Bringing to the next level
+We can also invoke a function directly:
 
-Here are a few ideas that you can use to get more acquainted as to how this overall process works:
+```console
+$ aws lambda invoke --function-name gofaas-WorkerFunction --log-type Tail --output text --query 'LogResult' out.log | base64 -D
+START RequestId: 0bb47628-1718-11e8-ad73-c58e72b8826c Version: $LATEST
+2018/02/21 15:01:07 Worker Event: {SourceIP: TimeEnd:0001-01-01 00:00:00 +0000 UTC TimeStart:0001-01-01 00:00:00 +0000 UTC}
+END RequestId: 0bb47628-1718-11e8-ad73-c58e72b8826c
+REPORT RequestId: 0bb47628-1718-11e8-ad73-c58e72b8826c  Duration: 11.11 ms  Billed Duration: 100 ms  Memory Size: 128 MB  Max Memory Used: 41 MB
+```
 
-* Create an additional API resource (e.g. /slash/{proxy+}) and return the name requested through this new path
-* Update unit test to capture that
-* Package & Deploy
+Look at that speedy 11 ms duration! Go is faster than the minimum billing duration of 100 ms.
 
-Next, you can use the following resources to know more about beyond hello world samples and how others structure their Serverless applications:
+This gives us confidence in our production environment.
 
-* [AWS Serverless Application Repository](https://aws.amazon.com/serverless/serverlessrepo/)
+### Development Environment
+
+If we want to work on the [worker](docs/worker-functions.md) or [database](docs/databases.md) functions locally, we need to give the functions environment variables with pointers to DynamoDB, KMS and S3. Open up `env.json` and set `BUCKET`, etc. with the ids of the resources we just created on deploy:
+
+```console
+$ aws cloudformation describe-stack-resources --output text --stack-name gofaas \
+  --query 'StackResources[*].{Name:LogicalResourceId,Id:PhysicalResourceId,Type:ResourceType}' | \
+  grep 'Bucket\|Key\|UsersTable'
+
+gofaas-bucket-aykdokk6aek8            Bucket      AWS::S3::Bucket
+8eb8e209-51fb-41fa-adfe-1ec401667df4  Key         AWS::KMS::Key
+gofaas-UsersTable-1CYAQH3HHHRGW       UsersTable  AWS::DynamoDB::Table
+```
+
+### Integration Testing
+
+We can verify the app functionality by creating an isolated testing stack, testing all the endpoints, then deleting the stack. The `ci.sh` script automates this:
+
+```console
+$ ./ci.sh
+aws cloudformation package ...
+aws cloudformation deploy ...
+...
+<title>My first gofaas/Vue app</title>
+"username": "test"
+{"ExecutedVersion":null,"FunctionError":null,"LogResult":null,"Payload":"","StatusCode":202}
+...
+✅ SUCCESS!
+```
+
+## Docs
+
+Check out [the docs folder](docs/) where each component is explained in more detail.
+
+## Contributing
+
+Find a bug or see a way to improve the project? [Open an issue](https://github.com/nzoschke/gofaas/issues).
+
+## License
+
+Apache 2.0 © 2018 Noah Zoschke
