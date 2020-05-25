@@ -15,25 +15,17 @@ deploy: handlers
 	sam deploy --capabilities CAPABILITY_NAMED_IAM --parameter-overrides $(PARAMS) --template-file out.yml --stack-name $(APP)
 	make deploy-static
 
-deploy-static: API_URL=$(shell aws cloudformation describe-stacks --output text --query 'Stacks[].Outputs[?OutputKey==`ApiUrl`].{Value:OutputValue}' --stack-name $(APP))
-deploy-static: BUCKET=$(shell aws cloudformation describe-stack-resources --output text --query 'StackResources[?LogicalResourceId==`WebBucket`].{Id:PhysicalResourceId}' --stack-name $(APP))
-deploy-static: DIST=$(shell aws cloudformation describe-stack-resources --output text --query 'StackResources[?LogicalResourceId==`WebDistribution`].{Id:PhysicalResourceId}' --stack-name $(APP))
-deploy-static: web/static/index.html
-	echo "const API_URL=\"$(API_URL)\";" > web/static/js/env.js
-	aws s3 sync web/static s3://$(BUCKET)/
-	[ -n "$(DIST)" ] && aws cloudfront create-invalidation --distribution-id $(DIST) --paths '/*' || true
-	aws cloudformation describe-stacks --output text --query 'Stacks[*].Outputs' --stack-name $(APP)
 
 dev-debug:
 	make clean
 	GCFLAGS="-N -l" make -j handlers
 	GOARCH=amd64 GOOS=linux go build -o /tmp/delve/dlv github.com/derekparker/delve/cmd/dlv
-	sam local start-api -d 5986 --debugger-path /tmp/delve -n env.json -s web/static
+	sam local start-api -d 5986 --debugger-path /tmp/delve
 
 dev:
 	make -j dev-watch dev-sam
 dev-sam:
-	sam local start-api -p 3001 -n env.json -s web/static
+	sam local start-api -p 3001 
 dev-watch:
 	watchexec -f '*.go' 'make -j handlers'
 
