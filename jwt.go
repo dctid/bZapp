@@ -3,7 +3,6 @@ package gofaas
 import (
 	"encoding/base64"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -23,7 +22,7 @@ func JWTClaims(e events.APIGatewayProxyRequest, claims jwt.Claims) (events.APIGa
 	}
 
 	// for convenience, "pass" auth if no hash key is set
-	k := os.Getenv("AUTH_HASH_KEY")
+	k := "" //os.Getenv("AUTH_HASH_KEY")
 	if k == "" {
 		return r, claims, nil
 	}
