@@ -10,17 +10,6 @@ import (
 
 func Slash(ctx context.Context, e events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
-	// resp, err := http.Get("https://www.google.com")
-	// if err != nil {
-	// 	return events.APIGatewayProxyResponse{
-	// 		StatusCode: 500,
-	// 	}, err
-	// }
-
-	// defer resp.Body.Close()
-
-	// body, err := ioutil.ReadAll(resp.Body)
-
 	resp, err := GET("https://www.google.com", nil)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
@@ -37,7 +26,7 @@ func Slash(ctx context.Context, e events.APIGatewayProxyRequest) (events.APIGate
 	}
 	return events.APIGatewayProxyResponse{
 		Headers:    headers,
-		Body:       fmt.Sprintf("{\"text\": \"%v\"}", body),
+		Body:       fmt.Sprintf("{\"text\": \"%v\"}", string(body)),
 		StatusCode: 200,
 	}, nil
 }

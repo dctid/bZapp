@@ -21,7 +21,6 @@ func TestSlash(t *testing.T) {
 	expectUrl, _ := url.Parse("https://www.google.com")
 	Client = &mocks.MockClient{}
 	json := `{"name":"Test Name","full_name":"test full name","owner":{"login": "octocat"}}`
-	// create a new reader with that JSON
 	r2 := ioutil.NopCloser(bytes.NewReader([]byte(json)))
 	mocks.GetDoFunc = func(req *http.Request) (*http.Response, error) {
 		log.Printf("url %s ", req.URL)
@@ -32,20 +31,20 @@ func TestSlash(t *testing.T) {
 		}, nil
 	}
 
-	_, err := Slash(context.Background(), events.APIGatewayProxyRequest{
+	r, err := Slash(context.Background(), events.APIGatewayProxyRequest{
 		Body: `{"text": "none"}`,
 	})
 	assert.NoError(t, err)
 
 	assert.EqualValues(t, urlCalled, expectUrl)
-	// assert.EqualValues(t,
-	// 	events.APIGatewayProxyResponse{
-	// 		Body: "{\"text\": \"hi\"}",
-	// 		Headers: map[string]string{
-	// 			"Content-Type": "application/json",
-	// 		},
-	// 		StatusCode: 200,
-	// 	},
-	// 	r,
-	// )
+	assert.EqualValues(t,
+		events.APIGatewayProxyResponse{
+			Body: "{\"text\": \"" + json + "\"}",
+			Headers: map[string]string{
+				"Content-Type": "application/json",
+			},
+			StatusCode: 200,
+		},
+		r,
+	)
 }
