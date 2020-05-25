@@ -43,7 +43,7 @@ Then we update our handler programs to use the middleware:
 
 ```go
 func main() {
-	lambda.Start(gofaas.NotifyAPIGateway(gofaas.Dashboard))
+	lambda.Start(bZapp.NotifyAPIGateway(bZapp.Dashboard))
 }
 ```
 > From [handlers/dashboard/main.go](../handlers/dashboard/main.go)

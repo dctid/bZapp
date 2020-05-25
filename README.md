@@ -120,27 +120,27 @@ watchexec 1.9.2
 <summary>We may also want to configure the AWS CLI with IAM keys to develop and deploy our application...</summary>
 &nbsp;
 
-Follow the [Creating an IAM User in Your AWS Account](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html) doc to create a IAM user with programmatic access. Call the user `gofaas-admin` and attach the "Administrator Access" policy for now.
+Follow the [Creating an IAM User in Your AWS Account](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html) doc to create a IAM user with programmatic access. Call the user `bZapp-admin` and attach the "Administrator Access" policy for now.
 
-Then configure the CLI. Here we are creating a new profile that we can switch to with `export AWS_PROFILE=gofaas`. This will help us isolate our experiments from other AWS work.
+Then configure the CLI. Here we are creating a new profile that we can switch to with `export AWS_PROFILE=bZapp`. This will help us isolate our experiments from other AWS work.
 
 Configure an AWS profile with keys and switch to the profile:
 
 ```console
-$ aws configure --profile gofaas
+$ aws configure --profile bZapp
 AWS Access Key ID [None]: AKIA................
 AWS Secret Access Key [None]: PQN4CWZXXbJEgnrom2fP0Z+z................
 Default region name [None]: us-east-1
 Default output format [None]: json
 
-$ export AWS_PROFILE=gofaas
+$ export AWS_PROFILE=bZapp
 $ aws iam get-user
 {
     "User": {
         "Path": "/",
-        "UserName": "gofaas-admin",
+        "UserName": "bZapp-admin",
         "UserId": "AIDAJA44LJEOECDPZ3S5U",
-        "Arn": "arn:aws:iam::572007530218:user/gofaas-admin",
+        "Arn": "arn:aws:iam::572007530218:user/bZapp-admin",
         "CreateDate": "2018-02-16T16:17:24Z"
     }
 }
@@ -149,11 +149,11 @@ $ aws iam get-user
 
 ### Get the App
 
-We start by getting and testing the `github.com/nzoschke/gofaas`.
+We start by getting and testing the `github.com/dctid/bZapp`.
 
 ```console
-$ git clone https://github.com/nzoschke/gofaas.git ~/dev/gofaas
-$ cd ~/dev/gofaas
+$ git clone https://github.com/dctid/bZapp.git ~/dev/bZapp
+$ cd ~/dev/bZapp
 
 $ make test
 go test -v ./...
@@ -164,7 +164,7 @@ go: finding github.com/aws/aws-sdk-go v1.15.49
 === RUN   TestUserCreate
 --- PASS: TestUserCreate (0.00s)
 ...
-ok     github.com/nzoschke/gofaas      0.014s
+ok     github.com/dctid/bZapp      0.014s
 PASS
 ```
 
@@ -191,7 +191,7 @@ Now we can access our HTTP functions on port 3000:
 
 ```console
 $ curl http://localhost:3000
-<html><body><h1>gofaas dashboard</h1></body></html>
+<html><body><h1>bZapp dashboard</h1></body></html>
 ```
 
 We can also invoke a function directly:
@@ -219,7 +219,7 @@ make_bucket: pkgs-572007530218-us-east-1
 Uploading to 59d2ea5b6bdf38fcbcf62236f4c26f21  3018471 / 3018471.0  (100.00%)
 Waiting for changeset to be created
 Waiting for stack create/update to complete
-Successfully created/updated stack - gofaas
+Successfully created/updated stack - bZapp
 
 ApiUrl	https://x19vpdk568.execute-api.us-east-1.amazonaws.com/Prod
 ```
@@ -228,13 +228,13 @@ Now we can access our HTTP functions on AWS:
 
 ```console
 $ curl https://x19vpdk568.execute-api.us-east-1.amazonaws.com/Prod
-<html><body><h1>gofaas dashboard</h1></body></html>
+<html><body><h1>bZapp dashboard</h1></body></html>
 ```
 
 We can also invoke a function directly:
 
 ```console
-$ aws lambda invoke --function-name gofaas-WorkerFunction --log-type Tail --output text --query 'LogResult' out.log | base64 -D
+$ aws lambda invoke --function-name bZapp-WorkerFunction --log-type Tail --output text --query 'LogResult' out.log | base64 -D
 START RequestId: 0bb47628-1718-11e8-ad73-c58e72b8826c Version: $LATEST
 2018/02/21 15:01:07 Worker Event: {SourceIP: TimeEnd:0001-01-01 00:00:00 +0000 UTC TimeStart:0001-01-01 00:00:00 +0000 UTC}
 END RequestId: 0bb47628-1718-11e8-ad73-c58e72b8826c
@@ -250,13 +250,13 @@ This gives us confidence in our production environment.
 If we want to work on the [worker](docs/worker-functions.md) or [database](docs/databases.md) functions locally, we need to give the functions environment variables with pointers to DynamoDB, KMS and S3. Open up `env.json` and set `BUCKET`, etc. with the ids of the resources we just created on deploy:
 
 ```console
-$ aws cloudformation describe-stack-resources --output text --stack-name gofaas \
+$ aws cloudformation describe-stack-resources --output text --stack-name bZapp \
   --query 'StackResources[*].{Name:LogicalResourceId,Id:PhysicalResourceId,Type:ResourceType}' | \
   grep 'Bucket\|Key\|UsersTable'
 
-gofaas-bucket-aykdokk6aek8            Bucket      AWS::S3::Bucket
+bZapp-bucket-aykdokk6aek8            Bucket      AWS::S3::Bucket
 8eb8e209-51fb-41fa-adfe-1ec401667df4  Key         AWS::KMS::Key
-gofaas-UsersTable-1CYAQH3HHHRGW       UsersTable  AWS::DynamoDB::Table
+bZapp-UsersTable-1CYAQH3HHHRGW       UsersTable  AWS::DynamoDB::Table
 ```
 
 ### Integration Testing
@@ -268,7 +268,7 @@ $ ./ci.sh
 aws cloudformation package ...
 aws cloudformation deploy ...
 ...
-<title>My first gofaas/Vue app</title>
+<title>My first bZapp/Vue app</title>
 "username": "test"
 {"ExecutedVersion":null,"FunctionError":null,"LogResult":null,"Payload":"","StatusCode":202}
 ...
@@ -281,7 +281,7 @@ Check out [the docs folder](docs/) where each component is explained in more det
 
 ## Contributing
 
-Find a bug or see a way to improve the project? [Open an issue](https://github.com/nzoschke/gofaas/issues).
+Find a bug or see a way to improve the project? [Open an issue](https://github.com/dctid/bZapp/issues).
 
 ## License
 

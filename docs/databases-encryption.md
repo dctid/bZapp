@@ -93,7 +93,7 @@ Note how we give one function a policy to encrypt and another a policy to decryp
 Now we can encrypt, save and retrieve data with KMS and DynamoDB APIs.
 
 ```go
-package gofaas
+package bZapp
 
 import (
 	"context"

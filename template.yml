@@ -112,12 +112,12 @@ Outputs:
 Parameters:
   ApiDomainName:
     Default: ""
-    Description: "Domain or subdomain for the API Gateway distribution, e.g. api.gofaas.net"
+    Description: "Domain or subdomain for the API Gateway distribution, e.g. api.bZapp.net"
     Type: String
 
   AuthDomainName:
     Default: ""
-    Description: "The domain to restrict OAuth profiles to, e.g. gofaas.net"
+    Description: "The domain to restrict OAuth profiles to, e.g. bZapp.net"
     Type: String
 
   AuthHashKey:
@@ -147,7 +147,7 @@ Parameters:
 
   WebDomainName:
     Default: ""
-    Description: "Domain or subdomain for the static website distribution, e.g. www.gofaas.net"
+    Description: "Domain or subdomain for the static website distribution, e.g. www.bZapp.net"
     Type: String
 
 Resources:

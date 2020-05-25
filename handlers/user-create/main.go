@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/nzoschke/gofaas"
+	"github.com/dctid/bZapp"
 )
 
 func main() {
-	lambda.Start(gofaas.NotifyAPIGateway(gofaas.UserCreate))
+	lambda.Start(bZapp.NotifyAPIGateway(bZapp.UserCreate))
 }

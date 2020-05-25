@@ -1,4 +1,4 @@
-package gofaas
+package bZapp
 
 import (
 	"github.com/aws/aws-sdk-go/aws"

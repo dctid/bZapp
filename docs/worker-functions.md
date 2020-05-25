@@ -139,7 +139,7 @@ aws cloudformation deploy ...
 Finally we can invoke our function manually:
 
 ```console
-$ aws lambda invoke --function-name gofaas-WorkerFunction \
+$ aws lambda invoke --function-name bZapp-WorkerFunction \
   --payload '{"time_start": "2018-02-21T15:00:43.511Z"}'  \
   --log-type Tail --output text --query 'LogResult' out.log | base64 -D
 
@@ -152,7 +152,7 @@ REPORT RequestId: 0bb47628-1718-11e8-ad73-c58e72b8826c  Duration: 11.11 ms  Bill
 And we can review logs to see our periodic function called once a day:
 
 ```console
-$ aws logs filter-log-events --log-group-name '/aws/lambda/gofaas-WorkerPeriodicFunction' --output text --query 'events[*].{Message:message}'
+$ aws logs filter-log-events --log-group-name '/aws/lambda/bZapp-WorkerPeriodicFunction' --output text --query 'events[*].{Message:message}'
 
 START RequestId: ae1b5451-1727-11e8-991a-85c308f12bbb Version: $LATEST
 2018/02/23 03:01:43 WorkerPeriodic Event: ...

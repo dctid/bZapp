@@ -1,15 +1,15 @@
 # Static Websites
 ### With S3, CloudFront and ACM
 
-A modern application pattern is to deploy static web content, say a React or Vue.js single page application, that interacts with an app API. For this example we want to deploy a static web site -- `https://www.gofaas.net` -- that talks to our gofaas API running at `https://api.gofaas.net` to authenticate a user and display a dashboard.
+A modern application pattern is to deploy static web content, say a React or Vue.js single page application, that interacts with an app API. For this example we want to deploy a static web site -- `https://www.bZapp.net` -- that talks to our bZapp API running at `https://api.bZapp.net` to authenticate a user and display a dashboard.
 
 This pattern offers many advantages. Now the API is only concerned with data, making it easier to write and more cost effective to run. The web content is completely static, making it extremely reliable and cost effective to deliver to our users.
 
 Compare this to a traditional Model View Controller (MVC) approach like Rails or Django. In this architecture the API may spend lots of time rendering HTML, and the HTML may not get served to users if there is an application bug or a database outage.
 
-Static websites are a solved problem on AWS. We simply create an S3 bucket configured for website hosting and upload the content with public-read permissions. Then anyone can access the content from a URL like `http://gofaas-webbucket-572007530218.s3-website-us-east-1.amazonaws.com` with some of the highest reliability and lowest storage and bandwidth costs possible.
+Static websites are a solved problem on AWS. We simply create an S3 bucket configured for website hosting and upload the content with public-read permissions. Then anyone can access the content from a URL like `http://bZapp-webbucket-572007530218.s3-website-us-east-1.amazonaws.com` with some of the highest reliability and lowest storage and bandwidth costs possible.
 
-Serving this from a custom domain is also a solved problem. We add the CloudFront CDN, configured with an SSL cert via the AWS Certificate Manager, in front of the S3 bucket. When we point our custom domain DNS to CloudFront, users can access the content from a URL like `https://www.gofaas.net` with some of the fastest delivery times and lowest bandwidth costs possible thanks to the global content caching network.
+Serving this from a custom domain is also a solved problem. We add the CloudFront CDN, configured with an SSL cert via the AWS Certificate Manager, in front of the S3 bucket. When we point our custom domain DNS to CloudFront, users can access the content from a URL like `https://www.bZapp.net` with some of the fastest delivery times and lowest bandwidth costs possible thanks to the global content caching network.
 
 Let's set this all up for our app...
 
@@ -70,7 +70,7 @@ Outputs:
 Parameters:
   WebDomainName:
     Default: ""
-    Description: "Domain or subdomain for the static website distribution, e.g. www.gofaas.net"
+    Description: "Domain or subdomain for the static website distribution, e.g. www.bZapp.net"
     Type: String
 
 Resources:
@@ -148,21 +148,21 @@ Now we can deploy the config to create the website bucket:
 $ aws cloudformation package \
     --output-template-file out.yml --template-file template.yml
 
-$ aws cloudformation deploy --stack-name gofaas \
+$ aws cloudformation deploy --stack-name bZapp \
     --capabilities CAPABILITY_NAMED_IAM --template-file out.yml
 Waiting for stack create/update to complete
 
-$ aws cloudformation describe-stacks --stack-name gofaas \
+$ aws cloudformation describe-stacks --stack-name bZapp \
     --output text --query 'Stacks[*].Outputs'
-WebUrl	http://gofaas-webbucket-572007530218.s3-website-us-east-1.amazonaws.com
+WebUrl	http://bZapp-webbucket-572007530218.s3-website-us-east-1.amazonaws.com
 ```
 > From [Makefile](../Makefile)
 
 And upload our first content:
 
 ```shell
-$ aws s3 sync public s3://gofaas-webbucket-572007530218/
-upload: public/index.html to s3://gofaas-webbucket-572007530218/index.html
+$ aws s3 sync public s3://bZapp-webbucket-572007530218/
+upload: public/index.html to s3://bZapp-webbucket-572007530218/index.html
 ...
 ```
 > From [Makefile](../Makefile)
@@ -170,9 +170,9 @@ upload: public/index.html to s3://gofaas-webbucket-572007530218/index.html
 Sure enough we can access it over HTTP:
 
 ```shell
-$ curl http://gofaas-webbucket-572007530218.s3-website-us-east-1.amazonaws.com/
+$ curl http://bZapp-webbucket-572007530218.s3-website-us-east-1.amazonaws.com/
 ...
-<title>My first gofaas/Vue app</title>
+<title>My first bZapp/Vue app</title>
 ```
 
 ## Deploy Custom Domain
@@ -180,22 +180,22 @@ $ curl http://gofaas-webbucket-572007530218.s3-website-us-east-1.amazonaws.com/
 Now we can re-deploy the config with our domain name to create the certificate and CDN:
 
 ```shell
-aws cloudformation deploy  --stack-name gofaas         \
-    --parameter-overrides WebDomainName=www.gofaas.net \
+aws cloudformation deploy  --stack-name bZapp         \
+    --parameter-overrides WebDomainName=www.bZapp.net \
     --capabilities CAPABILITY_NAMED_IAM --template-file out.yml
 
-$ aws cloudformation describe-stacks --stack-name gofaas \
+$ aws cloudformation describe-stacks --stack-name bZapp \
     --output text --query 'Stacks[*].Outputs'
 WebDistributionDomainName  d2bwnae7bzw1t6.cloudfront.net
-WebUrl                     https://www.gofaas.net
+WebUrl                     https://www.bZapp.net
 ```
 
-Note that this can take 10 to 20 minutes to set up the global infrastructure for our static site. Also note that ACM will send an email to the domain owner (e.g. admin@gofaas.net) who must click through the approval to create the certificate. See the [ACM email validation](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-validate-email.html) guide for more information.
+Note that this can take 10 to 20 minutes to set up the global infrastructure for our static site. Also note that ACM will send an email to the domain owner (e.g. admin@bZapp.net) who must click through the approval to create the certificate. See the [ACM email validation](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-validate-email.html) guide for more information.
 
 Once the CDN is in place, we can sync content to the S3 bucket the same way, but we may need to invalidate content cached in the CDN to immediately see the latest content:
 
 ```console
-$ aws s3 sync public s3://www.gofaas.net/
+$ aws s3 sync public s3://www.bZapp.net/
 $ aws cloudfront create-invalidation --distribution-id E2YL0GMGANCGMA --paths '/*'
 ```
 
@@ -204,12 +204,12 @@ Sure enough we can access our content via the CDN:
 ```shell
 $ curl https://d2bwnae7bzw1t6.cloudfront.net/
 ...
-<title>My first gofaas/Vue app</title>
+<title>My first bZapp/Vue app</title>
 ```
 
 ## DNS
 
-The final step is to set up a DNS CNAME from our `WebDomainName` parameter (e.g. `www.gofaas.net`) to the new `WebDistributionDomainName` output (e.g. `d2bwnae7bzw1t6.cloudfront.net`).
+The final step is to set up a DNS CNAME from our `WebDomainName` parameter (e.g. `www.bZapp.net`) to the new `WebDistributionDomainName` output (e.g. `d2bwnae7bzw1t6.cloudfront.net`).
 
 If we are using Route53, this is easy to do through the UI:
 
@@ -220,7 +220,7 @@ In this case we could consider automating DNS setup by adding an conditional `AW
 After a few minutes we have our custom HTTPS endpoint:
 
 ```shell
-$ curl https://www.gofaas.net
+$ curl https://www.bZapp.net
 ...
 <p>Hello world! This is HTML5 Boilerplate.</p>
 ```

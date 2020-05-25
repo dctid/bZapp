@@ -1,4 +1,4 @@
-package gofaas
+package bZapp
 
 import (
 	"encoding/base64"

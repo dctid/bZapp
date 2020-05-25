@@ -1,7 +1,7 @@
 # Custom Domains
 ### With Lambda, API Gateway, ACM and CloudFront
 
-When we are ready to take our gofaas app live, we likely want to move the API off of the `https://x19vpdk568.execute-api.us-east-1.amazonaws.com/Prod` API Gateway URL and onto our own domain, say `https://api.gofaas.net`.
+When we are ready to take our bZapp app live, we likely want to move the API off of the `https://x19vpdk568.execute-api.us-east-1.amazonaws.com/Prod` API Gateway URL and onto our own domain, say `https://api.bZapp.net`.
 
 AWS supports this by creating a CloudFront distribution that will route requests to the API Gateway URL. The CloudFront CDN naturally enables custom domain names and SSL certificates.
 
@@ -54,20 +54,20 @@ Resources:
 
 Now we deploy the app, specifying a value for the `ApiDomainName` parameter. Behind the scenes AWS will automatically set up a cert and distribution.
 
-Note that the cert requires email approval from someone that administers the root `gofaas.net` domain. During this deploy, check your email and click through on the approval buttons or else the deploy will eventually fail and roll back. See the [ACM Email Validation](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-validate-email.html) doc for more info.
+Note that the cert requires email approval from someone that administers the root `bZapp.net` domain. During this deploy, check your email and click through on the approval buttons or else the deploy will eventually fail and roll back. See the [ACM Email Validation](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-validate-email.html) doc for more info.
 
 Also note that creating the CloudFront distribution could take 15 minutes or more. Be patient while AWS sets up infrastructure all around the globe for our API...
 
 ```shell
-$ make deploy PARAMS="ApiDomainName=api.gofaas.net"
+$ make deploy PARAMS="ApiDomainName=api.bZapp.net"
 ...
-ApiUrl	https://api.gofaas.net
+ApiUrl	https://api.bZapp.net
 ApiDistributionDomainName	d2bwnae7bzw1t6.cloudfront.net
 ```
 
 ## DNS
 
-The final step is to set up a DNS CNAME from our `ApiDomainName` parameter (e.g. `api.gofaas.net`) to the new `ApiDistributionDomainName` output (e.g. `d2bwnae7bzw1t6.cloudfront.net`).
+The final step is to set up a DNS CNAME from our `ApiDomainName` parameter (e.g. `api.bZapp.net`) to the new `ApiDistributionDomainName` output (e.g. `d2bwnae7bzw1t6.cloudfront.net`).
 
 If we are using Route53, this is easy to do through the UI:
 
@@ -78,8 +78,8 @@ In this case we could consider automating DNS setup by adding an conditional `AW
 After a few minutes we have our custom HTTPS API endpoint:
 
 ```shell
-$ curl https://api.gofaas.net
-<html><body><h1>gofaas dashboard</h1></body></html>
+$ curl https://api.bZapp.net
+<html><body><h1>bZapp dashboard</h1></body></html>
 ```
 
 ## Summary

@@ -1,4 +1,4 @@
-module github.com/nzoschke/gofaas
+module github.com/dctid/bZapp
 
 go 1.14
 

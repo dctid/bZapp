@@ -12,7 +12,7 @@ import "github.com/aws/aws-lambda-go/events"
 
 func Dashboard(ctx context.Context, e events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	return events.APIGatewayProxyResponse{
-		Body: string("<html><body><h1>gofaas dashboard</h1></body></html>\n"),
+		Body: string("<html><body><h1>bZapp dashboard</h1></body></html>\n"),
 		Headers: map[string]string{
 			"Content-Type": "text/html",
 		},
@@ -60,11 +60,11 @@ package main
 
 import (
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/nzoschke/gofaas"
+	"github.com/dctid/bZapp"
 )
 
 func main() {
-	lambda.Start(gofaas.Dashboard)
+	lambda.Start(bZapp.Dashboard)
 }
 
 ```
@@ -85,7 +85,7 @@ Now we can deploy it:
 
 ```console
 $ aws cloudformation package --output-template-file out.yml --s3-bucket $(BUCKET) --template-file template.yml
-$ aws cloudformation deploy --capabilities CAPABILITY_NAMED_IAM --template-file out.yml --stack-name gofaas
+$ aws cloudformation deploy --capabilities CAPABILITY_NAMED_IAM --template-file out.yml --stack-name bZapp
 ```
 > From [Makefile](../Makefile)
 
@@ -95,7 +95,7 @@ Finally we can call our function over HTTP:
 
 ```console
 $ curl https://x19vpdk568.execute-api.us-east-1.amazonaws.com/Prod
-<html><body><h1>gofaas dashboard</h1></body></html>
+<html><body><h1>bZapp dashboard</h1></body></html>
 ```
 
 ## Summary

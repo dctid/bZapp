@@ -76,7 +76,7 @@ Go was created by Google with a goal of making distributed systems programming e
 We may have noticed that every Lambda function takes a first argument of `ctx context.Context`. We also see the `ctx` argument in many other Go packages like the AWS SDK. This variable provides a way to share information, like a request ID or a parent segment structure, across all our code and 3rd party libraries we use. Go opts for a variable for safety -- we can't safely share data between all the systems, we have to pass data down to them.
 
 ```go
-package gofaas
+package bZapp
 
 import (
 	"context"
@@ -130,7 +130,7 @@ Next we reach for the [aws/aws-xray-go-sdk package](https://github.com/aws/aws-x
 To start, the SDK lets us wrap the AWS SDK so that all AWS API calls are traced:
 
 ```go
-package gofaas
+package bZapp
 
 import (
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -251,7 +251,7 @@ It should be no surprise that Lambda supports this out of the box too. Logs prin
 We can use the `sam logs` command to review logs:
 
 ```shell
-$ sam logs -n WorkerFunction --stack-name gofaas -t
+$ sam logs -n WorkerFunction --stack-name bZapp -t
 2018/10/07/[$LATEST]68e50ab313c34257844b10666a0c8d62 2018-10-07T18:42:33.005000 START RequestId: c0385b8a-ca60-11e8-879c-8f9b7d940021 Version: $LATEST
 2018/10/07/[$LATEST]68e50ab313c34257844b10666a0c8d62 2018-10-07T18:42:33.018000 2018/10/07 18:42:33 Worker Event: {SourceIP: TimeEnd:0001-01-01 00:00:00 +0000 UTC TimeStart:0001-01-01 00:00:00 +0000 UTC}
 2018/10/07/[$LATEST]68e50ab313c34257844b10666a0c8d62 2018-10-07T18:42:34.698000 END RequestId: c0385b8a-ca60-11e8-879c-8f9b7d940021

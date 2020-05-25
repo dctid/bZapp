@@ -4,8 +4,8 @@ set -e
 trap 'echo 🈲 ERROR' ERR
 
 RAND=$RANDOM
-export APP=gofaas-$RAND
-export AWS_PROFILE=gofaas
+export APP=bZapp-$RAND
+export AWS_PROFILE=bZapp
 
 make -j deploy
 
@@ -15,7 +15,7 @@ WEB_URL=$(aws cloudformation describe-stacks --output text --query 'Stacks[].Out
 WEB_BUCKET=$(aws cloudformation describe-stack-resources --output text --query 'StackResources[?LogicalResourceId==`WebBucket`].{Id:PhysicalResourceId}' --stack-name $APP)
 
 # test static site
-curl -s $WEB_URL | grep "My first gofaas"
+curl -s $WEB_URL | grep "My first bZapp"
 
 # test user funcs
 ID=$(curl -s -X POST $API_URL/users -d '{"username":"test"}' | jq -r .id)
@@ -35,7 +35,7 @@ aws lambda invoke --function-name $APP-WorkerPeriodicFunction --log-type Tail /d
 # TODO: Test private mode. Currently hard with cert approval and DNS
 # export AUTH_HASH_KEY=43Z647ntcQ8L5LfNi2HlW3XXJYz5x9Y/EYv6C7gdajo=
 # export ACCESS_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0QGdvZmFhcy5uZXQiLCJleHAiOjIwMDAwMDAwMDB9.8I4HeBoWs1rcXDclctz2qJaTrrRHm0aKZOCJtMfwaQE
-# make deploy PARAMS="ApiDomainName=api-$RAND.gofaas.net AuthDomainName=gofaas.net AuthHashKey=$AUTH_HASH_KEY OAuthClientId=foo OAuthClientSecret=bar WebDomainName=www-$RAND.gofaas.net"
+# make deploy PARAMS="ApiDomainName=api-$RAND.bZapp.net AuthDomainName=bZapp.net AuthHashKey=$AUTH_HASH_KEY OAuthClientId=foo OAuthClientSecret=bar WebDomainName=www-$RAND.bZapp.net"
 
 aws s3 rm --recursive s3://$WEB_BUCKET/
 aws cloudformation delete-stack --stack-name $APP

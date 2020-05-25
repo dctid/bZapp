@@ -98,7 +98,7 @@ The release step is accomplished with the `sam package` command. This zips the h
 
 ```console
 $ aws cloudformation package --output-template-file out.yml --s3-bucket $(BUCKET) --template-file template.yml
-$ aws cloudformation deploy --capabilities CAPABILITY_NAMED_IAM --template-file out.yml --stack-name gofaas
+$ aws cloudformation deploy --capabilities CAPABILITY_NAMED_IAM --template-file out.yml --stack-name bZapp
 ```
 > From [Makefile](../Makefile)
 

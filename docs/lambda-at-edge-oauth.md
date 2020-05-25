@@ -19,7 +19,7 @@ Lambda@Edge only supports the `Node.js 6.10` runtime, presumably to increase the
 
 ```js
 var Params = {
-    AuthDomainName: "gofaas.net",
+    AuthDomainName: "bZapp.net",
     AuthHashKey: "43Z647ntcQ8L5LfNi2HlW3XXJYz5x9Y/EYv6C7gdajo=",
     OAuthClientId: "347...apps.googleusercontent.com",
     OAuthClientSecret: "akc...",

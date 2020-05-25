@@ -1,4 +1,4 @@
-package gofaas
+package bZapp
 
 import (
 	"github.com/satori/go.uuid"

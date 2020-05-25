@@ -3,7 +3,7 @@
 
 In the [static website security](lambda-at-edge-oauth.md) guide, we looked at securing our static web app with OAuth and a JSON Web Token (JWT) cookie. The next step is to secure our API so only our web app can access it after user authentication.
 
-The first means of API protection is Cross-Origin Resources Sharing (CORS). By default web browsers have a layer of security where content from one domain, e.g. the `private.gofaas.net` web app, can not make requests to another domain, e.g. the `api.gofaas.net` API. This is extremely important to prevent malicious JavaScript on a web page from interacting with the Google, Facebook, a bank account, etc. we might be logged into. CORS gives us a way to white-list access between domains we control and trust.
+The first means of API protection is Cross-Origin Resources Sharing (CORS). By default web browsers have a layer of security where content from one domain, e.g. the `private.bZapp.net` web app, can not make requests to another domain, e.g. the `api.bZapp.net` API. This is extremely important to prevent malicious JavaScript on a web page from interacting with the Google, Facebook, a bank account, etc. we might be logged into. CORS gives us a way to white-list access between domains we control and trust.
 
 The second means of protection is the JWT token. With JWT we use a secret "hash key" to give a signed token the user in a cookie. The user will present the token on every API request and the auth function will validate it. No 3rd party can create a valid token without the secret hash key, so we are confident a user with a valid token was authorized by us.
 
@@ -102,7 +102,7 @@ func WorkCreate(ctx context.Context, e events.APIGatewayProxyRequest) (events.AP
 Finally our API is ready for web app client to talk to it. We can use the `fetch` method with the `cors` mode and an `Authorization` header with the JWT cookie value.
 
 ```js
-fetch(`https://api.gofaas.net/work`, {
+fetch(`https://api.bZapp.net/work`, {
     method: "POST",
     mode: "cors",
     headers: {
