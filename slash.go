@@ -4,14 +4,24 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
 )
 
 func Slash(ctx context.Context, e events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
-	resp, err := http.Get("https://www.google.com")
+	// resp, err := http.Get("https://www.google.com")
+	// if err != nil {
+	// 	return events.APIGatewayProxyResponse{
+	// 		StatusCode: 500,
+	// 	}, err
+	// }
+
+	// defer resp.Body.Close()
+
+	// body, err := ioutil.ReadAll(resp.Body)
+
+	resp, err := GET("https://www.google.com", nil)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
@@ -21,6 +31,7 @@ func Slash(ctx context.Context, e events.APIGatewayProxyRequest) (events.APIGate
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
+
 	var headers = map[string]string{
 		"Content-Type": "application/json",
 	}
