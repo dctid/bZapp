@@ -12,5 +12,6 @@ require (
 	github.com/pkg/errors v0.8.0
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/satori/go.uuid v1.2.0
+	github.com/slack-go/slack v0.6.4
 	github.com/stretchr/testify v1.2.2
 )

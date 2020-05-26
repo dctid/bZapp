@@ -147,6 +147,7 @@ Resources:
         Variables:
           CLIENT_ID: "id"
           CLIENT_SECRET: "secret"
+          SLACK_KEY: slack_key
       Events:
         Request:
           Properties:
@@ -196,9 +197,7 @@ Resources:
       CodeUri: ./handlers/slash
       Environment:
         Variables:
-          AUTH_HASH_KEY: !Ref AuthHashKey
-          KEY_ID: !Ref Key
-          TABLE_NAME: !Ref UsersTable
+          SLACK_KEY: slack_key
       Events:
         Request:
           Properties:
