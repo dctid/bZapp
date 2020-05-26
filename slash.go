@@ -2,13 +2,21 @@ package bZapp
 
 import (
 	"context"
-	"fmt"
-	"io/ioutil"
+	"encoding/json"
 
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/slack-go/slack"
 )
 
 func Slash(ctx context.Context, e events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
+	var block = slack.NewTextBlockObject("plain_text", "HIII", false, false)
+	b, err := json.MarshalIndent(block, "", "    ")
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+		}, err
+	}
 
 	resp, err := GET("https://www.google.com", nil)
 	if err != nil {
@@ -19,14 +27,14 @@ func Slash(ctx context.Context, e events.APIGatewayProxyRequest) (events.APIGate
 
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	// body, err := ioutil.ReadAll(resp.Body)
 
 	var headers = map[string]string{
 		"Content-Type": "application/json",
 	}
 	return events.APIGatewayProxyResponse{
 		Headers:    headers,
-		Body:       fmt.Sprintf("{\"text\": \"%v\"}", string(body)),
+		Body:       string(b),
 		StatusCode: 200,
 	}, nil
 }

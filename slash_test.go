@@ -39,7 +39,7 @@ func TestSlash(t *testing.T) {
 	assert.EqualValues(t, urlCalled, expectUrl)
 	assert.EqualValues(t,
 		events.APIGatewayProxyResponse{
-			Body: "{\"text\": \"" + json + "\"}",
+			Body: "{\n    \"type\": \"plain_text\",\n    \"text\": \"HIII\"\n}",
 			Headers: map[string]string{
 				"Content-Type": "application/json",
 			},
