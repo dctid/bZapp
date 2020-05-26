@@ -53,15 +53,6 @@ Resources:
       TracingEnabled: true
     Type: Custom::ApiGatewayStage
 
-  CustomResourceFunction:
-    Properties:
-      CodeUri: ./handlers/custom-resource
-      FunctionName: !Sub ${AWS::StackName}-CustomResourceFunction
-      Handler: main
-      Policies:
-        - arn:aws:iam::aws:policy/AmazonAPIGatewayAdministrator
-      Runtime: go1.x
-    Type: AWS::Serverless::Function
 ```
 > From [template.yml](../template.yml)
 

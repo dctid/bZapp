@@ -4,8 +4,8 @@ set -e
 trap 'echo 🈲 ERROR' ERR
 
 RAND=$RANDOM
-export APP=bZapp-$RAND
-export AWS_PROFILE=bZapp
+export APP=bzapp-$RAND
+export AWS_PROFILE=bzapp
 
 make -j deploy
 

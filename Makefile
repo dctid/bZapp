@@ -1,5 +1,5 @@
 export AWS_DEFAULT_REGION ?= us-east-1
-APP ?= bZapp
+APP ?= bzapp
 
 app: dev
 
@@ -8,12 +8,10 @@ clean:
 	rm -rf $(wildcard web/handlers/*/node_modules)
 
 deploy: BUCKET = pkgs-$(shell aws sts get-caller-identity --output text --query 'Account')-$(AWS_DEFAULT_REGION)
-deploy: PARAMS ?= =
 deploy: handlers
 	@aws s3api head-bucket --bucket $(BUCKET) || aws s3 mb s3://$(BUCKET) --region $(AWS_DEFAULT_REGION)
 	sam package --output-template-file out.yml --s3-bucket $(BUCKET) --template-file template.yml
-	sam deploy --capabilities CAPABILITY_NAMED_IAM --parameter-overrides $(PARAMS) --template-file out.yml --stack-name $(APP)
-	make deploy-static
+	sam deploy --capabilities CAPABILITY_NAMED_IAM  --template-file out.yml --stack-name $(APP)
 
 
 dev-debug:

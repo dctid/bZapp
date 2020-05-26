@@ -1,6 +1,11 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
 
+Conditions:
+  ApiDomainNameSpecified: !Not [!Equals [!Ref ApiDomainName, ""]]
+  WebDomainNameSpecified: !Not [!Equals [!Ref WebDomainName, ""]]
+  WebDomainNameUnspecified: !Equals [!Ref WebDomainName, ""]
+
 Globals:
   Api:
     MethodSettings:
@@ -13,11 +18,17 @@ Globals:
   Function:
     Environment:
       Variables:
-        NOTIFICATION_TOPIC: !Ref NotificationTopic
+        NOTIFICATION_TOPIC: "Something"
     Handler: main
     Runtime: go1.x
     Timeout: 5
     Tracing: Active
+
+Mappings:
+  RegionMap:
+    sa-east-1:
+      S3HostedZoneId: Z31GFT0UA1I2HV
+      S3WebsiteEndpoint: s3-website-sa-east-1.amazonaws.com
 
 
 Metadata:
@@ -27,6 +38,7 @@ Metadata:
           default: Custom domains
         Parameters:
           - ApiDomainName
+          - WebDomainName
       - Label:
           default: Notifications
         Parameters:
@@ -45,17 +57,6 @@ Outputs:
       - !Sub https://${ApiDomainName}
       - !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/${ServerlessRestApiProdStage}"
 
-  WebDistributionDomainName:
-    Condition: WebDomainNameSpecified
-    Value: !GetAtt WebDistribution.DomainName
-
-  WebUrl:
-    Value:
-      !If
-      - WebDomainNameSpecified
-      - !Sub https://${WebDomainName}
-      - Fn::Sub: ["http://${WebBucket}.${Endpoint}", {Endpoint: !FindInMap [RegionMap, !Ref "AWS::Region", S3WebsiteEndpoint]}]
-
 Parameters:
   ApiDomainName:
     Default: ""
@@ -73,6 +74,11 @@ Parameters:
 
   NotificationNumber:
     Default: ""
+    Type: String
+
+  WebDomainName:
+    Default: ""
+    Description: "Domain or subdomain for the static website distribution, e.g. www.gofaas.net"
     Type: String
 
 Resources:
@@ -119,26 +125,8 @@ Resources:
       Path: /
     Type: AWS::IAM::Role
 
-  ApiGatewayStage:
-    Properties:
-      RestApiId: !Ref ServerlessRestApi
-      ServiceToken: !GetAtt CustomResourceFunction.Arn
-      Stage: !Ref ServerlessRestApiProdStage
-      TracingEnabled: true
-    Type: Custom::ApiGatewayStage
-
   Bucket:
     Type: AWS::S3::Bucket
-
-  CustomResourceFunction:
-    Properties:
-      CodeUri: ./handlers/custom-resource
-      FunctionName: !Sub ${AWS::StackName}-CustomResourceFunction
-      Handler: main
-      Policies:
-        - arn:aws:iam::aws:policy/AmazonAPIGatewayAdministrator
-      Runtime: go1.x
-    Type: AWS::Serverless::Function
 
   DashboardFunction:
     Properties:
@@ -156,9 +144,6 @@ Resources:
           Type: Api
       FunctionName: !Sub ${AWS::StackName}-DashboardFunction
       Handler: main
-      Policies:
-        - SNSPublishMessagePolicy:
-            TopicName: !GetAtt NotificationTopic.TopicName
       Runtime: go1.x
     Type: AWS::Serverless::Function
 
@@ -176,22 +161,6 @@ Resources:
         Version: 2012-10-17
     Type: AWS::KMS::Key
 
-  NotificationTopic:
-    Properties:
-      DisplayName: !Sub Notifications for ${AWS::StackName}
-      Subscription:
-        - !If
-          - NotificationEmailSpecified
-          - Endpoint: !Ref NotificationEmail
-            Protocol: email
-          - !Ref AWS::NoValue
-        - !If
-          - NotificationNumberSpecified
-          - Endpoint: !Ref NotificationNumber
-            Protocol: sms
-          - !Ref AWS::NoValue
-    Type: AWS::SNS::Topic
-
   SlashFunction:
     Properties:
       CodeUri: ./handlers/slash
@@ -207,10 +176,6 @@ Resources:
       FunctionName: !Sub ${AWS::StackName}-SlashFunction
       Handler: main
       Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref UsersTable
-        - SNSPublishMessagePolicy:
-            TopicName: !GetAtt NotificationTopic.TopicName
         - Statement:
             - Action:
                 - kms:Encrypt
@@ -240,6 +205,13 @@ Resources:
             Resource: !Sub arn:aws:s3:::${WebBucket}/*
             Sid: GetObjectsCloudFront
     Type: AWS::S3::BucketPolicy
+
+  WebOriginAccessIdentity:
+    Condition: WebDomainNameSpecified
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Ref WebBucket
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
 
   WebBucketPolicyPublic:
     Condition: WebDomainNameUnspecified
