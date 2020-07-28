@@ -20,7 +20,7 @@ func init() {
 }
 
 // Post sends a post request to the URL with the body
-func Post(url string, body interface{}, headers http.Header) (*http.Response, error) {
+func Post(url string, headers http.Header, body interface{} ) (*http.Response, error) {
 	jsonBytes, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
@@ -34,7 +34,7 @@ func Post(url string, body interface{}, headers http.Header) (*http.Response, er
 }
 
 // Post sends a post request to the URL with the body
-func GET(url string, headers http.Header) (*http.Response, error) {
+func Get(url string, headers http.Header) (*http.Response, error) {
 
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
