@@ -44,9 +44,12 @@ func Slash(ctx context.Context, e events.APIGatewayProxyRequest) (events.APIGate
 	titleText := slack.NewTextBlockObject("plain_text", "bZapp", true, false)
 	submitText := slack.NewTextBlockObject("plain_text", "Submit", true, false)
 	closeText := slack.NewTextBlockObject("plain_text", "Cancel", true, false)
+	todayHeader := slack.NewContextBlock("", slack.NewTextBlockObject("mrkdwn", "*Today's Events*", false, false))
 
 	blocks := slack.Blocks{
 		BlockSet: []slack.Block{
+			slack.NewDividerBlock(),
+			todayHeader,
 			slack.NewDividerBlock(),
 			//headerSection,
 			//firstName,

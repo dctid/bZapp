@@ -326,7 +326,19 @@ func TestSlash(t *testing.T) {
  	    "blocks": [
          	{
             	 "type": "divider"
-        	 }
+        	 },
+	        {
+	             "type": "context",
+	             "elements": [
+	                 {
+	                     "type": "mrkdwn",
+	                     "text": "*Today's Events*"
+	                 }
+	             ]
+	         },
+	        {
+	             "type": "divider"
+	        }
 		]
 	}`
 
