@@ -254,7 +254,6 @@ var openModalJson = `{
                  },
                  {
                      "type": "datepicker",
-                     "initial_date": "1990-04-28",
                      "placeholder": {
                          "type": "plain_text",
                          "text": "Select a date",
@@ -341,6 +340,13 @@ func TestSlash(t *testing.T) {
       "type": "divider"
     },
     {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "No events yet"
+      }
+    },
+    {
       "type": "divider"
     },
     {
@@ -356,13 +362,20 @@ func TestSlash(t *testing.T) {
       "type": "divider"
     },
     {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "No events yet"
+      }
+    },
+    {
       "type": "divider"
     },
     {
       "type": "input",
       "element": {
         "type": "plain_text_input",
-		"action_id": "add_event",
+        "action_id": "add_event",
         "placeholder": {
           "type": "plain_text",
           "text": "Title"
@@ -372,146 +385,146 @@ func TestSlash(t *testing.T) {
         "type": "plain_text",
         "text": "Add Event"
       }
-    }, {
-             "type": "actions",
-"elements": [
-                 {
-                     "type": "static_select",
-                     "placeholder": {
-                         "type": "plain_text",
-                         "text": "Select hour",
-                         "emoji": true
-                     },
-                     "options": [
-                         {
-                             "text": {
-                                 "type": "plain_text",
-                                 "text": "9 AM",
-                                 "emoji": true
-                             },
-                             "value": "hour-9"
-                         },
-                         {
-                             "text": {
-                                 "type": "plain_text",
-                                 "text": "10 AM",
-                                 "emoji": true
-                             },
-                             "value": "hour-10"
-                         },
-                         {
-                             "text": {
-                                 "type": "plain_text",
-                                 "text": "11 AM",
-                                 "emoji": true
-                             },
-                             "value": "hour-11"
-                         },
-                         {
-                             "text": {
-                                 "type": "plain_text",
-                                 "text": "12 PM",
-                                 "emoji": true
-                             },
-                             "value": "hour-12"
-                         },
-                         {
-                             "text": {
-                                 "type": "plain_text",
-                                 "text": "1 PM",
-                                 "emoji": true
-                             },
-                             "value": "hour-1"
-                         },
-                         {
-                             "text": {
-                                 "type": "plain_text",
-                                 "text": "2 PM",
-                                 "emoji": true
-                             },
-                             "value": "hour-2"
-                         },
-                         {
-                             "text": {
-                                 "type": "plain_text",
-                                 "text": "3 PM",
-                                 "emoji": true
-                             },
-                             "value": "hour-3"
-                         },
-                         {
-                             "text": {
-                                 "type": "plain_text",
-                                 "text": "4 PM",
-                                 "emoji": true
-                             },
-                             "value": "hour-4"
-                         }
-                     ]
-                 },
-                 {
-                     "type": "static_select",
-                     "placeholder": {
-                         "type": "plain_text",
-                         "text": "Select minutes",
-                         "emoji": true
-                     },
-                     "options": [
-                         {
-                             "text": {
-                                 "type": "plain_text",
-                                 "text": "00",
-                                 "emoji": true
-                             },
-                             "value": "min-0"
-                         },
-                         {
-                             "text": {
-                                 "type": "plain_text",
-                                 "text": "15",
-                                 "emoji": true
-                             },
-                             "value": "min-15"
-                         },
-                         {
-                             "text": {
-                                 "type": "plain_text",
-                                 "text": "30",
-                                 "emoji": true
-                             },
-                             "value": "min-30"
-                         },
-                         {
-                             "text": {
-                                 "type": "plain_text",
-                                 "text": "45",
-                                 "emoji": true
-                             },
-                             "value": "min-45"
-                         }
-                     ]
-                 },
-                 {
-                     "type": "datepicker",
-					 "action_id": "datepicker",
-                     "initial_date": "1990-04-28",
-                     "placeholder": {
-                         "type": "plain_text",
-                         "text": "Select a date",
-                         "emoji": true
-                     }
-                 },
-                 {
-                     "type": "button",
-                     "text": {
-                         "type": "plain_text",
-                         "text": "Add",
-                         "emoji": true
-                     },
-                     "value": "click_me_123"
-                 }
-             ]
-}
+    },
+    {
+      "type": "actions",
+      "elements": [
+        {
+          "type": "static_select",
+          "placeholder": {
+            "type": "plain_text",
+            "text": "Select hour",
+            "emoji": true
+          },
+          "options": [
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "9 AM",
+                "emoji": true
+              },
+              "value": "hour-9"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "10 AM",
+                "emoji": true
+              },
+              "value": "hour-10"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "11 AM",
+                "emoji": true
+              },
+              "value": "hour-11"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "12 PM",
+                "emoji": true
+              },
+              "value": "hour-12"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "1 PM",
+                "emoji": true
+              },
+              "value": "hour-1"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "2 PM",
+                "emoji": true
+              },
+              "value": "hour-2"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "3 PM",
+                "emoji": true
+              },
+              "value": "hour-3"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "4 PM",
+                "emoji": true
+              },
+              "value": "hour-4"
+            }
+          ]
+        },
+        {
+          "type": "static_select",
+          "placeholder": {
+            "type": "plain_text",
+            "text": "Select minutes",
+            "emoji": true
+          },
+          "options": [
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "00",
+                "emoji": true
+              },
+              "value": "min-0"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "15",
+                "emoji": true
+              },
+              "value": "min-15"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "30",
+                "emoji": true
+              },
+              "value": "min-30"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "45",
+                "emoji": true
+              },
+              "value": "min-45"
+            }
+          ]
+        },
+        {
+          "type": "datepicker",
+          "action_id": "datepicker",
+          "placeholder": {
+            "type": "plain_text",
+            "text": "Select a date",
+            "emoji": true
+          }
+        },
+        {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "Add",
+            "emoji": true
+          },
+          "value": "add_event"
+        }
+      ]
+    }
   ]
 }`
 
