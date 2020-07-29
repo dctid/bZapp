@@ -1,7 +1,6 @@
 package bZapp
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"io/ioutil"
@@ -289,15 +288,17 @@ func PrettyJson(data string) (string, error) {
 	if err != nil {
 		return empty, err
 	}
-	buffer := new(bytes.Buffer)
-	encoder := json.NewEncoder(buffer)
-	encoder.SetIndent(empty, tab)
+	//buffer := new(bytes.Buffer)
+	//encoder := json.NewEncoder(buffer)
+	//encoder.SetIndent(empty, tab)
+	//
+	//err = encoder.Encode(expectedMap)
 
-	err = encoder.Encode(expectedMap)
+	indent, err := json.MarshalIndent(expectedMap, empty, tab)
 	if err != nil {
 		return empty, err
 	}
-	return buffer.String(), nil
+	return string(indent), nil
 }
 
 func TestSlash(t *testing.T) {
@@ -307,55 +308,73 @@ func TestSlash(t *testing.T) {
 	expectUrl, _ := url.Parse("http://localhost:8080/api/scores")
 	Client = &mocks.MockClient{}
 	expected := `{
-		 "type": "modal",
-	     "title": {
-	         "type": "plain_text",
-	         "text": "bZapp",
-	         "emoji": true
-	     },
-		 "submit": {
-	         "type": "plain_text",
-	         "text": "Submit",
-	         "emoji": true
-	     },
-		 "close": {
-	         "type": "plain_text",
-	         "text": "Cancel",
-	         "emoji": true
-	     },
- 	    "blocks": [
-         	{
-            	 "type": "divider"
-        	 },
-	        {
-	             "type": "context",
-	             "elements": [
-	                 {
-	                     "type": "mrkdwn",
-	                     "text": "*Today's Events*"
-	                 }
-	             ]
-	         },
-	        {
-	             "type": "divider"
-	        },
-	         {
-	             "type": "divider"
-	         },
-	         {
-	             "type": "context",
-	             "elements": [
-	                 {
-	                     "type": "mrkdwn",
-	                     "text": "*Tomorrow's Events*"
-	                 }
-	             ]
-	         },
-	         {
-	             "type": "divider"
-	         }
-		]
-	}`
+  "type": "modal",
+  "title": {
+    "type": "plain_text",
+    "text": "bZapp",
+    "emoji": true
+  },
+  "submit": {
+    "type": "plain_text",
+    "text": "Submit",
+    "emoji": true
+  },
+  "close": {
+    "type": "plain_text",
+    "text": "Cancel",
+    "emoji": true
+  },
+  "blocks": [
+    {
+      "type": "divider"
+    },
+    {
+      "type": "context",
+      "elements": [
+        {
+          "type": "mrkdwn",
+          "text": "*Today's Events*"
+        }
+      ]
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "context",
+      "elements": [
+        {
+          "type": "mrkdwn",
+          "text": "*Tomorrow's Events*"
+        }
+      ]
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "input",
+      "element": {
+        "type": "plain_text_input",
+		"action_id": "add_event",
+        "placeholder": {
+          "type": "plain_text",
+          "text": "Title"
+        }
+      },
+      "label": {
+        "type": "plain_text",
+        "text": "Add Event"
+      }
+    }
+  ]
+}`
 
 	prettyJsonExpected, err := PrettyJson(expected)
 	assert.NoError(t, err)

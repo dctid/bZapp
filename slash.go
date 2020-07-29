@@ -46,6 +46,8 @@ func Slash(ctx context.Context, e events.APIGatewayProxyRequest) (events.APIGate
 	closeText := slack.NewTextBlockObject("plain_text", "Cancel", true, false)
 	todayHeader := slack.NewContextBlock("", slack.NewTextBlockObject("mrkdwn", "*Today's Events*", false, false))
 	tomorrowHeader := slack.NewContextBlock("", slack.NewTextBlockObject("mrkdwn", "*Tomorrow's Events*", false, false))
+	addEventsElement := slack.NewPlainTextInputBlockElement(slack.NewTextBlockObject("plain_text","Title", false, false ) , "add_event")
+	addEvents := slack.NewInputBlock("",slack.NewTextBlockObject("plain_text", "Add Event", false, false), addEventsElement)
 
 	blocks := slack.Blocks{
 		BlockSet: []slack.Block{
@@ -55,6 +57,8 @@ func Slash(ctx context.Context, e events.APIGatewayProxyRequest) (events.APIGate
 			slack.NewDividerBlock(),
 			tomorrowHeader,
 			slack.NewDividerBlock(),
+			slack.NewDividerBlock(),
+			addEvents,
 		},
 	}
 
