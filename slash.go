@@ -55,7 +55,7 @@ func Slash(ctx context.Context, e events.APIGatewayProxyRequest) (events.APIGate
 	}
 
 	var modalRequest slack.ModalViewRequest
-	modalRequest.Type = slack.ViewType("modal")
+	modalRequest.Type = "modal"
 	modalRequest.Title = titleText
 	modalRequest.Close = closeText
 	modalRequest.Submit = submitText

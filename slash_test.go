@@ -1,7 +1,9 @@
 package bZapp
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -274,38 +276,63 @@ var openModalJson = `{
      ]
  }`
 
+const (
+	empty = ""
+	tab   = "\t"
+)
+
+
+func PrettyJson(data string) (string, error) {
+	expectedJson :=[]byte(strings.Join(strings.Fields(data), ""))
+	var expectedMap map[string]interface{}
+	err := json.Unmarshal(expectedJson, &expectedMap)
+	if err != nil {
+		return empty, err
+	}
+	buffer := new(bytes.Buffer)
+	encoder := json.NewEncoder(buffer)
+	encoder.SetIndent(empty, tab)
+
+	err = encoder.Encode(expectedMap)
+	if err != nil {
+		return empty, err
+	}
+	return buffer.String(), nil
+}
+
 func TestSlash(t *testing.T) {
 
 	var urlCalled *url.URL = nil
-	bodyCalled := ""
+	var bodyCalled string
 	expectUrl, _ := url.Parse("http://localhost:8080/api/scores")
 	Client = &mocks.MockClient{}
-	expectedJson := strings.Join(strings.Fields(`{
-	     "type": "modal",
+	expected := `{
+		 "type": "modal",
 	     "title": {
 	         "type": "plain_text",
 	         "text": "bZapp",
-	         "emoji": true
-	     },
- 	    "blocks": [
-         	{
-            	 "type": "divider"
-        	 }
-		],
-		 "close": {
-	         "type": "plain_text",
-	         "text": "Cancel",
 	         "emoji": true
 	     },
 		 "submit": {
 	         "type": "plain_text",
 	         "text": "Submit",
 	         "emoji": true
-	     }
-	}`), "")
-	//expectedJson := slack.NewTextBlockObject("plain_text", "HIII", false, false)
-	//json := openModalJson
-	//	marshal, _ := json.Marshal(expectedJson)
+	     },
+		 "close": {
+	         "type": "plain_text",
+	         "text": "Cancel",
+	         "emoji": true
+	     },
+ 	    "blocks": [
+         	{
+            	 "type": "divider"
+        	 }
+		]
+	}`
+
+	prettyJsonExpected, err := PrettyJson(expected)
+	assert.NoError(t, err)
+
 	mocks.GetDoFunc = func(req *http.Request) (*http.Response, error) {
 		log.Printf("url %s ", req.URL)
 		urlCalled = req.URL
@@ -313,16 +340,17 @@ func TestSlash(t *testing.T) {
 		bodyCalled = string(body)
 		return &http.Response{
 			StatusCode: 200,
-			//Body:       ioutil.NopCloser(bytes.NewReader([]byte(expectedJson))),
 		}, nil
 	}
 
-	r, err := Slash(context.Background(), events.APIGatewayProxyRequest{
+	result, err := Slash(context.Background(), events.APIGatewayProxyRequest{
 		Body: `{"text": "none"}`,
 	})
 	assert.NoError(t, err)
-
 	assert.EqualValues(t, expectUrl, urlCalled)
-	assert.EqualValues(t, expectedJson, bodyCalled)
-	assert.EqualValues(t, events.APIGatewayProxyResponse{StatusCode: 200}, r)
+
+	prettyJsonActual, err := PrettyJson(bodyCalled)
+	assert.NoError(t, err)
+	assert.EqualValues(t, prettyJsonExpected, prettyJsonActual)
+	assert.EqualValues(t, events.APIGatewayProxyResponse{StatusCode: 200}, result)
 }
