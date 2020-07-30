@@ -184,6 +184,29 @@ Resources:
           Version: 2012-10-17
       Runtime: go1.x
     Type: AWS::Serverless::Function
+  InteractionFunction:
+    Properties:
+      CodeUri: ./handlers/interaction
+      Environment:
+        Variables:
+          SLACK_KEY: slack_key
+      Events:
+        Request:
+          Properties:
+            Method: POST
+            Path: /interaction
+          Type: Api
+      FunctionName: !Sub ${AWS::StackName}-InteractionFunction
+      Handler: main
+      Policies:
+        - Statement:
+            - Action:
+                - kms:Encrypt
+              Effect: Allow
+              Resource: !GetAtt Key.Arn
+          Version: 2012-10-17
+      Runtime: go1.x
+    Type: AWS::Serverless::Function
   WebBucket:
     Properties:
       BucketName: !If [WebDomainNameSpecified, !Ref WebDomainName, !Sub "${AWS::StackName}-webbucket-${AWS::AccountId}"]

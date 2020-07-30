@@ -3,12 +3,11 @@ package bZapp
 import (
 	"context"
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/slack-go/slack"
 	"log"
 	"net/url"
 )
 
-func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func Interaction(ctx context.Context, event events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	//var headers = map[string]string{
 	//	"Content-Type": "application/json",
 	//	"accept": "application/json",
@@ -24,6 +23,8 @@ func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.API
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
 		}, err
+	} else {
+		log.Printf("Body: %v", m)
 	}
 
 	//var bodyMap map[string]interface{}
@@ -35,15 +36,15 @@ func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.API
 	//	}, err
 	//}
 
-	triggerId := m["trigger_id"][0]// fmt.Sprintf("%v", bodyMap["trigger_id"])
-	modalRequest := NewModal(NoEventYetSection, NoEventYetSection)
-	api := slack.New("xoxb-260884079521-1098577169670-mQjaNJ7Sx6OTEycmjCvKJyTr", slack.OptionDebug(true))
-	interaction, err := api.OpenView(triggerId, modalRequest)
-	if err != nil {
-		log.Printf("Err opening modal: %v", err)
-	} else {
-		log.Printf("Success open modal: %v", interaction)
-	}
+	//triggerId := m["trigger_id"][0]// fmt.Sprintf("%v", bodyMap["trigger_id"])
+	//modalRequest := NewModal(NoEventYetSection, NoEventYetSection)
+	//api := slack.New("xoxb-260884079521-1098577169670-mQjaNJ7Sx6OTEycmjCvKJyTr", slack.OptionDebug(true))
+	//interaction, err := api.OpenView(triggerId, modalRequest)
+	//if err != nil {
+	//	log.Printf("Err opening modal: %v", err)
+	//} else {
+	//	log.Printf("Success open modal: %v", interaction)
+	//}
 
 	//jsonBytes, err := json.Marshal(modalRequest)
 	//log.Printf("json %s", jsonBytes)
