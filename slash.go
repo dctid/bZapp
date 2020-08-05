@@ -2,6 +2,7 @@ package bZapp
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/slack-go/slack"
 	"log"
@@ -40,12 +41,13 @@ func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.API
 	modalRequest := NewModal(NoEventYetSection, NoEventYetSection)
 	//modalRequest.ExternalID = "adsbadfbadf"
 
-	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true))
-	interaction, err := api.OpenView(triggerId, modalRequest)
+	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true), slack.OptionHTTPClient(Client))
+	viewResponse, err := api.OpenView(triggerId, modalRequest)
 	if err != nil {
 		log.Printf("Err opening modal: %v", err)
 	} else {
-		log.Printf("Success open modal: %v", interaction.ID)
+		indent, _ := json.MarshalIndent(viewResponse, "", "\t")
+		log.Printf("Success open modal: %v", string(indent))
 	}
 
 	//jsonBytes, err := json.Marshal(modalRequest)
