@@ -28,8 +28,8 @@ func NewModal(todayEvents *slack.SectionBlock, tomorrowEvents *slack.SectionBloc
 
 	actions := slack.NewActionBlock(
 		"",
-		slack.NewOptionsSelectBlockElement("static_select", slack.NewTextBlockObject("plain_text", "Select hour", true, false), "", hourOptions...),
-		slack.NewOptionsSelectBlockElement("static_select", slack.NewTextBlockObject("plain_text", "Select minutes", true, false), "", minOptions...),
+		slack.NewOptionsSelectBlockElement("static_select", slack.NewTextBlockObject("plain_text", "Select hour", true, false), "hours_select", hourOptions...),
+		slack.NewOptionsSelectBlockElement("static_select", slack.NewTextBlockObject("plain_text", "Select minutes", true, false), "mins_select", minOptions...),
 		datepicker,
 		slack.NewButtonBlockElement("", "add_event", slack.NewTextBlockObject("plain_text", "Add", true, false)),
 	)
@@ -90,3 +90,8 @@ func Map(vs []int, f func(int) *slack.OptionBlockObject) []*slack.OptionBlockObj
 	return vsm
 }
 
+func TodaySection() *slack.SectionBlock {
+	return slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", "9:15 Standup", false, false),
+		nil,
+		slack.NewAccessory(slack.NewButtonBlockElement("", "remove_today_1", slack.NewTextBlockObject("plain_text", "Remove", true, false))))
+}
