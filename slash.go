@@ -6,13 +6,14 @@ import (
 	"github.com/slack-go/slack"
 	"log"
 	"net/url"
+	"os"
 )
 
 func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	//var headers = map[string]string{
 	//	"Content-Type": "application/json",
 	//	"accept": "application/json",
-	//	"Authorization": "Bearer xoxb-260884079521-1098577169670-mQjaNJ7Sx6OTEycmjCvKJyTr",
+	//	"Authorization": "Bearer [add token]",
 	//}
 	//var block = slack.NewTextBlockObject("plain_text", "HIII", false, false)
 
@@ -37,12 +38,14 @@ func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.API
 
 	triggerId := m["trigger_id"][0]// fmt.Sprintf("%v", bodyMap["trigger_id"])
 	modalRequest := NewModal(NoEventYetSection, NoEventYetSection)
-	api := slack.New("xoxb-260884079521-1098577169670-mQjaNJ7Sx6OTEycmjCvKJyTr", slack.OptionDebug(true))
+	//modalRequest.ExternalID = "adsbadfbadf"
+
+	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true))
 	interaction, err := api.OpenView(triggerId, modalRequest)
 	if err != nil {
 		log.Printf("Err opening modal: %v", err)
 	} else {
-		log.Printf("Success open modal: %v", interaction)
+		log.Printf("Success open modal: %v", interaction.ID)
 	}
 
 	//jsonBytes, err := json.Marshal(modalRequest)
@@ -50,7 +53,7 @@ func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.API
 
 	//postHeaders := http.Header{"Content-Type": {"application/json"},
 	//	"accept": {"application/json"},
-	//	"Authorization": {"Bearer xoxb-260884079521-1098577169670-mQjaNJ7Sx6OTEycmjCvKJyTr"}}
+	//	"Authorization": {"Bearer [add token]"}}
 	//
 	//_, err = Post("https://slack.com/api/views.open", postHeaders, modalRequest)
 	//if err != nil {

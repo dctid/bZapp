@@ -81,6 +81,11 @@ Parameters:
     Description: "Domain or subdomain for the static website distribution, e.g. www.gofaas.net"
     Type: String
 
+  SlackToken:
+    Default: "Slack token not set"
+    Description: "Slack token"
+    Type: String
+
 Resources:
   ApiGatewayAccount:
     Properties:
@@ -136,6 +141,7 @@ Resources:
           CLIENT_ID: "id"
           CLIENT_SECRET: "secret"
           SLACK_KEY: slack_key
+          SLACK_TOKEN: !Ref SlackToken
       Events:
         Request:
           Properties:
@@ -166,7 +172,7 @@ Resources:
       CodeUri: ./handlers/slash
       Environment:
         Variables:
-          SLACK_KEY: slack_key
+          SLACK_TOKEN: !Ref SlackToken
       Events:
         Request:
           Properties:
@@ -184,12 +190,13 @@ Resources:
           Version: 2012-10-17
       Runtime: go1.x
     Type: AWS::Serverless::Function
+
   InteractionFunction:
     Properties:
       CodeUri: ./handlers/interaction
       Environment:
         Variables:
-          SLACK_KEY: slack_key
+          SLACK_TOKEN: !Ref SlackToken
       Events:
         Request:
           Properties:
@@ -207,6 +214,7 @@ Resources:
           Version: 2012-10-17
       Runtime: go1.x
     Type: AWS::Serverless::Function
+
   WebBucket:
     Properties:
       BucketName: !If [WebDomainNameSpecified, !Ref WebDomainName, !Sub "${AWS::StackName}-webbucket-${AWS::AccountId}"]
