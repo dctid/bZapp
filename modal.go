@@ -11,27 +11,10 @@ func NewModal(todayEvents *slack.SectionBlock, tomorrowEvents *slack.SectionBloc
 	closeText := slack.NewTextBlockObject("plain_text", "Cancel", true, false)
 	todayHeader := slack.NewContextBlock("", slack.NewTextBlockObject("mrkdwn", "*Today's Events*", false, false))
 	tomorrowHeader := slack.NewContextBlock("", slack.NewTextBlockObject("mrkdwn", "*Tomorrow's Events*", false, false))
-	addEventsElement := slack.NewPlainTextInputBlockElement(slack.NewTextBlockObject("plain_text", "Title", false, false), "add_event")
-	addEvents := slack.NewInputBlock("", slack.NewTextBlockObject("plain_text", "Add Event", false, false), addEventsElement)
-
-	hours := []int{9, 10, 11, 12, 1, 2, 3, 4}
-	hourOptions := Map(hours, HourOption)
-
-	mins := []int{0, 15, 30, 45}
-	minOptions := Map(mins, MinOption)
-
-	datepicker := slack.DatePickerBlockElement{
-		Type:        "datepicker",
-		ActionID:    "datepicker",
-		Placeholder: slack.NewTextBlockObject("plain_text", "Select a date", true, false),
-	}
 
 	actions := slack.NewActionBlock(
-		"",
-		slack.NewOptionsSelectBlockElement("static_select", slack.NewTextBlockObject("plain_text", "Select hour", true, false), "hours_select", hourOptions...),
-		slack.NewOptionsSelectBlockElement("static_select", slack.NewTextBlockObject("plain_text", "Select minutes", true, false), "mins_select", minOptions...),
-		datepicker,
-		slack.NewButtonBlockElement("", "add_event", slack.NewTextBlockObject("plain_text", "Add", true, false)),
+		"actions_block",
+		slack.NewButtonBlockElement("edit_events", "edit_events", slack.NewTextBlockObject("plain_text", "Edit Events", true, false)),
 	)
 
 	blocks := slack.Blocks{
@@ -45,7 +28,6 @@ func NewModal(todayEvents *slack.SectionBlock, tomorrowEvents *slack.SectionBloc
 			slack.NewDividerBlock(),
 			tomorrowEvents,
 			slack.NewDividerBlock(),
-			addEvents,
 			actions,
 		},
 	}
@@ -60,7 +42,7 @@ func NewModal(todayEvents *slack.SectionBlock, tomorrowEvents *slack.SectionBloc
 	return modalRequest
 }
 
-var NoEventYetSection = slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", "No events yet", false, false), nil, nil)
+var NoEventYetSection = slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", "_No events yet_", false, false), nil, nil)
 
 func MinOption(num int) *slack.OptionBlockObject {
 	return slack.NewOptionBlockObject(fmt.Sprintf("min-%d", num), slack.NewTextBlockObject("plain_text", fmt.Sprintf(func() string {

@@ -2,6 +2,7 @@ package bZapp
 
 import (
 	"encoding/json"
+	"github.com/dctid/bZapp/test"
 	"github.com/slack-go/slack"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -383,7 +384,7 @@ func TestNewEditEventsModal(t *testing.T) {
 	result := NewEditEventsModal(todaysEvents, tomorrowsEvents)
 	actualJson, _ := json.Marshal(result)
 	//assert.EqualValues(t, expected, result)
-	expectedJsonString, _ := PrettyJson(editEventsModal)
-	actualJsonString, _ := PrettyJson(string(actualJson))
+	expectedJsonString, _ := test.PrettyJson(editEventsModal)
+	actualJsonString, _ := test.PrettyJson(string(actualJson))
 	assert.EqualValues(t, expectedJsonString, actualJsonString)
 }
