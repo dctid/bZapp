@@ -3,9 +3,10 @@ package bZapp
 import (
 	"fmt"
 	"github.com/slack-go/slack"
+	"strings"
 )
 
-func NewModal(todayEvents *slack.SectionBlock, tomorrowEvents *slack.SectionBlock) slack.ModalViewRequest {
+func NewSummaryModal(todayEvents []*slack.SectionBlock, tomorrowEvents []*slack.SectionBlock) slack.ModalViewRequest {
 	titleText := slack.NewTextBlockObject("plain_text", "bZapp", true, false)
 	submitText := slack.NewTextBlockObject("plain_text", "Submit", true, false)
 	closeText := slack.NewTextBlockObject("plain_text", "Cancel", true, false)
@@ -17,19 +18,31 @@ func NewModal(todayEvents *slack.SectionBlock, tomorrowEvents *slack.SectionBloc
 		slack.NewButtonBlockElement("edit_events", "edit_events", slack.NewTextBlockObject("plain_text", "Edit Events", true, false)),
 	)
 
+	blockSet := []slack.Block{
+		slack.NewDividerBlock(),
+		todayHeader,
+		slack.NewDividerBlock(),
+	}
+
+	for _, event := range todayEvents {
+		blockSet = append(blockSet, event)
+	}
+
+	blockSet = append(blockSet, slack.NewDividerBlock(),
+		tomorrowHeader,
+		slack.NewDividerBlock(),
+	)
+
+	for _, event := range tomorrowEvents {
+		blockSet = append(blockSet, event)
+	}
+	blockSet = append(blockSet,
+		slack.NewDividerBlock(),
+		actions,
+	)
+
 	blocks := slack.Blocks{
-		BlockSet: []slack.Block{
-			slack.NewDividerBlock(),
-			todayHeader,
-			slack.NewDividerBlock(),
-			todayEvents,
-			slack.NewDividerBlock(),
-			tomorrowHeader,
-			slack.NewDividerBlock(),
-			tomorrowEvents,
-			slack.NewDividerBlock(),
-			actions,
-		},
+		BlockSet: blockSet,
 	}
 
 	var modalRequest slack.ModalViewRequest
@@ -42,7 +55,7 @@ func NewModal(todayEvents *slack.SectionBlock, tomorrowEvents *slack.SectionBloc
 	return modalRequest
 }
 
-var NoEventYetSection = slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", "_No events yet_", false, false), nil, nil)
+var NoEventYetSection = []*slack.SectionBlock{slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", "_No events yet_", false, false), nil, nil)}
 
 func MinOption(num int) *slack.OptionBlockObject {
 	return slack.NewOptionBlockObject(fmt.Sprintf("min-%d", num), slack.NewTextBlockObject("plain_text", fmt.Sprintf(func() string {
@@ -76,4 +89,10 @@ func TodaySection() *slack.SectionBlock {
 	return slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", "9:15 Standup", false, false),
 		nil,
 		slack.NewAccessory(slack.NewButtonBlockElement("", "remove_today_1", slack.NewTextBlockObject("plain_text", "Remove", true, false))))
+}
+
+func EventSection(index int, title string, hour string, mins string) *slack.SectionBlock {
+	return slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", fmt.Sprintf("%s:%s %s", strings.Fields(hour)[0], mins, title), false, false),
+		nil,
+		slack.NewAccessory(slack.NewButtonBlockElement("", fmt.Sprintf("remove_today_%d", index), slack.NewTextBlockObject("plain_text", "Remove", true, false))))
 }

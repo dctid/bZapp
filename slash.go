@@ -37,7 +37,7 @@ func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.API
 	//}
 
 	triggerId := m["trigger_id"][0]// fmt.Sprintf("%v", bodyMap["trigger_id"])
-	modalRequest := NewModal(NoEventYetSection, NoEventYetSection)
+	modalRequest := NewSummaryModal(NoEventYetSection, NoEventYetSection)
 	//modalRequest.ExternalID = "adsbadfbadf"
 
 	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true), slack.OptionHTTPClient(Client))

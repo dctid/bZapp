@@ -61,8 +61,9 @@ func pushModalWithAddedEvent(payload slack.InteractionCallback, err error, heade
 	eventHours := payload.View.State.Values[AddEventHoursInputBlock][AddEventHoursActionId].SelectedOption.Text.Text
 	eventMins := payload.View.State.Values[AddEventMinsInputBlock][AddEventMinsActionId].SelectedOption.Text.Text
 
+	newEvent := EventSection(1, eventTitle, eventHours, eventMins)
 	fmt.Printf("Add Event title: %s, day: %s, hour: %s, mins: %s\n", eventTitle, eventDay, eventHours, eventMins)
-	modalRequest := NewEditEventsModal([]*slack.SectionBlock{TodaySection()}, []*slack.SectionBlock{NoEventYetSection})
+	modalRequest := NewEditEventsModal([]*slack.SectionBlock{newEvent}, NoEventYetSection)
 	modalRequest.PrivateMetadata = "test metadata"
 
 	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true))
@@ -84,15 +85,17 @@ func pushModalWithAddedEvent(payload slack.InteractionCallback, err error, heade
 
 func pushEditEventModal(payload slack.InteractionCallback, err error, headers map[string]string) (events.APIGatewayProxyResponse, error) {
 	fmt.Printf("Message button pressed by user %s with value %v\n", payload.User.Name, payload)
-	modalRequest := NewEditEventsModal([]*slack.SectionBlock{TodaySection()}, []*slack.SectionBlock{NoEventYetSection})
+	modalRequest := NewEditEventsModal([]*slack.SectionBlock{TodaySection()}, NoEventYetSection)
 	modalRequest.PrivateMetadata = "test metadata"
 
 	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true))
-	interaction, err := api.UpdateView(modalRequest, payload.View.ExternalID, payload.Hash, payload.View.ID)
+	viewResponse, err := api.UpdateView(modalRequest, payload.View.ExternalID, payload.Hash, payload.View.ID)
 	if err != nil {
 		log.Printf("Err opening modal: %v\n", err)
 	} else {
-		log.Printf("Success open modal: %v\n", interaction)
+		log.Printf("Success open modal: %v\n", viewResponse)
+		indent, _ := json.MarshalIndent(viewResponse, "", "\t")
+		log.Printf("Success open modal2: %v", string(indent))
 	}
 	update := slack.NewUpdateViewSubmissionResponse(&modalRequest)
 	jsonBytes, err := json.Marshal(update)
@@ -107,7 +110,7 @@ func pushEditEventModal(payload slack.InteractionCallback, err error, headers ma
 	//}
 
 	//triggerId := m["trigger_id"][0]// fmt.Sprintf("%v", bodyMap["trigger_id"])
-	//modalRequest := NewModal(NoEventYetSection, NoEventYetSection)
+	//modalRequest := NewSummaryModal(NoEventYetSection, NoEventYetSection)
 
 	//jsonBytes, err := json.Marshal(modalRequest)
 	//log.Printf("json %s", jsonBytes)
