@@ -4,6 +4,16 @@ import (
 	"github.com/slack-go/slack"
 )
 
+const AddEventTitleInputBlock = "add_event_title_input_block"
+const AddEventDayInputBlock = "add_event_day_input_block"
+const AddEventHoursInputBlock = "add_event_hours_input_block"
+const AddEventMinsInputBlock = "add_event_mins_input_block"
+
+const AddEventTitleActionId = "add_event_title"
+const AddEventDayActionId = "add_event_day"
+const AddEventHoursActionId = "add_event_hour"
+const AddEventMinsActionId = "add_event_mins"
+
 func NewEditEventsModal(todayEvents []*slack.SectionBlock, tomorrowEvents []*slack.SectionBlock) slack.ModalViewRequest {
 	hours := []int{9, 10, 11, 12, 1, 2, 3, 4}
 	hourOptions := Map(hours, HourOption)
@@ -28,22 +38,23 @@ func NewEditEventsModal(todayEvents []*slack.SectionBlock, tomorrowEvents []*sla
 		blocks = append(blocks, event)
 	}
 
+
 	blocks = append(blocks,
 
 		slack.NewDividerBlock(),
-		slack.NewInputBlock("", slack.NewTextBlockObject("plain_text", "Add Event", false, false),
-			slack.NewPlainTextInputBlockElement(slack.NewTextBlockObject("plain_text", "Title", false, false), "add_event"),
+		slack.NewInputBlock(AddEventTitleInputBlock, slack.NewTextBlockObject("plain_text", "Add Event", false, false),
+			slack.NewPlainTextInputBlockElement(slack.NewTextBlockObject("plain_text", "Title", false, false), AddEventTitleActionId),
 		),
-		slack.NewInputBlock("", slack.NewTextBlockObject("plain_text", "Day", true, false),
-			slack.NewRadioButtonsBlockElement("today_or_tomorrow",
+		slack.NewInputBlock(AddEventDayInputBlock, slack.NewTextBlockObject("plain_text", "Day", true, false),
+			slack.NewRadioButtonsBlockElement(AddEventDayActionId,
 				slack.NewOptionBlockObject("today", slack.NewTextBlockObject("plain_text", "Today", true, false)),
 				slack.NewOptionBlockObject("tomorrow", slack.NewTextBlockObject("plain_text", "Tomorrow", true, false))),
 		),
-		slack.NewInputBlock("", slack.NewTextBlockObject("plain_text", "Hour", true, false),
-			slack.NewOptionsSelectBlockElement("static_select", slack.NewTextBlockObject("plain_text", "Select hour", true, false), "hours_select", hourOptions...),
+		slack.NewInputBlock(AddEventHoursInputBlock, slack.NewTextBlockObject("plain_text", "Hour", true, false),
+			slack.NewOptionsSelectBlockElement("static_select", slack.NewTextBlockObject("plain_text", "Select hour", true, false), AddEventHoursActionId, hourOptions...),
 		),
-		slack.NewInputBlock("", slack.NewTextBlockObject("plain_text", "Minutes", true, false),
-			slack.NewOptionsSelectBlockElement("static_select", slack.NewTextBlockObject("plain_text", "Select Minutes", true, false), "mins_select", minOptions...),
+		slack.NewInputBlock(AddEventMinsInputBlock, slack.NewTextBlockObject("plain_text", "Minutes", true, false),
+			slack.NewOptionsSelectBlockElement("static_select", slack.NewTextBlockObject("plain_text", "Select Minutes", true, false), AddEventMinsActionId, minOptions...),
 		))
 
 	return slack.ModalViewRequest{

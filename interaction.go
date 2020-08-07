@@ -15,10 +15,6 @@ func Interaction(ctx context.Context, event events.APIGatewayProxyRequest) (even
 	var headers = map[string]string{
 		"content-Type": "application/json",
 	}
-	//	"accept": "application/json",
-	//	"Authorization": "Bearer [add token]",
-	//}
-	//var block = slack.NewTextBlockObject("plain_text", "HIII", false, false)
 
 	log.Printf("Body: %v", event.Body)
 
@@ -35,19 +31,69 @@ func Interaction(ctx context.Context, event events.APIGatewayProxyRequest) (even
 	err = json.Unmarshal([]byte(m["payload"][0]), &payload)
 	if err != nil {
 		fmt.Printf("Could not parse action response JSON: %v\n", err)
+		return events.APIGatewayProxyResponse{Headers: headers,
+			Body:       "Bad payload",
+			StatusCode: 400,
+		}, err
 	}
-	fmt.Printf("Message button pressed by user %s with value %v\n", payload.User.Name, payload)
-	modalRequest := NewModal(TodaySection(), NoEventYetSection)
+	switch payload.Type {
+	case slack.InteractionTypeViewSubmission:
+		return pushModalWithAddedEvent(payload, err, headers)
+	case slack.InteractionTypeBlockActions:
+		return pushEditEventModal(payload, err, headers)
+	}
+
+	return events.APIGatewayProxyResponse{
+		Headers:    headers,
+		Body:       fmt.Sprintf("Unimplemented Event Type: %v", payload.Type),
+		StatusCode: 400,
+	}, nil
+
+}
+
+func pushModalWithAddedEvent(payload slack.InteractionCallback, err error, headers map[string]string) (events.APIGatewayProxyResponse, error) {
+	action := payload.View.State.Values[AddEventDayInputBlock][AddEventDayActionId]
+	marshal, err := json.Marshal(action)
+	fmt.Printf("Add Event button pressed by user %s with value %v\n", payload.User.Name, string(marshal))
+
+	eventTitle := payload.View.State.Values[AddEventTitleInputBlock][AddEventTitleActionId].Value
+	eventDay := payload.View.State.Values[AddEventDayInputBlock][AddEventDayActionId].SelectedOption.Text.Text
+	eventHours := payload.View.State.Values[AddEventHoursInputBlock][AddEventHoursActionId].SelectedOption.Text.Text
+	eventMins := payload.View.State.Values[AddEventMinsInputBlock][AddEventMinsActionId].SelectedOption.Text.Text
+
+	fmt.Printf("Add Event title: %s, day: %s, hour: %s, mins: %s\n", eventTitle, eventDay, eventHours, eventMins)
+	modalRequest := NewEditEventsModal([]*slack.SectionBlock{TodaySection()}, []*slack.SectionBlock{NoEventYetSection})
 	modalRequest.PrivateMetadata = "test metadata"
 
 	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true))
-	interaction, err := api.UpdateView(modalRequest,  payload.View.ExternalID, payload.Hash ,payload.View.ID)
+	interaction, err := api.UpdateView(modalRequest, payload.View.ExternalID, payload.Hash, payload.View.ID)
 	if err != nil {
 		log.Printf("Err opening modal: %v\n", err)
 	} else {
 		log.Printf("Success open modal: %v\n", interaction)
 	}
+	update := slack.NewUpdateViewSubmissionResponse(&modalRequest)
+	jsonBytes, err := json.Marshal(update)
+	log.Printf("Json bytes: %v\n", jsonBytes)
 
+	return events.APIGatewayProxyResponse{
+		Headers:    headers,
+		StatusCode: 200,
+	}, nil
+}
+
+func pushEditEventModal(payload slack.InteractionCallback, err error, headers map[string]string) (events.APIGatewayProxyResponse, error) {
+	fmt.Printf("Message button pressed by user %s with value %v\n", payload.User.Name, payload)
+	modalRequest := NewEditEventsModal([]*slack.SectionBlock{TodaySection()}, []*slack.SectionBlock{NoEventYetSection})
+	modalRequest.PrivateMetadata = "test metadata"
+
+	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true))
+	interaction, err := api.UpdateView(modalRequest, payload.View.ExternalID, payload.Hash, payload.View.ID)
+	if err != nil {
+		log.Printf("Err opening modal: %v\n", err)
+	} else {
+		log.Printf("Success open modal: %v\n", interaction)
+	}
 	update := slack.NewUpdateViewSubmissionResponse(&modalRequest)
 	jsonBytes, err := json.Marshal(update)
 	log.Printf("Json bytes: %v\n", jsonBytes)
@@ -83,7 +129,7 @@ func Interaction(ctx context.Context, event events.APIGatewayProxyRequest) (even
 	//println(string(body))
 
 	return events.APIGatewayProxyResponse{
-		Headers:headers,
+		Headers: headers,
 		//Body: string(jsonBytes),
 		StatusCode: 200,
 	}, nil

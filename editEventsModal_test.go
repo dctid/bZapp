@@ -170,8 +170,9 @@ var editEventsModal = `{
 		},
 		{
 			"type": "input",
+			"block_id": "add_event_title_input_block",
 			"element": {
-				"action_id": "add_event",
+				"action_id": "add_event_title",
 				"type": "plain_text_input",
 				"placeholder": {
 					"type": "plain_text",
@@ -185,9 +186,10 @@ var editEventsModal = `{
 		},
 		{
 			"type": "input",
+			"block_id": "add_event_day_input_block",
 			"element": {
 				"type": "radio_buttons",
-				"action_id": "today_or_tomorrow",
+				"action_id": "add_event_day",
 				"options": [
 					{
 						"text": {
@@ -215,6 +217,7 @@ var editEventsModal = `{
 		},
 		{
 			"type": "input",
+			"block_id": "add_event_hours_input_block",
 			"element": {
 				"type": "static_select",
 				"placeholder": {
@@ -222,7 +225,7 @@ var editEventsModal = `{
 					"text": "Select hour",
 					"emoji": true
 				},
-				"action_id": "hours_select",
+				"action_id": "add_event_hour",
 				"options": [
 					{
 						"text": {
@@ -298,6 +301,7 @@ var editEventsModal = `{
 		},
 		{
 			"type": "input",
+			"block_id": "add_event_mins_input_block",
 			"element": {
 				"type": "static_select",
 				"placeholder": {
@@ -305,7 +309,7 @@ var editEventsModal = `{
 					"text": "Select Minutes",
 					"emoji": true
 				},
-				"action_id": "mins_select",
+				"action_id": "add_event_mins",
 				"options": [
 					{
 						"text": {

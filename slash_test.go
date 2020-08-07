@@ -54,7 +54,7 @@ const expected = `{
       "type": "section",
       "text": {
         "type": "mrkdwn",
-        "text": "No events yet"
+        "text": "_No events yet_"
       }
     },
     {
@@ -76,7 +76,7 @@ const expected = `{
       "type": "section",
       "text": {
         "type": "mrkdwn",
-        "text": "No events yet"
+        "text": "_No events yet_"
       }
     },
     {
