@@ -88,7 +88,8 @@ func Map(vs []int, f func(int) *slack.OptionBlockObject) []*slack.OptionBlockObj
 
 
 func EventSection(index int, title string, hour string, mins string) *slack.SectionBlock {
+	id := fmt.Sprintf("remove_today_%d", index)
 	return slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", fmt.Sprintf("%s:%s %s", strings.Fields(hour)[0], mins, title), false, false),
 		nil,
-		slack.NewAccessory(slack.NewButtonBlockElement("", fmt.Sprintf("remove_today_%d", index), slack.NewTextBlockObject("plain_text", "Remove", true, false))))
+		slack.NewAccessory(slack.NewButtonBlockElement(id, id, slack.NewTextBlockObject("plain_text", "Remove", true, false))))
 }

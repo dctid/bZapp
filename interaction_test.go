@@ -4,6 +4,8 @@ var editEventsActionButton = `payload=%7B%22type%22%3A%22block_actions%22%2C%22u
 
 var addEventSubmittion = `payload=%7B%22type%22%3A%22view_submission%22%2C%22team%22%3A%7B%22id%22%3A%22T7NS02BFB%22%2C%22domain%22%3A%22ford-community%22%7D%2C%22user%22%3A%7B%22id%22%3A%22U7QNBA36K%22%2C%22username%22%3A%22cdorman1%22%2C%22name%22%3A%22cdorman1%22%2C%22team_id%22%3A%22T7NS02BFB%22%7D%2C%22api_app_id%22%3A%22A0131JT7VPF%22%2C%22token%22%3A%228KTh0sVRkeZozlTxrBRqk1NO%22%2C%22trigger_id%22%3A%221294422417044.260884079521.581460426a7ec54dcf700ed47d087735%22%2C%22view%22%3A%7B%22id%22%3A%22V018GCUV2GK%22%2C%22team_id%22%3A%22T7NS02BFB%22%2C%22type%22%3A%22modal%22%2C%22blocks%22%3A%5B%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22ChVGD%22%7D%2C%7B%22type%22%3A%22context%22%2C%22block_id%22%3A%22hln%22%2C%22elements%22%3A%5B%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2AToday%27s+Events%2A%22%2C%22verbatim%22%3Afalse%7D%5D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22NPGWv%22%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22ADL6a%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%229%3A15+Standup%22%2C%22verbatim%22%3Afalse%7D%2C%22accessory%22%3A%7B%22type%22%3A%22button%22%2C%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Remove%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22remove_today_1%22%2C%22action_id%22%3A%22%3DF5%22%7D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22LzFxD%22%7D%2C%7B%22type%22%3A%22context%22%2C%22block_id%22%3A%22mXLy%22%2C%22elements%22%3A%5B%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2ATomorrow%27s+Events%2A%22%2C%22verbatim%22%3Afalse%7D%5D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22bZK%22%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%225ybS%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22_No+events+yet_%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22Q3Pm%22%7D%2C%7B%22type%22%3A%22input%22%2C%22block_id%22%3A%22mOC%22%2C%22label%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Add+Event%22%2C%22emoji%22%3Atrue%7D%2C%22optional%22%3Afalse%2C%22element%22%3A%7B%22type%22%3A%22plain_text_input%22%2C%22action_id%22%3A%22add_event%22%2C%22placeholder%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Title%22%2C%22emoji%22%3Atrue%7D%7D%7D%2C%7B%22type%22%3A%22input%22%2C%22block_id%22%3A%22pzhZ%22%2C%22label%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Day%22%2C%22emoji%22%3Atrue%7D%2C%22optional%22%3Afalse%2C%22element%22%3A%7B%22type%22%3A%22radio_buttons%22%2C%22action_id%22%3A%22today_or_tomorrow%22%2C%22options%22%3A%5B%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Today%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22today%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Tomorrow%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22tomorrow%22%7D%5D%7D%7D%2C%7B%22type%22%3A%22input%22%2C%22block_id%22%3A%2289kBN%22%2C%22label%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Hour%22%2C%22emoji%22%3Atrue%7D%2C%22optional%22%3Afalse%2C%22element%22%3A%7B%22type%22%3A%22static_select%22%2C%22action_id%22%3A%22hours_select%22%2C%22placeholder%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Select+hour%22%2C%22emoji%22%3Atrue%7D%2C%22options%22%3A%5B%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%229+AM%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22hour-9%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%2210+AM%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22hour-10%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%2211+AM%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22hour-11%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%2212+PM%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22hour-12%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%221+PM%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22hour-1%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%222+PM%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22hour-2%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%223+PM%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22hour-3%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%224+PM%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22hour-4%22%7D%5D%7D%7D%2C%7B%22type%22%3A%22input%22%2C%22block_id%22%3A%22zJnq%22%2C%22label%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Minutes%22%2C%22emoji%22%3Atrue%7D%2C%22optional%22%3Afalse%2C%22element%22%3A%7B%22type%22%3A%22static_select%22%2C%22action_id%22%3A%22mins_select%22%2C%22placeholder%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Select+Minutes%22%2C%22emoji%22%3Atrue%7D%2C%22options%22%3A%5B%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%2200%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22min-0%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%2215%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22min-15%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%2230%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22min-30%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%2245%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22min-45%22%7D%5D%7D%7D%5D%2C%22private_metadata%22%3A%22test+metadata%22%2C%22callback_id%22%3A%22%22%2C%22state%22%3A%7B%22values%22%3A%7B%22mOC%22%3A%7B%22add_event%22%3A%7B%22type%22%3A%22plain_text_input%22%2C%22value%22%3A%22new+test+event%22%7D%7D%2C%22pzhZ%22%3A%7B%22today_or_tomorrow%22%3A%7B%22type%22%3A%22radio_buttons%22%2C%22selected_option%22%3A%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Today%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22today%22%7D%7D%7D%2C%2289kBN%22%3A%7B%22hours_select%22%3A%7B%22type%22%3A%22static_select%22%2C%22selected_option%22%3A%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%2210+AM%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22hour-10%22%7D%7D%7D%2C%22zJnq%22%3A%7B%22mins_select%22%3A%7B%22type%22%3A%22static_select%22%2C%22selected_option%22%3A%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%2215%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22min-15%22%7D%7D%7D%7D%7D%2C%22hash%22%3A%221596810897.DFwzhtyn%22%2C%22title%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22bZapp+-+Edit+Events%22%2C%22emoji%22%3Atrue%7D%2C%22clear_on_close%22%3Afalse%2C%22notify_on_close%22%3Afalse%2C%22close%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Cancel%22%2C%22emoji%22%3Atrue%7D%2C%22submit%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Add%22%2C%22emoji%22%3Atrue%7D%2C%22previous_view_id%22%3Anull%2C%22root_view_id%22%3A%22V018GCUV2GK%22%2C%22app_id%22%3A%22A0131JT7VPF%22%2C%22external_id%22%3A%22%22%2C%22app_installed_team_id%22%3A%22T7NS02BFB%22%2C%22bot_id%22%3A%22B0133F8RE11%22%7D%2C%22response_urls%22%3A%5B%5D%7D`
 
+var removeAction = `payload=%7B%22type%22%3A%22block_actions%22%2C%22user%22%3A%7B%22id%22%3A%22U7QNBA36K%22%2C%22username%22%3A%22cdorman1%22%2C%22name%22%3A%22cdorman1%22%2C%22team_id%22%3A%22T7NS02BFB%22%7D%2C%22api_app_id%22%3A%22A0131JT7VPF%22%2C%22token%22%3A%228KTh0sVRkeZozlTxrBRqk1NO%22%2C%22container%22%3A%7B%22type%22%3A%22view%22%2C%22view_id%22%3A%22V018Z0RV60H%22%7D%2C%22trigger_id%22%3A%221316246398256.260884079521.dd90960e72b227fd104c50827a859bd2%22%2C%22team%22%3A%7B%22id%22%3A%22T7NS02BFB%22%2C%22domain%22%3A%22ford-community%22%7D%2C%22view%22%3A%7B%22id%22%3A%22V018Z0RV60H%22%2C%22team_id%22%3A%22T7NS02BFB%22%2C%22type%22%3A%22modal%22%2C%22blocks%22%3A%5B%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22S8fmI%22%7D%2C%7B%22type%22%3A%22context%22%2C%22block_id%22%3A%22QO%5C%2FH6%22%2C%22elements%22%3A%5B%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2AToday%27s+Events%2A%22%2C%22verbatim%22%3Afalse%7D%5D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22rVpPn%22%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22bSKL%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%2210%3A30+asdf%22%2C%22verbatim%22%3Afalse%7D%2C%22accessory%22%3A%7B%22type%22%3A%22button%22%2C%22action_id%22%3A%22remove_today_1%22%2C%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Remove%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22remove_today_1%22%7D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22%3DZ2C%22%7D%2C%7B%22type%22%3A%22context%22%2C%22block_id%22%3A%22T7p%22%2C%22elements%22%3A%5B%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2ATomorrow%27s+Events%2A%22%2C%22verbatim%22%3Afalse%7D%5D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22h%2Begt%22%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22HAp%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22_No+events+yet_%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22AIA%22%7D%2C%7B%22type%22%3A%22actions%22%2C%22block_id%22%3A%22actions_block%22%2C%22elements%22%3A%5B%7B%22type%22%3A%22button%22%2C%22action_id%22%3A%22edit_events%22%2C%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Edit+Events%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22edit_events%22%7D%5D%7D%5D%2C%22private_metadata%22%3A%22test+metadata%22%2C%22callback_id%22%3A%22%22%2C%22state%22%3A%7B%22values%22%3A%7B%22add_event_title_input_block%22%3A%7B%22add_event_title%22%3A%7B%22type%22%3A%22plain_text_input%22%2C%22value%22%3A%22asdf%22%7D%7D%2C%22add_event_day_input_block%22%3A%7B%22add_event_day%22%3A%7B%22type%22%3A%22radio_buttons%22%2C%22selected_option%22%3A%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Today%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22today%22%7D%7D%7D%2C%22add_event_hours_input_block%22%3A%7B%22add_event_hour%22%3A%7B%22type%22%3A%22static_select%22%2C%22selected_option%22%3A%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%2210+AM%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22hour-10%22%7D%7D%7D%2C%22add_event_mins_input_block%22%3A%7B%22add_event_mins%22%3A%7B%22type%22%3A%22static_select%22%2C%22selected_option%22%3A%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%2230%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22min-30%22%7D%7D%7D%7D%7D%2C%22hash%22%3A%221597087652.cTolAgdn%22%2C%22title%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22bZapp%22%2C%22emoji%22%3Atrue%7D%2C%22clear_on_close%22%3Afalse%2C%22notify_on_close%22%3Afalse%2C%22close%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Cancel%22%2C%22emoji%22%3Atrue%7D%2C%22submit%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Submit%22%2C%22emoji%22%3Atrue%7D%2C%22previous_view_id%22%3Anull%2C%22root_view_id%22%3A%22V018Z0RV60H%22%2C%22app_id%22%3A%22A0131JT7VPF%22%2C%22external_id%22%3A%22%22%2C%22app_installed_team_id%22%3A%22T7NS02BFB%22%2C%22bot_id%22%3A%22B0133F8RE11%22%7D%2C%22actions%22%3A%5B%7B%22action_id%22%3A%22remove_today_1%22%2C%22block_id%22%3A%22bSKL%22%2C%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Remove%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22remove_today_1%22%2C%22type%22%3A%22button%22%2C%22action_ts%22%3A%221597087744.664898%22%7D%5D%7D`
+
 var addEventSubmittionJson = `{
   "type": "view_submission",
   "team": {
@@ -361,4 +363,354 @@ var addEventSubmittionJson = `{
     "bot_id": "B0133F8RE11"
   },
   "response_urls": []
+}`
+
+var parsedRemoveAction = `{
+  "type": "block_actions",
+  "user": {
+    "id": "U7QNBA36K",
+    "username": "cdorman1",
+    "name": "cdorman1",
+    "team_id": "T7NS02BFB"
+  },
+  "api_app_id": "A0131JT7VPF",
+  "token": "8KTh0sVRkeZozlTxrBRqk1NO",
+  "container": {
+    "type": "view",
+    "view_id": "V018Z0RV60H"
+  },
+  "trigger_id": "1316246398256.260884079521.dd90960e72b227fd104c50827a859bd2",
+  "team": {
+    "id": "T7NS02BFB",
+    "domain": "ford-community"
+  },
+  "view": {
+    "id": "V018Z0RV60H",
+    "team_id": "T7NS02BFB",
+    "type": "modal",
+    "blocks": [
+      {
+        "type": "divider",
+        "block_id": "S8fmI"
+      },
+      {
+        "type": "context",
+        "block_id": "QO\/H6",
+        "elements": [
+          {
+            "type": "mrkdwn",
+            "text": "*Today's Events*",
+            "verbatim": false
+          }
+        ]
+      },
+      {
+        "type": "divider",
+        "block_id": "rVpPn"
+      },
+      {
+        "type": "section",
+        "block_id": "bSKL",
+        "text": {
+          "type": "mrkdwn",
+          "text": "10:30 asdf",
+          "verbatim": false
+        },
+        "accessory": {
+          "type": "button",
+          "action_id": "remove_today_1",
+          "text": {
+            "type": "plain_text",
+            "text": "Remove",
+            "emoji": true
+          },
+          "value": "remove_today_1"
+        }
+      },
+      {
+        "type": "divider",
+        "block_id": "=Z2C"
+      },
+      {
+        "type": "context",
+        "block_id": "T7p",
+        "elements": [
+          {
+            "type": "mrkdwn",
+            "text": "*Tomorrow's Events*",
+            "verbatim": false
+          }
+        ]
+      },
+      {
+        "type": "divider",
+        "block_id": "h+egt"
+      },
+      {
+        "type": "section",
+        "block_id": "HAp",
+        "text": {
+          "type": "mrkdwn",
+          "text": "_No events yet_",
+          "verbatim": false
+        }
+      },
+      {
+        "type": "divider",
+        "block_id": "AIA"
+      },
+      {
+        "type": "actions",
+        "block_id": "actions_block",
+        "elements": [
+          {
+            "type": "button",
+            "action_id": "edit_events",
+            "text": {
+              "type": "plain_text",
+              "text": "Edit Events",
+              "emoji": true
+            },
+            "value": "edit_events"
+          }
+        ]
+      }
+    ],
+    "private_metadata": "test metadata",
+    "callback_id": "",
+    "state": {
+      "values": {
+        "add_event_title_input_block": {
+          "add_event_title": {
+            "type": "plain_text_input",
+            "value": "asdf"
+          }
+        },
+        "add_event_day_input_block": {
+          "add_event_day": {
+            "type": "radio_buttons",
+            "selected_option": {
+              "text": {
+                "type": "plain_text",
+                "text": "Today",
+                "emoji": true
+              },
+              "value": "today"
+            }
+          }
+        },
+        "add_event_hours_input_block": {
+          "add_event_hour": {
+            "type": "static_select",
+            "selected_option": {
+              "text": {
+                "type": "plain_text",
+                "text": "10 AM",
+                "emoji": true
+              },
+              "value": "hour-10"
+            }
+          }
+        },
+        "add_event_mins_input_block": {
+          "add_event_mins": {
+            "type": "static_select",
+            "selected_option": {
+              "text": {
+                "type": "plain_text",
+                "text": "30",
+                "emoji": true
+              },
+              "value": "min-30"
+            }
+          }
+        }
+      }
+    },
+    "hash": "1597087652.cTolAgdn",
+    "title": {
+      "type": "plain_text",
+      "text": "bZapp",
+      "emoji": true
+    },
+    "clear_on_close": false,
+    "notify_on_close": false,
+    "close": {
+      "type": "plain_text",
+      "text": "Cancel",
+      "emoji": true
+    },
+    "submit": {
+      "type": "plain_text",
+      "text": "Submit",
+      "emoji": true
+    },
+    "previous_view_id": null,
+    "root_view_id": "V018Z0RV60H",
+    "app_id": "A0131JT7VPF",
+    "external_id": "",
+    "app_installed_team_id": "T7NS02BFB",
+    "bot_id": "B0133F8RE11"
+  },
+  "actions": [
+    {
+      "action_id": "remove_today_1",
+      "block_id": "bSKL",
+      "text": {
+        "type": "plain_text",
+        "text": "Remove",
+        "emoji": true
+      },
+      "value": "remove_today_1",
+      "type": "button",
+      "action_ts": "1597087744.664898"
+    }
+  ]
+}`
+
+var editEvent = `{
+  "type": "block_actions",
+  "user": {
+    "id": "U7QNBA36K",
+    "username": "cdorman1",
+    "name": "cdorman1",
+    "team_id": "T7NS02BFB"
+  },
+  "api_app_id": "A0131JT7VPF",
+  "token": "8KTh0sVRkeZozlTxrBRqk1NO",
+  "container": {
+    "type": "view",
+    "view_id": "V018Z0RV60H"
+  },
+  "trigger_id": "1292606539763.260884079521.3246a76652e607ba32b4f5a8b6d73bf4",
+  "team": {
+    "id": "T7NS02BFB",
+    "domain": "ford-community"
+  },
+  "view": {
+    "id": "V018Z0RV60H",
+    "team_id": "T7NS02BFB",
+    "type": "modal",
+    "blocks": [
+      {
+        "type": "divider",
+        "block_id": "ZDQ97"
+      },
+      {
+        "type": "context",
+        "block_id": "7fu",
+        "elements": [
+          {
+            "type": "mrkdwn",
+            "text": "*Today's Events*",
+            "verbatim": false
+          }
+        ]
+      },
+      {
+        "type": "divider",
+        "block_id": "NJt"
+      },
+      {
+        "type": "section",
+        "block_id": "phu",
+        "text": {
+          "type": "mrkdwn",
+          "text": "_No events yet_",
+          "verbatim": false
+        }
+      },
+      {
+        "type": "divider",
+        "block_id": "Ts3"
+      },
+      {
+        "type": "context",
+        "block_id": "Oat",
+        "elements": [
+          {
+            "type": "mrkdwn",
+            "text": "*Tomorrow's Events*",
+            "verbatim": false
+          }
+        ]
+      },
+      {
+        "type": "divider",
+        "block_id": "qQQph"
+      },
+      {
+        "type": "section",
+        "block_id": "xwem2",
+        "text": {
+          "type": "mrkdwn",
+          "text": "_No events yet_",
+          "verbatim": false
+        }
+      },
+      {
+        "type": "divider",
+        "block_id": "p2e\/I"
+      },
+      {
+        "type": "actions",
+        "block_id": "actions_block",
+        "elements": [
+          {
+            "type": "button",
+            "action_id": "edit_events",
+            "text": {
+              "type": "plain_text",
+              "text": "Edit Events",
+              "emoji": true
+            },
+            "value": "edit_events"
+          }
+        ]
+      }
+    ],
+    "private_metadata": "",
+    "callback_id": "",
+    "state": {
+      "values": {}
+    },
+    "hash": "1597087576.E3v2G5oS",
+    "title": {
+      "type": "plain_text",
+      "text": "bZapp",
+      "emoji": true
+    },
+    "clear_on_close": false,
+    "notify_on_close": false,
+    "close": {
+      "type": "plain_text",
+      "text": "Cancel",
+      "emoji": true
+    },
+    "submit": {
+      "type": "plain_text",
+      "text": "Submit",
+      "emoji": true
+    },
+    "previous_view_id": null,
+    "root_view_id": "V018Z0RV60H",
+    "app_id": "A0131JT7VPF",
+    "external_id": "",
+    "app_installed_team_id": "T7NS02BFB",
+    "bot_id": "B0133F8RE11"
+  },
+  "actions": [
+    {
+      "action_id": "edit_events",
+      "block_id": "actions_block",
+      "text": {
+        "type": "plain_text",
+        "text": "Edit Events",
+        "emoji": true
+      },
+      "value": "edit_events",
+      "type": "button",
+      "action_ts": "1597087578.755152"
+    }
+  ]
 }`

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/slack-go/slack"
 	"log"
+	"strconv"
+	"strings"
 )
 
 func AddNewEventToDay(blocks []slack.Block, eventDay string, newEvent *slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {
@@ -15,7 +17,29 @@ func AddNewEventToDay(blocks []slack.Block, eventDay string, newEvent *slack.Sec
 	log.Printf("Replace got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
 	return todaysSectionBlocks, tomorrowsSectionBlocks
 }
+func RemoveEvent(blocks []slack.Block, actionId string) ([]*slack.SectionBlock, []*slack.SectionBlock) {
+	log.Printf("remove action id %s\n", actionId)
+	todaysSectionBlocks, tomorrowsSectionBlocks := ExtractEvents(blocks)
+	eventDay, index, err := extractDayAndIndexFromActionId(actionId)
+	if err == nil {
+		log.Printf("day: %s, index: %d\n", eventDay, index)
+		log.Printf("Extracted got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
+		todaysSectionBlocks, tomorrowsSectionBlocks = RemoveEventFromCorrectDay(eventDay, todaysSectionBlocks, index, tomorrowsSectionBlocks)
+		log.Printf("AddNew got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
+	} else {
+		log.Printf("err: %s\n", err)
+	}
+	todaysSectionBlocks, tomorrowsSectionBlocks = ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks, tomorrowsSectionBlocks)
+	log.Printf("Replace got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
 
+	return todaysSectionBlocks, tomorrowsSectionBlocks
+}
+
+func extractDayAndIndexFromActionId(actionId string) (string, int, error) {
+	tokens := strings.Split(actionId, "_")
+	index, err := strconv.Atoi(tokens[2])
+	return tokens[1], index, err
+}
 func ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks []*slack.SectionBlock, tomorrowsSectionBlocks []*slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {
 	if len(todaysSectionBlocks) == 0 {
 		todaysSectionBlocks = NoEventYetSection
@@ -35,6 +59,23 @@ func AddNewEventToCorrectDay(eventDay string, todaysSectionBlocks []*slack.Secti
 	return todaysSectionBlocks, tomorrowsSectionBlocks
 }
 
+func RemoveEventFromCorrectDay(eventDay string, todaysSectionBlocks []*slack.SectionBlock, indexToRemove int, tomorrowsSectionBlocks []*slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {
+	if eventDay == TodayOptionValue {
+		todaysSectionBlocks = remove(todaysSectionBlocks, indexToRemove)
+	} else {
+		tomorrowsSectionBlocks = remove(tomorrowsSectionBlocks, indexToRemove)
+	}
+	return todaysSectionBlocks, tomorrowsSectionBlocks
+}
+
+func remove(sectionBlocks []*slack.SectionBlock, indexToRemove int, ) []*slack.SectionBlock {
+	//copy(sectionBlocks[indexToRemove:], sectionBlocks[indexToRemove+1:])
+	//sectionBlocks[len(sectionBlocks)-1] = &slack.SectionBlock{}
+	//sectionBlocks = sectionBlocks[:len(sectionBlocks)-1]
+	//return sectionBlocks
+	return make([]*slack.SectionBlock, 0)
+}
+
 func ExtractEvents(blocks []slack.Block) ([]*slack.SectionBlock, []*slack.SectionBlock) {
 	firstContextBlock := Index(blocks, slack.MBTContext)
 	secondContextBlock := Index(blocks[firstContextBlock+1:], slack.MBTContext)
@@ -42,14 +83,14 @@ func ExtractEvents(blocks []slack.Block) ([]*slack.SectionBlock, []*slack.Sectio
 	sectionBlockFilter := func(block slack.Block) bool {
 		return block.BlockType() == slack.MBTSection && block.(*slack.SectionBlock).Text.Text != NoEventsText
 	}
-	todaysBlocks := Filter(blocks[firstContextBlock:secondContextBlock + firstContextBlock], sectionBlockFilter)
+	todaysBlocks := Filter(blocks[firstContextBlock:secondContextBlock+firstContextBlock], sectionBlockFilter)
 	fmt.Printf("Today filtered got: %v\n", len(todaysBlocks))
 	todaysSectionBlocks := make([]*slack.SectionBlock, len(todaysBlocks))
 	for i, todayBlock := range todaysBlocks {
 		todaysSectionBlocks[i] = todayBlock.(*slack.SectionBlock)
 	}
 
-	tomorrowsBlocks := Filter(blocks[secondContextBlock + firstContextBlock:], sectionBlockFilter)
+	tomorrowsBlocks := Filter(blocks[secondContextBlock+firstContextBlock:], sectionBlockFilter)
 	fmt.Printf("tomorrow filtered got: %v\n", len(todaysBlocks))
 	tomorrowsSectionBlocks := make([]*slack.SectionBlock, len(tomorrowsBlocks))
 	for i, tomorrowBlock := range tomorrowsBlocks {
@@ -77,5 +118,3 @@ func Index(vs []slack.Block, t slack.MessageBlockType) int {
 	}
 	return -1
 }
-
-
