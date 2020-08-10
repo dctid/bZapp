@@ -1,0 +1,81 @@
+package modal
+
+import (
+	"fmt"
+	"github.com/slack-go/slack"
+	"log"
+)
+
+func AddNewEventToDay(blocks []slack.Block, eventDay string, newEvent *slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {
+	todaysSectionBlocks, tomorrowsSectionBlocks := ExtractEvents(blocks)
+	log.Printf("Extract got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
+	todaysSectionBlocks, tomorrowsSectionBlocks = AddNewEventToCorrectDay(eventDay, todaysSectionBlocks, newEvent, tomorrowsSectionBlocks)
+	log.Printf("AddNew got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
+	todaysSectionBlocks, tomorrowsSectionBlocks = ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks, tomorrowsSectionBlocks)
+	log.Printf("Replace got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
+	return todaysSectionBlocks, tomorrowsSectionBlocks
+}
+
+func ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks []*slack.SectionBlock, tomorrowsSectionBlocks []*slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {
+	if len(todaysSectionBlocks) == 0 {
+		todaysSectionBlocks = NoEventYetSection
+	}
+	if len(tomorrowsSectionBlocks) == 0 {
+		tomorrowsSectionBlocks = NoEventYetSection
+	}
+	return todaysSectionBlocks, tomorrowsSectionBlocks
+}
+
+func AddNewEventToCorrectDay(eventDay string, todaysSectionBlocks []*slack.SectionBlock, newEvent *slack.SectionBlock, tomorrowsSectionBlocks []*slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {
+	if eventDay == TodayOptionValue {
+		todaysSectionBlocks = append(todaysSectionBlocks, newEvent)
+	} else {
+		tomorrowsSectionBlocks = append(tomorrowsSectionBlocks, newEvent)
+	}
+	return todaysSectionBlocks, tomorrowsSectionBlocks
+}
+
+func ExtractEvents(blocks []slack.Block) ([]*slack.SectionBlock, []*slack.SectionBlock) {
+	firstContextBlock := Index(blocks, slack.MBTContext)
+	secondContextBlock := Index(blocks[firstContextBlock+1:], slack.MBTContext)
+
+	sectionBlockFilter := func(block slack.Block) bool {
+		return block.BlockType() == slack.MBTSection && block.(*slack.SectionBlock).Text.Text != NoEventsText
+	}
+	todaysBlocks := Filter(blocks[firstContextBlock:secondContextBlock + firstContextBlock], sectionBlockFilter)
+	fmt.Printf("Today filtered got: %v\n", len(todaysBlocks))
+	todaysSectionBlocks := make([]*slack.SectionBlock, len(todaysBlocks))
+	for i, todayBlock := range todaysBlocks {
+		todaysSectionBlocks[i] = todayBlock.(*slack.SectionBlock)
+	}
+
+	tomorrowsBlocks := Filter(blocks[secondContextBlock + firstContextBlock:], sectionBlockFilter)
+	fmt.Printf("tomorrow filtered got: %v\n", len(todaysBlocks))
+	tomorrowsSectionBlocks := make([]*slack.SectionBlock, len(tomorrowsBlocks))
+	for i, tomorrowBlock := range tomorrowsBlocks {
+		sectionBlock := tomorrowBlock.(*slack.SectionBlock)
+		tomorrowsSectionBlocks[i] = sectionBlock
+	}
+	return todaysSectionBlocks, tomorrowsSectionBlocks
+}
+
+func Filter(vs []slack.Block, f func(slack.Block) bool) []slack.Block {
+	vsf := make([]slack.Block, 0)
+	for _, v := range vs {
+		if f(v) {
+			vsf = append(vsf, v)
+		}
+	}
+	return vsf
+}
+
+func Index(vs []slack.Block, t slack.MessageBlockType) int {
+	for i, v := range vs {
+		if v.BlockType() == t {
+			return i
+		}
+	}
+	return -1
+}
+
+

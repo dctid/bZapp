@@ -1,4 +1,4 @@
-package bZapp
+package modal
 
 import (
 	"encoding/json"

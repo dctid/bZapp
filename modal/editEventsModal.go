@@ -1,4 +1,4 @@
-package bZapp
+package modal
 
 import (
 	"github.com/slack-go/slack"
@@ -13,6 +13,8 @@ const AddEventTitleActionId = "add_event_title"
 const AddEventDayActionId = "add_event_day"
 const AddEventHoursActionId = "add_event_hour"
 const AddEventMinsActionId = "add_event_mins"
+
+const TodayOptionValue = "today"
 
 func NewEditEventsModal(todayEvents []*slack.SectionBlock, tomorrowEvents []*slack.SectionBlock) slack.ModalViewRequest {
 	hours := []int{9, 10, 11, 12, 1, 2, 3, 4}
@@ -38,7 +40,6 @@ func NewEditEventsModal(todayEvents []*slack.SectionBlock, tomorrowEvents []*sla
 		blocks = append(blocks, event)
 	}
 
-
 	blocks = append(blocks,
 
 		slack.NewDividerBlock(),
@@ -47,7 +48,7 @@ func NewEditEventsModal(todayEvents []*slack.SectionBlock, tomorrowEvents []*sla
 		),
 		slack.NewInputBlock(AddEventDayInputBlock, slack.NewTextBlockObject("plain_text", "Day", true, false),
 			slack.NewRadioButtonsBlockElement(AddEventDayActionId,
-				slack.NewOptionBlockObject("today", slack.NewTextBlockObject("plain_text", "Today", true, false)),
+				slack.NewOptionBlockObject(TodayOptionValue, slack.NewTextBlockObject("plain_text", "Today", true, false)),
 				slack.NewOptionBlockObject("tomorrow", slack.NewTextBlockObject("plain_text", "Tomorrow", true, false))),
 		),
 		slack.NewInputBlock(AddEventHoursInputBlock, slack.NewTextBlockObject("plain_text", "Hour", true, false),

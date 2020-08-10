@@ -3,6 +3,7 @@ package bZapp
 import (
 	"context"
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/dctid/bZapp/modal"
 	"github.com/slack-go/slack"
 	"log"
 	"net/url"
@@ -37,11 +38,14 @@ func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.API
 	//}
 
 	triggerId := m["trigger_id"][0]// fmt.Sprintf("%v", bodyMap["trigger_id"])
-	modalRequest := NewSummaryModal(NoEventYetSection, NoEventYetSection)
+	modalRequest := modal.NewSummaryModal(modal.NoEventYetSection, modal.NoEventYetSection)
 	//modalRequest.ExternalID = "adsbadfbadf"
 
-	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true), slack.OptionHTTPClient(Client))
+	getenv := os.Getenv("SLACK_TOKEN")
+	log.Printf("token: %s, trigger: %s", getenv, triggerId)
+	api := slack.New(getenv, slack.OptionDebug(true), slack.OptionHTTPClient(Client))
 	_, err = api.OpenView(triggerId, modalRequest)
+
 	statusCode := 200
 	if err != nil {
 		statusCode = 500

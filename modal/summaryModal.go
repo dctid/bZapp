@@ -1,4 +1,4 @@
-package bZapp
+package modal
 
 import (
 	"fmt"
@@ -54,8 +54,8 @@ func NewSummaryModal(todayEvents []*slack.SectionBlock, tomorrowEvents []*slack.
 
 	return modalRequest
 }
-
-var NoEventYetSection = []*slack.SectionBlock{slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", "_No events yet_", false, false), nil, nil)}
+const NoEventsText = "_No events yet_"
+var NoEventYetSection = []*slack.SectionBlock{slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", NoEventsText, false, false), nil, nil)}
 
 func MinOption(num int) *slack.OptionBlockObject {
 	return slack.NewOptionBlockObject(fmt.Sprintf("min-%d", num), slack.NewTextBlockObject("plain_text", fmt.Sprintf(func() string {
@@ -85,11 +85,7 @@ func Map(vs []int, f func(int) *slack.OptionBlockObject) []*slack.OptionBlockObj
 	return vsm
 }
 
-func TodaySection() *slack.SectionBlock {
-	return slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", "9:15 Standup", false, false),
-		nil,
-		slack.NewAccessory(slack.NewButtonBlockElement("", "remove_today_1", slack.NewTextBlockObject("plain_text", "Remove", true, false))))
-}
+
 
 func EventSection(index int, title string, hour string, mins string) *slack.SectionBlock {
 	return slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", fmt.Sprintf("%s:%s %s", strings.Fields(hour)[0], mins, title), false, false),
