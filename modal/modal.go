@@ -12,7 +12,7 @@ func BuildNewEventSectionBlock(values map[string]map[string]slack.BlockAction) (
 	eventMins := values[AddEventMinsInputBlock][AddEventMinsActionId].SelectedOption.Text.Text
 	fmt.Printf("Add Event title: %s, day: %s, hour: %s, mins: %s\n", eventTitle, eventDay, eventHours, eventMins)
 
-	newEvent := EventSection(0, eventTitle, eventHours, eventMins)
+	newEvent := EventSection(eventDay, 0, eventTitle, eventHours, eventMins)
 	return eventDay, newEvent
 }
 

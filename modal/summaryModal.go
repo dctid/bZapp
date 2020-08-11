@@ -7,46 +7,13 @@ import (
 )
 
 func NewSummaryModal(todayEvents []*slack.SectionBlock, tomorrowEvents []*slack.SectionBlock) slack.ModalViewRequest {
-	titleText := slack.NewTextBlockObject("plain_text", "bZapp", true, false)
-	submitText := slack.NewTextBlockObject("plain_text", "Submit", true, false)
-	closeText := slack.NewTextBlockObject("plain_text", "Cancel", true, false)
-	todayHeader := slack.NewContextBlock("", slack.NewTextBlockObject("mrkdwn", "*Today's Events*", false, false))
-	tomorrowHeader := slack.NewContextBlock("", slack.NewTextBlockObject("mrkdwn", "*Tomorrow's Events*", false, false))
-
-	actions := slack.NewActionBlock(
-		"actions_block",
-		slack.NewButtonBlockElement("edit_events", "edit_events", slack.NewTextBlockObject("plain_text", "Edit Events", true, false)),
-	)
-
-	blockSet := []slack.Block{
-		slack.NewDividerBlock(),
-		todayHeader,
-		slack.NewDividerBlock(),
-	}
-
-	for _, event := range todayEvents {
-		blockSet = append(blockSet, event)
-	}
-
-	blockSet = append(blockSet, slack.NewDividerBlock(),
-		tomorrowHeader,
-		slack.NewDividerBlock(),
-	)
-
-	for _, event := range tomorrowEvents {
-		blockSet = append(blockSet, event)
-	}
-	blockSet = append(blockSet,
-		slack.NewDividerBlock(),
-		actions,
-	)
-
-	blocks := slack.Blocks{
-		BlockSet: blockSet,
-	}
+	titleText := slack.NewTextBlockObject(slack.PlainTextType, "bZapp", true, false)
+	submitText := slack.NewTextBlockObject(slack.PlainTextType, "Submit", true, false)
+	closeText := slack.NewTextBlockObject(slack.PlainTextType, "Cancel", true, false)
+	blocks := slack.Blocks{BlockSet: BuildEventBlocks(todayEvents, tomorrowEvents)}
 
 	var modalRequest slack.ModalViewRequest
-	modalRequest.Type = "modal"
+	modalRequest.Type = slack.VTModal
 	modalRequest.Title = titleText
 	modalRequest.Close = closeText
 	modalRequest.Submit = submitText
@@ -54,11 +21,47 @@ func NewSummaryModal(todayEvents []*slack.SectionBlock, tomorrowEvents []*slack.
 
 	return modalRequest
 }
+
+func BuildEventBlocks(todayEvents []*slack.SectionBlock, tomorrowEvents []*slack.SectionBlock) []slack.Block {
+	todayHeader := slack.NewContextBlock("", slack.NewTextBlockObject(slack.MarkdownType, "*Today's Events*", false, false))
+	tomorrowHeader := slack.NewContextBlock("", slack.NewTextBlockObject(slack.MarkdownType, "*Tomorrow's Events*", false, false))
+
+	actions := slack.NewActionBlock(
+		"actions_block",
+		slack.NewButtonBlockElement("edit_events", "edit_events", slack.NewTextBlockObject(slack.PlainTextType, "Edit Events", true, false)),
+	)
+	blocks := []slack.Block{
+		slack.NewDividerBlock(),
+		todayHeader,
+		slack.NewDividerBlock(),
+	}
+
+	for _, event := range todayEvents {
+		blocks = append(blocks, event)
+	}
+
+	blocks = append(blocks, slack.NewDividerBlock(),
+		tomorrowHeader,
+		slack.NewDividerBlock(),
+	)
+
+	for _, event := range tomorrowEvents {
+		blocks = append(blocks, event)
+	}
+	blocks = append(blocks,
+		slack.NewDividerBlock(),
+		actions,
+	)
+
+	return blocks
+}
+
 const NoEventsText = "_No events yet_"
-var NoEventYetSection = []*slack.SectionBlock{slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", NoEventsText, false, false), nil, nil)}
+
+var NoEventYetSection = []*slack.SectionBlock{slack.NewSectionBlock(slack.NewTextBlockObject(slack.MarkdownType, NoEventsText, false, false), nil, nil)}
 
 func MinOption(num int) *slack.OptionBlockObject {
-	return slack.NewOptionBlockObject(fmt.Sprintf("min-%d", num), slack.NewTextBlockObject("plain_text", fmt.Sprintf(func() string {
+	return slack.NewOptionBlockObject(fmt.Sprintf("min-%d", num), slack.NewTextBlockObject(slack.PlainTextType, fmt.Sprintf(func() string {
 		if num < 10 {
 			return "0%d"
 		} else {
@@ -68,7 +71,7 @@ func MinOption(num int) *slack.OptionBlockObject {
 }
 
 func HourOption(num int) *slack.OptionBlockObject {
-	return slack.NewOptionBlockObject(fmt.Sprintf("hour-%d", num), slack.NewTextBlockObject("plain_text", fmt.Sprintf("%d %s", num, func() string {
+	return slack.NewOptionBlockObject(fmt.Sprintf("hour-%d", num), slack.NewTextBlockObject(slack.PlainTextType, fmt.Sprintf("%d %s", num, func() string {
 		if num < 9 || num == 12 {
 			return "PM"
 		} else {
@@ -85,11 +88,9 @@ func Map(vs []int, f func(int) *slack.OptionBlockObject) []*slack.OptionBlockObj
 	return vsm
 }
 
-
-
-func EventSection(index int, title string, hour string, mins string) *slack.SectionBlock {
-	id := fmt.Sprintf("remove_today_%d", index)
-	return slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", fmt.Sprintf("%s:%s %s", strings.Fields(hour)[0], mins, title), false, false),
+func EventSection(day string, index int, title string, hour string, mins string) *slack.SectionBlock {
+	id := fmt.Sprintf("remove_%s_%d", day, index)
+	return slack.NewSectionBlock(slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf("%s:%s %s", strings.Fields(hour)[0], mins, title), false, false),
 		nil,
-		slack.NewAccessory(slack.NewButtonBlockElement(id, id, slack.NewTextBlockObject("plain_text", "Remove", true, false))))
+		slack.NewAccessory(slack.NewButtonBlockElement(id, id, slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))))
 }

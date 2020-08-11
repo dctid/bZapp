@@ -16,7 +16,7 @@ func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.API
 	//	"accept": "application/json",
 	//	"Authorization": "Bearer [add token]",
 	//}
-	//var block = slack.NewTextBlockObject("plain_text", "HIII", false, false)
+	//var block = slack.NewTextBlockObject(slack.PlainTextType, "HIII", false, false)
 
 	log.Printf("Body: %v", event.Body)
 

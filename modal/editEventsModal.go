@@ -15,6 +15,7 @@ const AddEventHoursActionId = "add_event_hour"
 const AddEventMinsActionId = "add_event_mins"
 
 const TodayOptionValue = "today"
+const TomorrowOptionValue = "tomorrow"
 
 func NewEditEventsModal(todayEvents []*slack.SectionBlock, tomorrowEvents []*slack.SectionBlock) slack.ModalViewRequest {
 	hours := []int{9, 10, 11, 12, 1, 2, 3, 4}
@@ -25,7 +26,7 @@ func NewEditEventsModal(todayEvents []*slack.SectionBlock, tomorrowEvents []*sla
 
 	blocks := []slack.Block{
 		slack.NewDividerBlock(),
-		slack.NewContextBlock("", slack.NewTextBlockObject("mrkdwn", "*Today's Events*", false, false)),
+		slack.NewContextBlock("", slack.NewTextBlockObject(slack.MarkdownType, "*Today's Events*", false, false)),
 		slack.NewDividerBlock(),
 	}
 	for _, event := range todayEvents {
@@ -33,7 +34,7 @@ func NewEditEventsModal(todayEvents []*slack.SectionBlock, tomorrowEvents []*sla
 	}
 
 	blocks = append(blocks, slack.NewDividerBlock(),
-		slack.NewContextBlock("", slack.NewTextBlockObject("mrkdwn", "*Tomorrow's Events*", false, false)),
+		slack.NewContextBlock("", slack.NewTextBlockObject(slack.MarkdownType, "*Tomorrow's Events*", false, false)),
 		slack.NewDividerBlock())
 
 	for _, event := range tomorrowEvents {
@@ -43,26 +44,26 @@ func NewEditEventsModal(todayEvents []*slack.SectionBlock, tomorrowEvents []*sla
 	blocks = append(blocks,
 
 		slack.NewDividerBlock(),
-		slack.NewInputBlock(AddEventTitleInputBlock, slack.NewTextBlockObject("plain_text", "Add Event", false, false),
-			slack.NewPlainTextInputBlockElement(slack.NewTextBlockObject("plain_text", "Title", false, false), AddEventTitleActionId),
+		slack.NewInputBlock(AddEventTitleInputBlock, slack.NewTextBlockObject(slack.PlainTextType, "Add Event", false, false),
+			slack.NewPlainTextInputBlockElement(slack.NewTextBlockObject(slack.PlainTextType, "Title", false, false), AddEventTitleActionId),
 		),
-		slack.NewInputBlock(AddEventDayInputBlock, slack.NewTextBlockObject("plain_text", "Day", true, false),
+		slack.NewInputBlock(AddEventDayInputBlock, slack.NewTextBlockObject(slack.PlainTextType, "Day", true, false),
 			slack.NewRadioButtonsBlockElement(AddEventDayActionId,
-				slack.NewOptionBlockObject(TodayOptionValue, slack.NewTextBlockObject("plain_text", "Today", true, false)),
-				slack.NewOptionBlockObject("tomorrow", slack.NewTextBlockObject("plain_text", "Tomorrow", true, false))),
+				slack.NewOptionBlockObject(TodayOptionValue, slack.NewTextBlockObject(slack.PlainTextType, "Today", true, false)),
+				slack.NewOptionBlockObject(TomorrowOptionValue, slack.NewTextBlockObject(slack.PlainTextType, "Tomorrow", true, false))),
 		),
-		slack.NewInputBlock(AddEventHoursInputBlock, slack.NewTextBlockObject("plain_text", "Hour", true, false),
-			slack.NewOptionsSelectBlockElement("static_select", slack.NewTextBlockObject("plain_text", "Select hour", true, false), AddEventHoursActionId, hourOptions...),
+		slack.NewInputBlock(AddEventHoursInputBlock, slack.NewTextBlockObject(slack.PlainTextType, "Hour", true, false),
+			slack.NewOptionsSelectBlockElement("static_select", slack.NewTextBlockObject(slack.PlainTextType, "Select hour", true, false), AddEventHoursActionId, hourOptions...),
 		),
-		slack.NewInputBlock(AddEventMinsInputBlock, slack.NewTextBlockObject("plain_text", "Minutes", true, false),
-			slack.NewOptionsSelectBlockElement("static_select", slack.NewTextBlockObject("plain_text", "Select Minutes", true, false), AddEventMinsActionId, minOptions...),
+		slack.NewInputBlock(AddEventMinsInputBlock, slack.NewTextBlockObject(slack.PlainTextType, "Minutes", true, false),
+			slack.NewOptionsSelectBlockElement("static_select", slack.NewTextBlockObject(slack.PlainTextType, "Select Minutes", true, false), AddEventMinsActionId, minOptions...),
 		))
 
 	return slack.ModalViewRequest{
 		Type:   slack.VTModal,
-		Title:  slack.NewTextBlockObject("plain_text", "bZapp - Edit Events", true, false),
-		Close:  slack.NewTextBlockObject("plain_text", "Cancel", true, false),
-		Submit: slack.NewTextBlockObject("plain_text", "Add", true, false),
+		Title:  slack.NewTextBlockObject(slack.PlainTextType, "bZapp - Edit Events", true, false),
+		Close:  slack.NewTextBlockObject(slack.PlainTextType, "Cancel", true, false),
+		Submit: slack.NewTextBlockObject(slack.PlainTextType, "Add", true, false),
 		Blocks: slack.Blocks{
 			BlockSet: blocks,
 		},
