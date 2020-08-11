@@ -24,7 +24,7 @@ func TestBuildNewEventSectionBlock(t *testing.T) {
 		want1 *slack.SectionBlock
 	}{
 		{name: "default", args: args{values: values} , want: "today",
-			want1: EventSection(TodayOptionValue, 0, "title", "10 AM", "15"),
+			want1: EventSectionWithoutRemoveButton("title", "10 AM", "15"),
 		},
 	}
 	for _, tt := range tests {

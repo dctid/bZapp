@@ -68,7 +68,7 @@ func actionEvent(payload slack.InteractionCallback, err error, headers map[strin
 }
 
 func removeEvent(payload slack.InteractionCallback, err error, headers map[string]string) (events.APIGatewayProxyResponse, error) {
-	log.Printf("remove starteddddd	sss")
+	log.Printf("remove startedddddddd	sss")
 	//actionId := payload.ActionCallback.BlockActions[0].ActionID
 	actionValue := payload.ActionCallback.BlockActions[0].Value
 	todaysSectionBlocks, tomorrowsSectionBlocks := modal.RemoveEvent(payload.View.Blocks.BlockSet, actionValue)
@@ -136,6 +136,7 @@ func pushEditEventModal(payload slack.InteractionCallback, err error, headers ma
 	fmt.Printf("Message button pressed by user %s with value %v\n", payload.User.Name, payload)
 
 	todaysEvents, tomorrowsEvents := modal.ExtractEvents(payload.View.Blocks.BlockSet)
+	todaysEvents, tomorrowsEvents = modal.ConvertToEventsWithRemoveButton(todaysEvents, tomorrowsEvents)
 	todaysEvents, tomorrowsEvents = modal.ReplaceEmptyEventsWithNoEventsYet(todaysEvents, tomorrowsEvents)
 
 	modalRequest := modal.NewEditEventsModal(todaysEvents, tomorrowsEvents)
