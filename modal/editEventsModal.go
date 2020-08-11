@@ -4,25 +4,28 @@ import (
 	"github.com/slack-go/slack"
 )
 
-const AddEventTitleInputBlock = "add_event_title_input_block"
-const AddEventDayInputBlock = "add_event_day_input_block"
-const AddEventHoursInputBlock = "add_event_hours_input_block"
-const AddEventMinsInputBlock = "add_event_mins_input_block"
 
-const AddEventTitleActionId = "add_event_title"
-const AddEventDayActionId = "add_event_day"
-const AddEventHoursActionId = "add_event_hour"
-const AddEventMinsActionId = "add_event_mins"
-
-const TodayOptionValue = "today"
-const TomorrowOptionValue = "tomorrow"
 
 func NewEditEventsModal(todayEvents []*slack.SectionBlock, tomorrowEvents []*slack.SectionBlock) slack.ModalViewRequest {
+	blocks := buildSummaryEventBlocks(todayEvents, tomorrowEvents)
+
+	return slack.ModalViewRequest{
+		Type:   slack.VTModal,
+		Title:  slack.NewTextBlockObject(slack.PlainTextType, "bZapp - Edit Events", true, false),
+		Close:  slack.NewTextBlockObject(slack.PlainTextType, "Cancel", true, false),
+		Submit: slack.NewTextBlockObject(slack.PlainTextType, "Add", true, false),
+		Blocks: slack.Blocks{
+			BlockSet: blocks,
+		},
+	}
+}
+
+func buildSummaryEventBlocks(todayEvents []*slack.SectionBlock, tomorrowEvents []*slack.SectionBlock) []slack.Block {
 	hours := []int{9, 10, 11, 12, 1, 2, 3, 4}
-	hourOptions := Map(hours, HourOption)
+	hourOptions := mapOptions(hours, hourOption)
 
 	mins := []int{0, 15, 30, 45}
-	minOptions := Map(mins, MinOption)
+	minOptions := mapOptions(mins, minOption)
 
 	blocks := []slack.Block{
 		slack.NewDividerBlock(),
@@ -58,14 +61,5 @@ func NewEditEventsModal(todayEvents []*slack.SectionBlock, tomorrowEvents []*sla
 		slack.NewInputBlock(AddEventMinsInputBlock, slack.NewTextBlockObject(slack.PlainTextType, "Minutes", true, false),
 			slack.NewOptionsSelectBlockElement("static_select", slack.NewTextBlockObject(slack.PlainTextType, "Select Minutes", true, false), AddEventMinsActionId, minOptions...),
 		))
-
-	return slack.ModalViewRequest{
-		Type:   slack.VTModal,
-		Title:  slack.NewTextBlockObject(slack.PlainTextType, "bZapp - Edit Events", true, false),
-		Close:  slack.NewTextBlockObject(slack.PlainTextType, "Cancel", true, false),
-		Submit: slack.NewTextBlockObject(slack.PlainTextType, "Add", true, false),
-		Blocks: slack.Blocks{
-			BlockSet: blocks,
-		},
-	}
+	return blocks
 }

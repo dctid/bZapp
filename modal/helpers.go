@@ -4,20 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/slack-go/slack"
-	"log"
 	"strings"
 )
-
-func AddNewEventToDay(blocks []slack.Block, eventDay string, newEvent *slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	todaysSectionBlocks, tomorrowsSectionBlocks := ExtractEvents(blocks)
-	log.Printf("Extract got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
-	todaysSectionBlocks, tomorrowsSectionBlocks = addNewEventToCorrectDay(eventDay, todaysSectionBlocks, newEvent, tomorrowsSectionBlocks)
-	todaysSectionBlocks, tomorrowsSectionBlocks = convertToEventsWithoutRemoveButton(todaysSectionBlocks, tomorrowsSectionBlocks)
-	log.Printf("AddNew got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
-	todaysSectionBlocks, tomorrowsSectionBlocks = ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks, tomorrowsSectionBlocks)
-	log.Printf("Replace got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
-	return todaysSectionBlocks, tomorrowsSectionBlocks
-}
 
 func convertToEventsWithoutRemoveButton(todaysSectionBlocks []*slack.SectionBlock, tomorrowsSectionBlocks []*slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {
 	return removeAccessory(todaysSectionBlocks), removeAccessory(tomorrowsSectionBlocks)
@@ -35,30 +23,6 @@ func removeAccessory(sectionBlocks []*slack.SectionBlock) []*slack.SectionBlock 
 	return result
 }
 
-func RemoveEvent(blocks []slack.Block, actionValue string) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	log.Printf("remove action id %s\n", actionValue)
-	todaysSectionBlocks, tomorrowsSectionBlocks := ExtractEvents(blocks)
-	eventDay := extractDay(actionValue)
-	index, err := extractIndex(actionValue, func() []*slack.SectionBlock {
-		if eventDay == TodayOptionValue {
-			return todaysSectionBlocks
-		} else {
-			return tomorrowsSectionBlocks
-		}
-	}())
-	if err == nil {
-		log.Printf("day: %s, index: %d\n", eventDay, index)
-		log.Printf("Extracted got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
-		todaysSectionBlocks, tomorrowsSectionBlocks = removeEventFromCorrectDay(eventDay, todaysSectionBlocks, index, tomorrowsSectionBlocks)
-		log.Printf("AddNew got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
-	} else {
-		log.Printf("err: %s\n", err)
-	}
-	todaysSectionBlocks, tomorrowsSectionBlocks = ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks, tomorrowsSectionBlocks)
-	log.Printf("Replace got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
-
-	return todaysSectionBlocks, tomorrowsSectionBlocks
-}
 func extractDay(actionValue string) string {
 	return strings.Split(actionValue, "_")[1]
 }
@@ -70,16 +34,6 @@ func extractIndex(actionId string, events []*slack.SectionBlock) (int, error) {
 		}
 	}
 	return -1, errors.New("couldn't find matching event")
-}
-
-func ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks []*slack.SectionBlock, tomorrowsSectionBlocks []*slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	if len(todaysSectionBlocks) == 0 {
-		todaysSectionBlocks = NoEventYetSection
-	}
-	if len(tomorrowsSectionBlocks) == 0 {
-		tomorrowsSectionBlocks = NoEventYetSection
-	}
-	return todaysSectionBlocks, tomorrowsSectionBlocks
 }
 
 func addNewEventToCorrectDay(eventDay string, todaysSectionBlocks []*slack.SectionBlock, newEvent *slack.SectionBlock, tomorrowsSectionBlocks []*slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {
@@ -105,36 +59,6 @@ func remove(sectionBlocks []*slack.SectionBlock, indexToRemove int, ) []*slack.S
 	sectionBlocks[len(sectionBlocks)-1] = &slack.SectionBlock{}
 	sectionBlocks = sectionBlocks[:len(sectionBlocks)-1]
 	return sectionBlocks
-	//return make([]*slack.SectionBlock, 0)
-}
-
-func ExtractEvents(blocks []slack.Block) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	firstContextBlock := Index(blocks, slack.MBTContext)
-	secondContextBlock := Index(blocks[firstContextBlock+1:], slack.MBTContext)
-
-	sectionBlockFilter := func(block slack.Block) bool {
-		return block.BlockType() == slack.MBTSection && block.(*slack.SectionBlock).Text.Text != NoEventsText
-	}
-	todaysBlocks := Filter(blocks[firstContextBlock:secondContextBlock+firstContextBlock], sectionBlockFilter)
-	fmt.Printf("Today filtered got: %v\n", len(todaysBlocks))
-	todaysSectionBlocks := make([]*slack.SectionBlock, len(todaysBlocks))
-	for i, todayBlock := range todaysBlocks {
-		todaysSectionBlocks[i] = todayBlock.(*slack.SectionBlock)
-	}
-
-	tomorrowsBlocks := Filter(blocks[secondContextBlock+firstContextBlock:], sectionBlockFilter)
-	fmt.Printf("tomorrow filtered got: %v\n", len(todaysBlocks))
-	tomorrowsSectionBlocks := make([]*slack.SectionBlock, len(tomorrowsBlocks))
-	for i, tomorrowBlock := range tomorrowsBlocks {
-		sectionBlock := tomorrowBlock.(*slack.SectionBlock)
-		tomorrowsSectionBlocks[i] = sectionBlock
-	}
-	return todaysSectionBlocks, tomorrowsSectionBlocks
-}
-
-func ConvertToEventsWithRemoveButton(todaysSectionBlocks []*slack.SectionBlock, tomorrowsSectionBlocks []*slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	return convertToEventsWithRemoveButton(TodayOptionValue, todaysSectionBlocks),
-		convertToEventsWithRemoveButton(TomorrowOptionValue, tomorrowsSectionBlocks)
 }
 
 func convertToEventsWithRemoveButton(day string, sectionBlocks []*slack.SectionBlock) []*slack.SectionBlock {
@@ -173,4 +97,41 @@ func Index(vs []slack.Block, t slack.MessageBlockType) int {
 		}
 	}
 	return -1
+}
+
+func eventSectionWithoutRemoveButton(title string, hour string, mins string) *slack.SectionBlock {
+	return slack.NewSectionBlock(
+		slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf("%s:%s %s", strings.Fields(hour)[0], mins, title), false, false),
+		nil,
+		nil,
+	)
+}
+
+
+func minOption(num int) *slack.OptionBlockObject {
+	return slack.NewOptionBlockObject(fmt.Sprintf("min-%d", num), slack.NewTextBlockObject(slack.PlainTextType, fmt.Sprintf(func() string {
+		if num < 10 {
+			return "0%d"
+		} else {
+			return "%d"
+		}
+	}(), num), true, false))
+}
+
+func hourOption(num int) *slack.OptionBlockObject {
+	return slack.NewOptionBlockObject(fmt.Sprintf("hour-%d", num), slack.NewTextBlockObject(slack.PlainTextType, fmt.Sprintf("%d %s", num, func() string {
+		if num < 9 || num == 12 {
+			return "PM"
+		} else {
+			return "AM"
+		}
+	}()), true, false))
+}
+
+func mapOptions(vs []int, f func(int) *slack.OptionBlockObject) []*slack.OptionBlockObject {
+	vsm := make([]*slack.OptionBlockObject, len(vs))
+	for i, v := range vs {
+		vsm[i] = f(v)
+	}
+	return vsm
 }
