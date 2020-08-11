@@ -5,6 +5,8 @@ import (
 	"github.com/slack-go/slack"
 )
 
+const EditEventsActionId = "edit_events"
+
 func BuildNewEventSectionBlock(values map[string]map[string]slack.BlockAction) (string, *slack.SectionBlock) {
 	eventTitle := values[AddEventTitleInputBlock][AddEventTitleActionId].Value
 	eventDay := values[AddEventDayInputBlock][AddEventDayActionId].SelectedOption.Value

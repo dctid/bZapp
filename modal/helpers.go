@@ -17,11 +17,11 @@ func AddNewEventToDay(blocks []slack.Block, eventDay string, newEvent *slack.Sec
 	log.Printf("Replace got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
 	return todaysSectionBlocks, tomorrowsSectionBlocks
 }
-func RemoveEvent(blocks []slack.Block, actionId string) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	log.Printf("remove action id %s\n", actionId)
+func RemoveEvent(blocks []slack.Block, actionValue string) ([]*slack.SectionBlock, []*slack.SectionBlock) {
+	log.Printf("remove action id %s\n", actionValue)
 	todaysSectionBlocks, tomorrowsSectionBlocks := ExtractEvents(blocks)
-	eventDay := extractDayFromActionId(actionId)
-	index, err := extractIndex(actionId, func() []*slack.SectionBlock {
+	eventDay := extractDay(actionValue)
+	index, err := extractIndex(actionValue, func() []*slack.SectionBlock {
 		if eventDay == TodayOptionValue {
 			return todaysSectionBlocks
 		} else {
@@ -41,8 +41,8 @@ func RemoveEvent(blocks []slack.Block, actionId string) ([]*slack.SectionBlock, 
 
 	return todaysSectionBlocks, tomorrowsSectionBlocks
 }
-func extractDayFromActionId(actionId string) string {
-	return strings.Split(actionId, "_")[1]
+func extractDay(actionValue string) string {
+	return strings.Split(actionValue, "_")[1]
 }
 
 func extractIndex(actionId string, events []*slack.SectionBlock) (int, error) {

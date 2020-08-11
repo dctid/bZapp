@@ -55,18 +55,23 @@ func Interaction(ctx context.Context, event events.APIGatewayProxyRequest) (even
 func actionEvent(payload slack.InteractionCallback, err error, headers map[string]string) (events.APIGatewayProxyResponse, error) {
 	log.Printf("action id %s\n", payload.ActionCallback.BlockActions[0].ActionID)
 	switch payload.ActionCallback.BlockActions[0].ActionID {
-	case "edit_events":
+	case modal.EditEventsActionId:
 		return pushEditEventModal(payload, err, headers)
-	default:
+	case modal.RemoveEventActionId:
 		return removeEvent(payload, err, headers)
-
 	}
+	return 	 events.APIGatewayProxyResponse{
+		Headers:    headers,
+		Body:       "Unknown action type",
+		StatusCode: 400,
+	}, nil
 }
 
 func removeEvent(payload slack.InteractionCallback, err error, headers map[string]string) (events.APIGatewayProxyResponse, error) {
 	log.Printf("remove starteddddd	sss")
-	actionId := payload.ActionCallback.BlockActions[0].ActionID
-	todaysSectionBlocks, tomorrowsSectionBlocks := modal.RemoveEvent(payload.View.Blocks.BlockSet, actionId)
+	//actionId := payload.ActionCallback.BlockActions[0].ActionID
+	actionValue := payload.ActionCallback.BlockActions[0].Value
+	todaysSectionBlocks, tomorrowsSectionBlocks := modal.RemoveEvent(payload.View.Blocks.BlockSet, actionValue)
 	modalRequest := modal.NewEditEventsModal(todaysSectionBlocks, tomorrowsSectionBlocks)
 	//update := slack.NewUpdateViewSubmissionResponse(&modalRequest)
 
