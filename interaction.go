@@ -13,9 +13,6 @@ import (
 )
 
 func Interaction(ctx context.Context, event events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	var headers = map[string]string{
-		"content-Type": "application/json",
-	}
 
 	log.Printf("Body: %v", event.Body)
 
@@ -32,42 +29,42 @@ func Interaction(ctx context.Context, event events.APIGatewayProxyRequest) (even
 	err = json.Unmarshal([]byte(m["payload"][0]), &payload)
 	if err != nil {
 		fmt.Printf("Could not parse action response JSON: %v\n", err)
-		return events.APIGatewayProxyResponse{Headers: headers,
+		return events.APIGatewayProxyResponse{Headers: JsonHeaders(),
 			Body:       "Bad payload",
 			StatusCode: 400,
 		}, err
 	}
 	switch payload.Type {
 	case slack.InteractionTypeViewSubmission:
-		return pushModalWithAddedEvent(payload, err, headers)
+		return pushModalWithAddedEvent(payload)
 	case slack.InteractionTypeBlockActions:
-		return actionEvent(payload, err, headers)
+		return actionEvent(payload)
 	}
 
 	return events.APIGatewayProxyResponse{
-		Headers:    headers,
+		Headers:    JsonHeaders(),
 		Body:       fmt.Sprintf("Unimplemented Event Type: %v", payload.Type),
 		StatusCode: 400,
 	}, nil
 
 }
 
-func actionEvent(payload slack.InteractionCallback, err error, headers map[string]string) (events.APIGatewayProxyResponse, error) {
+func actionEvent(payload slack.InteractionCallback) (events.APIGatewayProxyResponse, error) {
 	log.Printf("action id %s\n", payload.ActionCallback.BlockActions[0].ActionID)
 	switch payload.ActionCallback.BlockActions[0].ActionID {
 	case modal.EditEventsActionId:
-		return pushEditEventModal(payload, err, headers)
+		return pushEditEventModal(payload)
 	case modal.RemoveEventActionId:
-		return removeEvent(payload, err, headers)
+		return removeEvent(payload)
 	}
 	return 	 events.APIGatewayProxyResponse{
-		Headers:    headers,
+		Headers:    JsonHeaders(),
 		Body:       "Unknown action type",
 		StatusCode: 400,
 	}, nil
 }
 
-func removeEvent(payload slack.InteractionCallback, err error, headers map[string]string) (events.APIGatewayProxyResponse, error) {
+func removeEvent(payload slack.InteractionCallback) (events.APIGatewayProxyResponse, error) {
 	log.Printf("remove startedddddddd	sss")
 	//actionId := payload.ActionCallback.BlockActions[0].ActionID
 	actionValue := payload.ActionCallback.BlockActions[0].Value
@@ -92,15 +89,15 @@ func removeEvent(payload slack.InteractionCallback, err error, headers map[strin
 	//log.Printf("body sent to slack: %v", string(indent))
 
 	return events.APIGatewayProxyResponse{
-		Headers:    headers,
+		Headers: JsonHeaders(),
 		//Body:       string(jsonBytes),
 		StatusCode: 200,
 	}, nil
 }
 
-func pushModalWithAddedEvent(payload slack.InteractionCallback, err error, headers map[string]string) (events.APIGatewayProxyResponse, error) {
+func pushModalWithAddedEvent(payload slack.InteractionCallback) (events.APIGatewayProxyResponse, error) {
 	action := payload.View.State.Values[modal.AddEventDayInputBlock][modal.AddEventDayActionId]
-	marshal, err := json.Marshal(action)
+	marshal, _ := json.Marshal(action)
 	fmt.Printf("Add Event button pressed by user %s with value %v\n", payload.User.Name, string(marshal))
 
 	eventDay, newEvent := modal.BuildNewEventSectionBlock(payload.View.State.Values)
@@ -122,17 +119,24 @@ func pushModalWithAddedEvent(payload slack.InteractionCallback, err error, heade
 	//}
 	update := slack.NewUpdateViewSubmissionResponse(&modalRequest)
 	jsonBytes, err := json.Marshal(update)
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			Headers:    JsonHeaders(),
+			Body:       "Error processing request",
+			StatusCode: 500,
+		}, err
+	}
 	indent, _ := json.MarshalIndent(update, "", "\t")
 	log.Printf("body sent to slack: %v", string(indent))
 
 	return events.APIGatewayProxyResponse{
-		Headers:    headers,
+		Headers:    JsonHeaders(),
 		Body:       string(jsonBytes),
 		StatusCode: 200,
 	}, nil
 }
 
-func pushEditEventModal(payload slack.InteractionCallback, err error, headers map[string]string) (events.APIGatewayProxyResponse, error) {
+func pushEditEventModal(payload slack.InteractionCallback) (events.APIGatewayProxyResponse, error) {
 	fmt.Printf("Message button pressed by user %s with value %v\n", payload.User.Name, payload)
 
 	todaysEvents, tomorrowsEvents := modal.ExtractEvents(payload.View.Blocks.BlockSet)
@@ -186,7 +190,7 @@ func pushEditEventModal(payload slack.InteractionCallback, err error, headers ma
 	//println(string(body))
 
 	return events.APIGatewayProxyResponse{
-		Headers: headers,
+		Headers: JsonHeaders(),
 		//Body: string(jsonBytes),
 		StatusCode: 200,
 	}, nil

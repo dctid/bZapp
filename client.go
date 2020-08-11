@@ -19,6 +19,12 @@ func init() {
 	Client = &http.Client{}
 }
 
+func JsonHeaders() map[string]string {
+	return	map[string]string{
+		"content-Type": "application/json",
+	}
+}
+
 // Post sends a post request to the URL with the body
 func Post(url string, headers http.Header, body interface{} ) (*http.Response, error) {
 	jsonBytes, err := json.Marshal(body)
