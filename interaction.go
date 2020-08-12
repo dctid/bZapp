@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/dctid/bZapp/modal"
+	"github.com/dctid/bZapp/test"
 	"github.com/slack-go/slack"
 	"log"
 	"net/url"
@@ -72,7 +73,7 @@ func removeEvent(payload slack.InteractionCallback) (events.APIGatewayProxyRespo
 	modalRequest := modal.NewEditEventsModal(todaysSectionBlocks, tomorrowsSectionBlocks)
 	//update := slack.NewUpdateViewSubmissionResponse(&modalRequest)
 
-	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true))
+	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true), slack.OptionHTTPClient(Client))
 	viewResponse, err := api.UpdateView(modalRequest, payload.View.ExternalID, payload.Hash, payload.View.ID)
 	if err != nil {
 		log.Printf("Err opening modal: %v\n", err)
@@ -144,9 +145,7 @@ func pushEditEventModal(payload slack.InteractionCallback) (events.APIGatewayPro
 	todaysEvents, tomorrowsEvents = modal.ReplaceEmptyEventsWithNoEventsYet(todaysEvents, tomorrowsEvents)
 
 	modalRequest := modal.NewEditEventsModal(todaysEvents, tomorrowsEvents)
-	modalRequest.PrivateMetadata = "test metadata"
-
-	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true))
+	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true), slack.OptionHTTPClient(Client))
 	viewResponse, err := api.UpdateView(modalRequest, payload.View.ExternalID, payload.Hash, payload.View.ID)
 	if err != nil {
 		log.Printf("Err opening modal: %v\n", err)
@@ -157,41 +156,10 @@ func pushEditEventModal(payload slack.InteractionCallback) (events.APIGatewayPro
 	}
 	update := slack.NewUpdateViewSubmissionResponse(&modalRequest)
 	jsonBytes, err := json.Marshal(update)
-	log.Printf("Json bytes: %v\n", jsonBytes)
-	//var bodyMap map[string]interface{}
-	//err = json.Unmarshal([]byte(event.Body), &bodyMap)
-	//if err != nil {
-	//	log.Printf("Err parsing body: %v\n", err)
-	//	return events.APIGatewayProxyResponse{
-	//		StatusCode: 500,
-	//	}, err
-	//}
-
-	//triggerId := m["trigger_id"][0]// fmt.Sprintf("%v", bodyMap["trigger_id"])
-	//modalRequest := NewSummaryModal(NoEventYetSection, NoEventYetSection)
-
-	//jsonBytes, err := json.Marshal(modalRequest)
-	//log.Printf("json %s", jsonBytes)
-
-	//postHeaders := http.Header{"Content-Type": {"application/json"},
-	//	"accept": {"application/json"},
-	//	"Authorization": {"Bearer [add token]"}}
-	//
-	//_, err = Post("https://slack.com/api/views.open", postHeaders, modalRequest)
-	//if err != nil {
-	//	return events.APIGatewayProxyResponse{
-	//		StatusCode: 500,
-	//	}, err
-	//}
-
-	//defer resp.Body.Close()
-
-	//body, err := ioutil.ReadAll(resp.Body)
-	//println(string(body))
+	log.Printf("Json bytes: %v\n", test.PrettyJsonNoError(string(jsonBytes)))
 
 	return events.APIGatewayProxyResponse{
 		Headers: JsonHeaders(),
-		//Body: string(jsonBytes),
 		StatusCode: 200,
 	}, nil
 }

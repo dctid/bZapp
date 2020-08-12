@@ -2,6 +2,7 @@ package test
 
 import (
 	"encoding/json"
+	"log"
 	"strings"
 )
 
@@ -23,5 +24,13 @@ func PrettyJson(data string) (string, error) {
 		return empty, err
 	}
 	return string(indent), nil
+}
+
+func PrettyJsonNoError(data string) (string) {
+	result, err := PrettyJson(data)
+	if err != nil {
+		log.Printf("Pretty failed: %s", err)
+	}
+	return result
 }
 
