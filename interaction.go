@@ -8,7 +8,9 @@ import (
 	"github.com/dctid/bZapp/modal"
 	"github.com/dctid/bZapp/test"
 	"github.com/slack-go/slack"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"net/url"
 	"os"
 )
@@ -26,7 +28,7 @@ func Interaction(ctx context.Context, event events.APIGatewayProxyRequest) (even
 	} else {
 		log.Printf("Body parsed: %v\n", m)
 	}
-	var payload slack.InteractionCallback
+	var payload InteractionPayload
 	err = json.Unmarshal([]byte(m["payload"][0]), &payload)
 	if err != nil {
 		fmt.Printf("Could not parse action response JSON: %v\n", err)
@@ -37,7 +39,7 @@ func Interaction(ctx context.Context, event events.APIGatewayProxyRequest) (even
 	}
 	switch payload.Type {
 	case slack.InteractionTypeViewSubmission:
-		return pushModalWithAddedEvent(payload)
+		return viewSubmission(payload)
 	case slack.InteractionTypeBlockActions:
 		return actionEvent(payload)
 	}
@@ -50,7 +52,49 @@ func Interaction(ctx context.Context, event events.APIGatewayProxyRequest) (even
 
 }
 
-func actionEvent(payload slack.InteractionCallback) (events.APIGatewayProxyResponse, error) {
+type ResponseUrl struct {
+	BlockId string `json:"block_id"`
+	ActionId string `json:"action_id"`
+	ChannelId string `json:"channel_id"`
+	ResponseUrl string `json:"response_url"`
+}
+
+type InteractionPayload struct {
+	slack.InteractionCallback
+	ResponseUrls []ResponseUrl `json:"response_urls"`
+}
+
+func viewSubmission(payload InteractionPayload) (events.APIGatewayProxyResponse, error) {
+	if len(payload.View.State.Values) == 1 && payload.View.State.Values["convo_input_id"]["conversation_select_action_id"].Type == "conversations_select" {
+		return publishbZapp(payload)
+	} else {
+		return pushModalWithAddedEvent(payload)
+	}
+}
+
+func publishbZapp(payload InteractionPayload) (events.APIGatewayProxyResponse, error) {
+
+	url := payload.ResponseUrls[0].ResponseUrl
+	log.Printf("Response Urls: %s", url)
+	headers := http.Header{"Content-type": []string{"application/json"}}
+	blockObject := slack.TextBlockObject{
+		Text: "hi",
+	}
+	post, err := Post(url, headers, blockObject)
+	if err != nil {
+		log.Printf("Error: %s", err)
+	} else {
+		bytes, _ := ioutil.ReadAll(post.Body)
+		log.Printf("Success: %s", string(bytes))
+	}
+
+	return events.APIGatewayProxyResponse{
+		//Headers:    JsonHeaders(),
+		StatusCode: 200,
+	}, nil
+}
+
+func actionEvent(payload InteractionPayload) (events.APIGatewayProxyResponse, error) {
 	log.Printf("action id %s\n", payload.ActionCallback.BlockActions[0].ActionID)
 	switch payload.ActionCallback.BlockActions[0].ActionID {
 	case modal.EditEventsActionId:
@@ -65,7 +109,7 @@ func actionEvent(payload slack.InteractionCallback) (events.APIGatewayProxyRespo
 	}, nil
 }
 
-func removeEvent(payload slack.InteractionCallback) (events.APIGatewayProxyResponse, error) {
+func removeEvent(payload InteractionPayload) (events.APIGatewayProxyResponse, error) {
 	log.Printf("remove startedddddddd	sss")
 	//actionId := payload.ActionCallback.BlockActions[0].ActionID
 	actionValue := payload.ActionCallback.BlockActions[0].Value
@@ -96,7 +140,7 @@ func removeEvent(payload slack.InteractionCallback) (events.APIGatewayProxyRespo
 	}, nil
 }
 
-func pushModalWithAddedEvent(payload slack.InteractionCallback) (events.APIGatewayProxyResponse, error) {
+func pushModalWithAddedEvent(payload InteractionPayload) (events.APIGatewayProxyResponse, error) {
 	action := payload.View.State.Values[modal.AddEventDayInputBlock][modal.AddEventDayActionId]
 	marshal, _ := json.Marshal(action)
 	fmt.Printf("Add Event button pressed by user %s with value %v\n", payload.User.Name, string(marshal))
@@ -137,7 +181,7 @@ func pushModalWithAddedEvent(payload slack.InteractionCallback) (events.APIGatew
 	}, nil
 }
 
-func pushEditEventModal(payload slack.InteractionCallback) (events.APIGatewayProxyResponse, error) {
+func pushEditEventModal(payload InteractionPayload) (events.APIGatewayProxyResponse, error) {
 	fmt.Printf("Message button pressed by user %s with value %v\n", payload.User.Name, payload)
 
 	todaysEvents, tomorrowsEvents := modal.ExtractEvents(payload.View.Blocks.BlockSet)
