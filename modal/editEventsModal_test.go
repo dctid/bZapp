@@ -2,7 +2,8 @@ package modal
 
 import (
 	"encoding/json"
-	"github.com/dctid/bZapp/test"
+	"github.com/dctid/bZapp/format"
+
 	"github.com/slack-go/slack"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -388,7 +389,7 @@ func TestNewEditEventsModal(t *testing.T) {
 	result := NewEditEventsModal(todaysEvents, tomorrowsEvents)
 	actualJson, _ := json.Marshal(result)
 	//assert.EqualValues(t, expected, result)
-	expectedJsonString, _ := test.PrettyJson(editEventsModal)
-	actualJsonString, _ := test.PrettyJson(string(actualJson))
+	expectedJsonString, _ := format.PrettyJson(editEventsModal)
+	actualJsonString, _ := format.PrettyJson(string(actualJson))
 	assert.EqualValues(t, expectedJsonString, actualJsonString)
 }

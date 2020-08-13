@@ -2,7 +2,8 @@ package modal
 
 import (
 	"encoding/json"
-	"github.com/dctid/bZapp/test"
+	"github.com/dctid/bZapp/format"
+
 	"github.com/slack-go/slack"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -116,6 +117,20 @@ var summaryModal = `{
 			  "value": "edit_events"
 			}
 		  ]
+		},
+		{
+			"block_id": "convo_input_id",
+			"element": {
+				"action_id": "conversation_select_action_id",
+				"default_to_current_conversation": true,
+				"response_url_enabled": true,
+				"type": "conversations_select"
+			},
+			"label": {
+				"text": "Selectachanneltoposttheresulton",
+				"type": "plain_text"
+			},
+			"type": "input"
 		}
 	]
 }`
@@ -154,7 +169,7 @@ func TestNewSummaryModal(t *testing.T) {
 	result := NewSummaryModal(todaysEvents, tomorrowsEvents)
 	actualJson, _ := json.Marshal(result)
 	//assert.EqualValues(t, expected, result)
-	expectedJsonString, _ := test.PrettyJson(summaryModal)
-	actualJsonString, _ := test.PrettyJson(string(actualJson))
+	expectedJsonString, _ := format.PrettyJson(summaryModal)
+	actualJsonString, _ := format.PrettyJson(string(actualJson))
 	assert.EqualValues(t, expectedJsonString, actualJsonString)
 }

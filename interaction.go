@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/dctid/bZapp/format"
 	"github.com/dctid/bZapp/modal"
-	"github.com/dctid/bZapp/test"
 	"github.com/slack-go/slack"
 	"io/ioutil"
 	"log"
@@ -53,9 +53,9 @@ func Interaction(ctx context.Context, event events.APIGatewayProxyRequest) (even
 }
 
 type ResponseUrl struct {
-	BlockId string `json:"block_id"`
-	ActionId string `json:"action_id"`
-	ChannelId string `json:"channel_id"`
+	BlockId     string `json:"block_id"`
+	ActionId    string `json:"action_id"`
+	ChannelId   string `json:"channel_id"`
 	ResponseUrl string `json:"response_url"`
 }
 
@@ -77,10 +77,16 @@ func publishbZapp(payload InteractionPayload) (events.APIGatewayProxyResponse, e
 	url := payload.ResponseUrls[0].ResponseUrl
 	log.Printf("Response Urls: %s", url)
 	headers := http.Header{"Content-type": []string{"application/json"}}
-	blockObject := slack.TextBlockObject{
-		Text: "hi",
-	}
-	post, err := Post(url, headers, blockObject)
+
+	todaysEvents, tomorrowsEvents := modal.ExtractEvents(payload.View.Blocks.BlockSet)
+	todaysEvents, tomorrowsEvents = modal.ReplaceEmptyEventsWithNoEventsYet(todaysEvents, tomorrowsEvents)
+	eventBlocks := modal.BuildEventsBlock(todaysEvents, tomorrowsEvents)
+
+	message := slack.NewBlockMessage(eventBlocks...)
+	message.Text = "bZapp - Today's Standup Summary"
+	message.ResponseType = slack.ResponseTypeInChannel
+
+	post, err := Post(url, headers, message)
 	if err != nil {
 		log.Printf("Error: %s", err)
 	} else {
@@ -102,7 +108,7 @@ func actionEvent(payload InteractionPayload) (events.APIGatewayProxyResponse, er
 	case modal.RemoveEventActionId:
 		return removeEvent(payload)
 	}
-	return 	 events.APIGatewayProxyResponse{
+	return events.APIGatewayProxyResponse{
 		Headers:    JsonHeaders(),
 		Body:       "Unknown action type",
 		StatusCode: 400,
@@ -200,10 +206,10 @@ func pushEditEventModal(payload InteractionPayload) (events.APIGatewayProxyRespo
 	}
 	update := slack.NewUpdateViewSubmissionResponse(&modalRequest)
 	jsonBytes, err := json.Marshal(update)
-	log.Printf("Json bytes: %v\n", test.PrettyJsonNoError(string(jsonBytes)))
+	log.Printf("Json bytes: %v\n", format.PrettyJsonNoError(string(jsonBytes)))
 
 	return events.APIGatewayProxyResponse{
-		Headers: JsonHeaders(),
+		Headers:    JsonHeaders(),
 		StatusCode: 200,
 	}, nil
 }

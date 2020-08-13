@@ -3,6 +3,8 @@ package bZapp
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/dctid/bZapp/format"
+	"log"
 	"net/http"
 )
 
@@ -31,6 +33,7 @@ func Post(url string, headers http.Header, body interface{} ) (*http.Response, e
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("Post body: %s", format.PrettyJsonNoError(string(jsonBytes)))
 	request, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(jsonBytes))
 	if err != nil {
 		return nil, err

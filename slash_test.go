@@ -4,7 +4,8 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/dctid/bZapp/test"
+	"github.com/dctid/bZapp/format"
+
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -97,7 +98,21 @@ const expected = `{
           "value": "edit_events"
         }
       ]
-    }
+    },
+	{
+		"block_id": "convo_input_id",
+		"element": {
+			"action_id": "conversation_select_action_id",
+			"default_to_current_conversation": true,
+			"response_url_enabled": true,
+			"type": "conversations_select"
+		},
+		"label": {
+			"text": "Selectachanneltoposttheresulton",
+			"type": "plain_text"
+		},
+		"type": "input"
+	}
   ]
 }`
 
@@ -374,7 +389,7 @@ func TestSlash(t *testing.T) {
     "view": %s
 }`, expected)
 
-	prettyJsonExpected, err := test.PrettyJson(expected2)
+	prettyJsonExpected, err := format.PrettyJson(expected2)
 	assert.NoError(t, err)
 
 	mocks.GetDoFunc = func(req *http.Request) (*http.Response, error) {
@@ -395,7 +410,7 @@ func TestSlash(t *testing.T) {
 	assert.NoError(t, err)
 	assert.EqualValues(t, expectUrl, urlCalled)
 
-	prettyJsonActual, err := test.PrettyJson(bodyCalled)
+	prettyJsonActual, err := format.PrettyJson(bodyCalled)
 	assert.NoError(t, err)
 	assert.EqualValues(t, prettyJsonExpected, prettyJsonActual)
 	assert.EqualValues(t, events.APIGatewayProxyResponse{StatusCode: 200}, result)
