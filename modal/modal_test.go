@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestBuildNewEventSectionBlock(t *testing.T) {
@@ -18,7 +19,7 @@ func TestBuildNewEventSectionBlock(t *testing.T) {
 		AddEventTitleInputBlock: {AddEventTitleActionId: slack.BlockAction{Value: "title"}},
 		AddEventDayInputBlock:   {AddEventDayActionId: slack.BlockAction{SelectedOption: slack.OptionBlockObject{Value: TodayOptionValue}}},
 		AddEventHoursInputBlock: {AddEventHoursActionId: slack.BlockAction{SelectedOption: slack.OptionBlockObject{Text: &slack.TextBlockObject{Text: "10 AM"}}}},
-		AddEventMinsInputBlock:  {AddEventMinsActionId: slack.BlockAction{SelectedOption: slack.OptionBlockObject{Text: &slack.TextBlockObject{Text: "15"}}}},
+		fmt.Sprintf("%s-%d", AddEventMinsInputBlock, time.Now().UnixNano()): {AddEventMinsActionId: slack.BlockAction{SelectedOption: slack.OptionBlockObject{Text: &slack.TextBlockObject{Text: "15"}}}},
 	}
 	tests := []struct {
 		name  string
@@ -160,7 +161,7 @@ func TestAddNewEventToDay(t *testing.T) {
 				newEvent: eventSectionWithoutRemoveButton("retro", "1 PM", "44"),
 			},
 			want:  []*slack.SectionBlock{eventSectionWithoutRemoveButton("retro", "1 PM", "44")},
-			want1: NoEventYetSection,
+			want1: []*slack.SectionBlock{},
 		},
 		{
 			name: "add to tomorrow when empty",
@@ -169,7 +170,7 @@ func TestAddNewEventToDay(t *testing.T) {
 				eventDay: TomorrowOptionValue,
 				newEvent: eventSectionWithoutRemoveButton("retroed", "3 PM", "22"),
 			},
-			want:  NoEventYetSection,
+			want:  []*slack.SectionBlock{},
 			want1: []*slack.SectionBlock{eventSectionWithoutRemoveButton("retroed", "3 PM", "22")},
 		},
 		{
@@ -177,13 +178,13 @@ func TestAddNewEventToDay(t *testing.T) {
 			args: args{
 				blocks:   buildEventBlocks([]*slack.SectionBlock{EventSectionWithRemoveButton(TodayOptionValue, 0, "standup", "9 AM", "07")}, NoEventYetSection),
 				eventDay: TodayOptionValue,
-				newEvent: eventSectionWithoutRemoveButton("retro", "1 PM", "44"),
+				newEvent: EventSectionWithRemoveButton(TodayOptionValue, 1, "retro", "1 PM", "44"),
 			},
 			want: []*slack.SectionBlock{
-				eventSectionWithoutRemoveButton("standup", "9 AM", "07"),
-				eventSectionWithoutRemoveButton("retro", "1 PM", "44"),
+				EventSectionWithRemoveButton(TodayOptionValue, 0, "standup", "9 AM", "07"),
+				EventSectionWithRemoveButton(TodayOptionValue, 1, "retro", "1 PM", "44"),
 			},
-			want1: NoEventYetSection,
+			want1: []*slack.SectionBlock{},
 		},
 	}
 	for _, tt := range tests {
@@ -325,4 +326,52 @@ func EventSectionWithRemoveButton(day string, index int, title string, hour stri
 			),
 		),
 	)
+}
+
+func TestExtractInputIndex(t *testing.T) {
+	type args struct {
+		blocks []slack.Block
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "zero index",
+			args: args{blocks: []slack.Block{
+				slack.NewDividerBlock(),
+				&slack.InputBlock{Type: slack.MBTInput, BlockID: "block_id-0"},
+			}},
+			want: 0,
+		},
+		{
+			name: "one index",
+			args: args{blocks: []slack.Block{
+				slack.NewDividerBlock(),
+				&slack.InputBlock{Type: slack.MBTInput, BlockID: "block_id-1"},
+			}},
+			want: 1,
+		},
+		{
+			name: "missing index",
+			args: args{blocks: []slack.Block{
+				slack.NewDividerBlock(),
+				&slack.InputBlock{Type: slack.MBTInput, BlockID: "block_id"},
+			}},
+			want: 0,
+		},
+		{
+			name: "missing input",
+			args: args{blocks: []slack.Block{}},
+			want: 0,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ExtractInputIndex(tt.args.blocks); got != tt.want {
+				t.Errorf("ExtractInputIndex() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

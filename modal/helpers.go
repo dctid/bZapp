@@ -80,6 +80,8 @@ func convertToEventsWithRemoveButton(day string, sectionBlocks []*slack.SectionB
 	return convertedBlocks
 }
 
+
+
 func Filter(vs []slack.Block, f func(slack.Block) bool) []slack.Block {
 	vsf := make([]slack.Block, 0)
 	for _, v := range vs {

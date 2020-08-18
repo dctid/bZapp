@@ -3,7 +3,6 @@ package modal
 import (
 	"encoding/json"
 	"github.com/dctid/bZapp/format"
-
 	"github.com/slack-go/slack"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -15,6 +14,7 @@ var editEventsModal = `{
 		"text": "bZapp - Edit Events",
 		"emoji": true
 	},
+	"notify_on_close": true,
 	"submit": {
 		"type": "plain_text",
 		"text": "Add",
@@ -23,7 +23,7 @@ var editEventsModal = `{
 	"type": "modal",
 	"close": {
 		"type": "plain_text",
-		"text": "Cancel",
+		"text": "Back",
 		"emoji": true
 	},
 	"blocks": [
@@ -171,7 +171,7 @@ var editEventsModal = `{
 		},
 		{
 			"type": "input",
-			"block_id": "add_event_title_input_block",
+			"block_id": "add_event_title_input_block-666",
 			"element": {
 				"action_id": "add_event_title",
 				"type": "plain_text_input",
@@ -187,7 +187,7 @@ var editEventsModal = `{
 		},
 		{
 			"type": "input",
-			"block_id": "add_event_day_input_block",
+			"block_id": "add_event_day_input_block-666",
 			"element": {
 				"type": "radio_buttons",
 				"action_id": "add_event_day",
@@ -218,7 +218,7 @@ var editEventsModal = `{
 		},
 		{
 			"type": "input",
-			"block_id": "add_event_hours_input_block",
+			"block_id": "add_event_hours_input_block-666",
 			"element": {
 				"type": "static_select",
 				"placeholder": {
@@ -302,7 +302,7 @@ var editEventsModal = `{
 		},
 		{
 			"type": "input",
-			"block_id": "add_event_mins_input_block",
+			"block_id": "add_event_mins_input_block-666",
 			"element": {
 				"type": "static_select",
 				"placeholder": {
@@ -386,10 +386,11 @@ func TestNewEditEventsModal(t *testing.T) {
 		tomorrowStandup, userInterview, tomorrowsSynthesis,
 	}
 
-	result := NewEditEventsModal(todaysEvents, tomorrowsEvents)
+	result := NewEditEventsModal(666, todaysEvents, tomorrowsEvents)
 	actualJson, _ := json.Marshal(result)
 	//assert.EqualValues(t, expected, result)
 	expectedJsonString, _ := format.PrettyJson(editEventsModal)
 	actualJsonString, _ := format.PrettyJson(string(actualJson))
+
 	assert.EqualValues(t, expectedJsonString, actualJsonString)
 }
