@@ -7,19 +7,19 @@ import (
 	"reflect"
 	"strings"
 	"testing"
-	"time"
 )
 
 func TestBuildNewEventSectionBlock(t *testing.T) {
 	type args struct {
+		index int
 		values map[string]map[string]slack.BlockAction
 	}
 
 	values := map[string]map[string]slack.BlockAction{
-		AddEventTitleInputBlock: {AddEventTitleActionId: slack.BlockAction{Value: "title"}},
-		AddEventDayInputBlock:   {AddEventDayActionId: slack.BlockAction{SelectedOption: slack.OptionBlockObject{Value: TodayOptionValue}}},
-		AddEventHoursInputBlock: {AddEventHoursActionId: slack.BlockAction{SelectedOption: slack.OptionBlockObject{Text: &slack.TextBlockObject{Text: "10 AM"}}}},
-		fmt.Sprintf("%s-%d", AddEventMinsInputBlock, time.Now().UnixNano()): {AddEventMinsActionId: slack.BlockAction{SelectedOption: slack.OptionBlockObject{Text: &slack.TextBlockObject{Text: "15"}}}},
+		fmt.Sprintf("%s-%d", AddEventTitleInputBlock, 1): {AddEventTitleActionId: slack.BlockAction{Value: "title"}},
+		fmt.Sprintf("%s-%d", AddEventDayInputBlock, 1):   {AddEventDayActionId: slack.BlockAction{SelectedOption: slack.OptionBlockObject{Value: TodayOptionValue}}},
+		fmt.Sprintf("%s-%d", AddEventHoursInputBlock, 1): {AddEventHoursActionId: slack.BlockAction{SelectedOption: slack.OptionBlockObject{Text: &slack.TextBlockObject{Text: "10 AM"}}}},
+		fmt.Sprintf("%s-%d", AddEventMinsInputBlock, 1): {AddEventMinsActionId: slack.BlockAction{SelectedOption: slack.OptionBlockObject{Text: &slack.TextBlockObject{Text: "15"}}}},
 	}
 	tests := []struct {
 		name  string
@@ -27,13 +27,13 @@ func TestBuildNewEventSectionBlock(t *testing.T) {
 		want  string
 		want1 *slack.SectionBlock
 	}{
-		{name: "default", args: args{values: values}, want: "today",
+		{name: "default", args: args{index: 1, values: values}, want: "today",
 			want1: eventSectionWithoutRemoveButton("title", "10 AM", "15"),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := BuildNewEventSectionBlock(tt.args.values)
+			got, got1 := BuildNewEventSectionBlock(tt.args.index, tt.args.values)
 			if got != tt.want {
 				t.Errorf("BuildNewEventSectionBlock() got = %v, want %v", got, tt.want)
 			}

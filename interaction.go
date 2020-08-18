@@ -144,14 +144,14 @@ func pushModalWithAddedEvent(payload modal.InteractionPayload) (events.APIGatewa
 	marshal, _ := json.Marshal(action)
 	fmt.Printf("Add Event button pressed by user %s with value %v\n", payload.User.Name, string(marshal))
 
-	eventDay, newEvent := modal.BuildNewEventSectionBlock(payload.View.State.Values)
+	index := modal.ExtractInputIndex(payload.View.Blocks.BlockSet)
+	eventDay, newEvent := modal.BuildNewEventSectionBlock(index, payload.View.State.Values)
 
 	todaysSectionBlocks, tomorrowsSectionBlocks := modal.AddNewEventToDay(payload.View.Blocks.BlockSet, eventDay, newEvent)
 	todaysSectionBlocks, tomorrowsSectionBlocks = modal.ConvertToEventsWithRemoveButton(todaysSectionBlocks, tomorrowsSectionBlocks)
 	todaysSectionBlocks, tomorrowsSectionBlocks = modal.ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks, tomorrowsSectionBlocks)
 	fmt.Printf("Addedsssss New gotasdf: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
 
-	index := modal.ExtractInputIndex(payload.View.Blocks.BlockSet)
 
 	modalRequest := modal.NewEditEventsModal(index + 1, todaysSectionBlocks, tomorrowsSectionBlocks)
 	//modalRequest.PrivateMetadata = "test metadata"

@@ -26,8 +26,6 @@ const RemoveEventActionId = "remove_event"
 
 const NoEventsText = "_No events yet_"
 
-const ParentViewId = "parent_view_id"
-
 var NoEventYetSection = []*slack.SectionBlock{slack.NewSectionBlock(slack.NewTextBlockObject(slack.MarkdownType, NoEventsText, false, false), nil, nil)}
 
 type ResponseUrl struct {
@@ -42,27 +40,11 @@ type InteractionPayload struct {
 	ResponseUrls []ResponseUrl `json:"response_urls"`
 }
 
-func BuildNewEventSectionBlock(values map[string]map[string]slack.BlockAction) (string, *slack.SectionBlock) {
-	//eventTitle := values[AddEventTitleInputBlock][AddEventTitleActionId].Value
-	//eventDay := values[AddEventDayInputBlock][AddEventDayActionId].SelectedOption.Value
-	//eventHours := values[AddEventHoursInputBlock][AddEventHoursActionId].SelectedOption.Text.Text
-	//eventMins := values[AddEventMinsInputBlock][AddEventMinsActionId].SelectedOption.Text.Text
-	var eventTitle string
-	var eventDay string
-	var eventHours string
-	var eventMins string
-
-	for key, value := range values {
-		if strings.Contains(key, AddEventTitleInputBlock) {
-			eventTitle = value[AddEventTitleActionId].Value
-		} else if strings.Contains(key, AddEventDayInputBlock) {
-			eventDay = value[AddEventDayActionId].SelectedOption.Value
-		} else if strings.Contains(key, AddEventHoursInputBlock) {
-			eventHours = value[AddEventHoursActionId].SelectedOption.Text.Text
-		} else if strings.Contains(key, AddEventMinsInputBlock) {
-			eventMins = value[AddEventMinsActionId].SelectedOption.Text.Text
-		}
-	}
+func BuildNewEventSectionBlock(index int, values map[string]map[string]slack.BlockAction) (string, *slack.SectionBlock) {
+	eventTitle := values[fmt.Sprintf("%s-%d", AddEventTitleInputBlock, index)][AddEventTitleActionId].Value
+	eventDay := values[fmt.Sprintf("%s-%d", AddEventDayInputBlock, index)][AddEventDayActionId].SelectedOption.Value
+	eventHours := values[fmt.Sprintf("%s-%d", AddEventHoursInputBlock, index)][AddEventHoursActionId].SelectedOption.Text.Text
+	eventMins := values[fmt.Sprintf("%s-%d", AddEventMinsInputBlock, index)][AddEventMinsActionId].SelectedOption.Text.Text
 
 	fmt.Printf("Add Event title: %s, day: %s, hour: %s, mins: %s\n", eventTitle, eventDay, eventHours, eventMins)
 
