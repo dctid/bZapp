@@ -41,8 +41,7 @@ type InteractionPayload struct {
 	ResponseUrls []ResponseUrl `json:"response_urls"`
 }
 
-
-func BuildNewEventSectionBlock(index int, values map[string]map[string]slack.BlockAction) (model.Event) {
+func BuildNewEventSectionBlock(index int, values map[string]map[string]slack.BlockAction) model.Event {
 	eventTitle := values[fmt.Sprintf("%s-%d", AddEventTitleInputBlock, index)][AddEventTitleActionId].Value
 	eventDay := values[fmt.Sprintf("%s-%d", AddEventDayInputBlock, index)][AddEventDayActionId].SelectedOption.Value
 	eventHours, _ := strconv.Atoi(strings.Split(values[fmt.Sprintf("%s-%d", AddEventHoursInputBlock, index)][AddEventHoursActionId].SelectedOption.Text.Text, " ")[0])
@@ -51,7 +50,7 @@ func BuildNewEventSectionBlock(index int, values map[string]map[string]slack.Blo
 	fmt.Printf("Add Event title: %s, day: %s, hour: %d, mins: %d\n", eventTitle, eventDay, eventHours, eventMins)
 
 	return model.Event{
-		Id: model.Hash(),
+		Id:    model.Hash(),
 		Title: eventTitle,
 		Day:   eventDay,
 		Hour:  eventHours,
@@ -72,21 +71,13 @@ func ExtractEvents(blocks []slack.Block) ([]model.Event, []model.Event) {
 }
 
 func ConvertToEventsWithRemoveButton(todaysEvents []model.Event, tomorrowsEvents []model.Event) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	return convertToSectionBlocks(true, todaysEvents), convertToSectionBlocks(true, tomorrowsEvents)
+	return convertToSectionBlocks(true, todaysEvents),
+		convertToSectionBlocks(true, tomorrowsEvents)
 }
 
 func ConvertToEventsWithoutRemoveButton(todaysEvents []model.Event, tomorrowsEvents []model.Event) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	return convertToSectionBlocks(false, todaysEvents), convertToSectionBlocks(false, tomorrowsEvents)
-}
-
-func ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks []*slack.SectionBlock, tomorrowsSectionBlocks []*slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	if len(todaysSectionBlocks) == 0 {
-		todaysSectionBlocks = NoEventYetSection
-	}
-	if len(tomorrowsSectionBlocks) == 0 {
-		tomorrowsSectionBlocks = NoEventYetSection
-	}
-	return todaysSectionBlocks, tomorrowsSectionBlocks
+	return convertToSectionBlocks(false, todaysEvents),
+		convertToSectionBlocks(false, tomorrowsEvents)
 }
 
 func ExtractInputIndex(blocks []slack.Block) int {

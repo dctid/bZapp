@@ -11,7 +11,12 @@ import (
 
 
 func convertToSectionBlocks(includeRemoveButton bool, events []model.Event) []*slack.SectionBlock {
-	convertedBlocks := make([]*slack.SectionBlock, len(events))
+
+	numEvents := len(events)
+	if numEvents == 0 {
+		return NoEventYetSection
+	}
+	convertedBlocks := make([]*slack.SectionBlock, numEvents)
 
 	for index, event := range events {
 		convertedBlocks[index] = slack.NewSectionBlock(
@@ -113,3 +118,4 @@ func convertToEvent(day string, block slack.Block) model.Event {
 
 	return model.Event{Id: sectionBlock.BlockID, Title: tokens[2], Day: day, Hour: hour, Min: mins, AmPm: amPm}
 }
+
