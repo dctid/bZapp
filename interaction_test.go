@@ -92,7 +92,7 @@ func TestInteraction(t *testing.T) {
 			wantDo:  do{},
 		},
 		{
-			name: "modal submission",
+			name: "submit and send message to channel",
 			args: args{event: events.APIGatewayProxyRequest{Body: submitPayload}},
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
@@ -946,7 +946,6 @@ const submissionJson = `{
 			"type": "divider"
 		},
 		{
-			"block_id": "FpV6",
 			"text": {
 				"text": "10:45gsfd",
 				"type": "mrkdwn"
@@ -969,7 +968,6 @@ const submissionJson = `{
 			"type": "divider"
 		},
 		{
-			"block_id": "xWAF3",
 			"text": {
 				"text": "4:30kljh",
 				"type": "mrkdwn"

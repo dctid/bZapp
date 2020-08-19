@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/dctid/bZapp/format"
 	"github.com/dctid/bZapp/modal"
+	"github.com/dctid/bZapp/model"
 	"github.com/slack-go/slack"
 	"io/ioutil"
 	"log"
@@ -69,9 +70,10 @@ func publishbZapp(payload modal.InteractionPayload) (events.APIGatewayProxyRespo
 	log.Printf("Response Urls: %s", url)
 	headers := http.Header{"Content-type": []string{"application/json"}}
 
-	todaysEvents, tomorrowsEvents := modal.ExtractEvents(payload.View.Blocks.BlockSet)
-	todaysEvents, tomorrowsEvents = modal.ReplaceEmptyEventsWithNoEventsYet(todaysEvents, tomorrowsEvents)
-	eventBlocks := modal.BuildEventsBlock(todaysEvents, tomorrowsEvents)
+	todaysEvents, tomorrowsEvents := modal.ExtractEvents2(payload.View.Blocks.BlockSet)
+	todaysSectionBlocks, tomorrowsSectionBlocks := modal.ConvertToEventsWithoutRemoveButton2(todaysEvents, tomorrowsEvents)
+	tomorrowsSectionBlocks, tomorrowsSectionBlocks = modal.ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks, tomorrowsSectionBlocks)
+	eventBlocks := modal.BuildEventsBlock(todaysSectionBlocks, tomorrowsSectionBlocks)
 
 	message := slack.NewBlockMessage(eventBlocks...)
 	message.Text = "bZapp - Today's Standup Summary"
@@ -92,7 +94,7 @@ func publishbZapp(payload modal.InteractionPayload) (events.APIGatewayProxyRespo
 }
 
 func actionEvent(payload modal.InteractionPayload) (events.APIGatewayProxyResponse, error) {
-	log.Printf("action idss %s\n", payload.ActionCallback.BlockActions[0].ActionID)
+	log.Printf("action id %s\n", payload.ActionCallback.BlockActions[0].ActionID)
 	switch payload.ActionCallback.BlockActions[0].ActionID {
 	case modal.EditEventsActionId:
 		return pushEditEventModal(payload)
@@ -107,7 +109,7 @@ func actionEvent(payload modal.InteractionPayload) (events.APIGatewayProxyRespon
 }
 
 func removeEvent(payload modal.InteractionPayload) (events.APIGatewayProxyResponse, error) {
-	log.Printf("remove startedddddddd	sss")
+	log.Printf("remove starteddddddddddddddd	sss")
 	//actionId := payload.ActionCallback.BlockActions[0].ActionID
 	actionValue := payload.ActionCallback.BlockActions[0].Value
 	todaysSectionBlocks, tomorrowsSectionBlocks := modal.RemoveEvent(payload.View.Blocks.BlockSet, actionValue)
@@ -145,10 +147,21 @@ func pushModalWithAddedEvent(payload modal.InteractionPayload) (events.APIGatewa
 	fmt.Printf("Add Event button pressed by user %s with value %v\n", payload.User.Name, string(marshal))
 
 	index := modal.ExtractInputIndex(payload.View.Blocks.BlockSet)
-	eventDay, newEvent := modal.BuildNewEventSectionBlock(index, payload.View.State.Values)
+	todaysEvents, tomorrowsEvents := modal.ExtractEvents2(payload.View.Blocks.BlockSet)
 
-	todaysSectionBlocks, tomorrowsSectionBlocks := modal.AddNewEventToDay(payload.View.Blocks.BlockSet, eventDay, newEvent)
-	todaysSectionBlocks, tomorrowsSectionBlocks = modal.ConvertToEventsWithRemoveButton(todaysSectionBlocks, tomorrowsSectionBlocks)
+	newEvent := modal.BuildNewEventSectionBlock2(index, payload.View.State.Values)
+	switch newEvent.Day {
+	case modal.TodayOptionValue:
+		todaysEvents = model.AddEventInOrder(newEvent, todaysEvents)
+	case modal.TomorrowOptionValue:
+		tomorrowsEvents = model.AddEventInOrder(newEvent, tomorrowsEvents)
+	}
+
+	//eventDay, newEvent := modal.BuildNewEventSectionBlock(index, payload.View.State.Values)
+
+
+	//todaysSectionBlocks, tomorrowsSectionBlocks := modal.AddNewEventToDay(payload.View.Blocks.BlockSet, eventDay, newEvent)
+	todaysSectionBlocks, tomorrowsSectionBlocks := modal.ConvertToEventsWithRemoveButton2(todaysEvents, tomorrowsEvents)
 	todaysSectionBlocks, tomorrowsSectionBlocks = modal.ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks, tomorrowsSectionBlocks)
 	fmt.Printf("Addedsssss New gotasdf: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
 
@@ -188,12 +201,12 @@ func pushModalWithAddedEvent(payload modal.InteractionPayload) (events.APIGatewa
 func pushEditEventModal(payload modal.InteractionPayload) (events.APIGatewayProxyResponse, error) {
 	fmt.Printf("Message button pressed by user %s with value %v\n", payload.User.Name, payload)
 
-	todaysEvents, tomorrowsEvents := modal.ExtractEvents(payload.View.Blocks.BlockSet)
-	todaysEvents, tomorrowsEvents = modal.ConvertToEventsWithRemoveButton(todaysEvents, tomorrowsEvents)
-	todaysEvents, tomorrowsEvents = modal.ReplaceEmptyEventsWithNoEventsYet(todaysEvents, tomorrowsEvents)
+	todaysEvents, tomorrowsEvents := modal.ExtractEvents2(payload.View.Blocks.BlockSet)
+	todaysSectionBlocks, tomorrowsSectionEvents := modal.ConvertToEventsWithRemoveButton2(todaysEvents, tomorrowsEvents)
+	todaysSectionBlocks, tomorrowsSectionEvents = modal.ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks, tomorrowsSectionEvents)
 	index :=modal.ExtractInputIndex(payload.View.Blocks.BlockSet)
 
-	modalRequest := modal.NewEditEventsModal(index +1, todaysEvents, tomorrowsEvents)
+	modalRequest := modal.NewEditEventsModal(index +1, todaysSectionBlocks, tomorrowsSectionEvents)
 	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true), slack.OptionHTTPClient(Client))
 	//viewResponse, err := api.UpdateView(modalRequest, payload.View.ExternalID, payload.Hash, payload.View.ID)
 	viewResponse, err := api.PushView(payload.TriggerID, modalRequest)
@@ -227,11 +240,11 @@ func viewClosed(payload modal.InteractionPayload) (events.APIGatewayProxyRespons
 
 
 func returnToSummaryModal(payload modal.InteractionPayload) (events.APIGatewayProxyResponse, error) {
-	todaysEvents, tomorrowsEvents := modal.ExtractEvents(payload.View.Blocks.BlockSet)
-	todaysEvents, tomorrowsEvents = modal.ConvertToEventsWithoutRemoveButton(todaysEvents, tomorrowsEvents)
-	todaysEvents, tomorrowsEvents = modal.ReplaceEmptyEventsWithNoEventsYet(todaysEvents, tomorrowsEvents)
+	todaysEvents, tomorrowsEvents := modal.ExtractEvents2(payload.View.Blocks.BlockSet)
+	todaysSectionBlocks, tomorrowsSectionBlocks := modal.ConvertToEventsWithoutRemoveButton2(todaysEvents, tomorrowsEvents)
+	todaysSectionBlocks, tomorrowsSectionBlocks = modal.ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks, tomorrowsSectionBlocks)
 
-	modalRequest := modal.NewSummaryModal(todaysEvents, tomorrowsEvents)
+	modalRequest := modal.NewSummaryModal(todaysSectionBlocks, tomorrowsSectionBlocks)
 	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true), slack.OptionHTTPClient(Client))
 	viewResponse, err := api.UpdateView(modalRequest, payload.View.ExternalID, payload.Hash, payload.View.RootViewID)
 	if err != nil {

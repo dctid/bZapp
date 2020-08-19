@@ -3,7 +3,11 @@ package modal
 import (
 	"errors"
 	"fmt"
+	"github.com/dctid/bZapp/model"
 	"github.com/slack-go/slack"
+	"log"
+	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -80,9 +84,41 @@ func convertToEventsWithRemoveButton(day string, sectionBlocks []*slack.SectionB
 	return convertedBlocks
 }
 
+func convertToEventsWithRemoveButton2(events []model.Event) []*slack.SectionBlock {
+	convertedBlocks := make([]*slack.SectionBlock, len(events))
+
+	for index, event := range events {
+		convertedBlocks[index] = slack.NewSectionBlock(
+			slack.NewTextBlockObject(slack.MarkdownType, event.ToString(), false, false),
+			nil,
+			slack.NewAccessory(
+				slack.NewButtonBlockElement(
+					RemoveEventActionId,
+					fmt.Sprintf("remove_%s_%d", event.Day, index),
+					slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false),
+				),
+			),
+		)
+	}
+	return convertedBlocks
+}
+
+func convertToEventsWithoutRemoveButton2(events []model.Event) []*slack.SectionBlock {
+	convertedBlocks := make([]*slack.SectionBlock, len(events))
+
+	for index, event := range events {
+		convertedBlocks[index] = slack.NewSectionBlock(
+			slack.NewTextBlockObject(slack.MarkdownType, event.ToString(), false, false),
+			nil,
+			nil,
+		)
+	}
+	return convertedBlocks
+}
 
 
-func Filter(vs []slack.Block, f func(slack.Block) bool) []slack.Block {
+
+func filterBlocks(vs []slack.Block, f func(slack.Block) bool) []slack.Block {
 	vsf := make([]slack.Block, 0)
 	for _, v := range vs {
 		if f(v) {
@@ -92,7 +128,7 @@ func Filter(vs []slack.Block, f func(slack.Block) bool) []slack.Block {
 	return vsf
 }
 
-func Index(vs []slack.Block, t slack.MessageBlockType) int {
+func firstBlockOfTypeIndex(vs []slack.Block, t slack.MessageBlockType) int {
 	for i, v := range vs {
 		if v.BlockType() == t {
 			return i
@@ -122,12 +158,16 @@ func minOption(num int) *slack.OptionBlockObject {
 
 func hourOption(num int) *slack.OptionBlockObject {
 	return slack.NewOptionBlockObject(fmt.Sprintf("hour-%d", num), slack.NewTextBlockObject(slack.PlainTextType, fmt.Sprintf("%d %s", num, func() string {
-		if num < 9 || num == 12 {
-			return "PM"
-		} else {
-			return "AM"
-		}
+		return amOrPm(num)
 	}()), true, false))
+}
+
+func amOrPm(num int) string {
+	if num < 9 || num == 12 {
+		return "PM"
+	} else {
+		return "AM"
+	}
 }
 
 func mapOptions(vs []int, f func(int) *slack.OptionBlockObject) []*slack.OptionBlockObject {
@@ -136,4 +176,30 @@ func mapOptions(vs []int, f func(int) *slack.OptionBlockObject) []*slack.OptionB
 		vsm[i] = f(v)
 	}
 	return vsm
+}
+
+func sectionBlockFilter(block slack.Block) bool {
+	return block.BlockType() == slack.MBTSection && block.(*slack.SectionBlock).Text.Text != NoEventsText
+}
+
+
+func mapToEvents(day string, blocks []slack.Block) []model.Event {
+	var events = make([]model.Event, len(blocks))
+	for index, block := range blocks {
+		events[index] = convertToEvent(day, block)
+	}
+	return events
+}
+
+func convertToEvent(day string, block slack.Block) model.Event {
+	spacesOrColon := regexp.MustCompile(`(?:\:|\s)+`)
+	text := block.(*slack.SectionBlock).Text.Text
+	tokens := spacesOrColon.Split(text, -1)
+	log.Printf("text %s, %d", tokens, len(tokens))
+
+	hour, _ := strconv.Atoi(tokens[0])
+	mins, _ := strconv.Atoi(tokens[1])
+	amPm := amOrPm(hour)
+
+	return model.Event{Title: tokens[2], Day: day, Hour: hour, Min: mins, AmPm: amPm}
 }
