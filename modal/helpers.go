@@ -1,83 +1,41 @@
 package modal
 
 import (
-	"errors"
 	"fmt"
 	"github.com/dctid/bZapp/model"
 	"github.com/slack-go/slack"
 	"log"
 	"regexp"
 	"strconv"
-	"strings"
 )
 
 
-func extractDay(actionValue string) string {
-	return strings.Split(actionValue, "_")[1]
-}
-
-func extractIndex(actionId string, events []*slack.SectionBlock) (int, error) {
-	for index, event := range events {
-		if event.Accessory.ButtonElement.Value == actionId {
-			return index, nil
-		}
-	}
-	return -1, errors.New("couldn't find matching event")
-}
-
-
-func removeEventFromCorrectDay(eventDay string, todaysSectionBlocks []*slack.SectionBlock, indexToRemove int, tomorrowsSectionBlocks []*slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	if eventDay == TodayOptionValue {
-		todaysSectionBlocks = remove(todaysSectionBlocks, indexToRemove)
-	} else {
-		tomorrowsSectionBlocks = remove(tomorrowsSectionBlocks, indexToRemove)
-	}
-	return todaysSectionBlocks, tomorrowsSectionBlocks
-}
-
-func remove(sectionBlocks []*slack.SectionBlock, indexToRemove int, ) []*slack.SectionBlock {
-	copy(sectionBlocks[indexToRemove:], sectionBlocks[indexToRemove+1:])
-	sectionBlocks[len(sectionBlocks)-1] = &slack.SectionBlock{}
-	sectionBlocks = sectionBlocks[:len(sectionBlocks)-1]
-	return sectionBlocks
-}
-
-
-func convertToEventsWithRemoveButton(events []model.Event) []*slack.SectionBlock {
+func convertToSectionBlocks(includeRemoveButton bool, events []model.Event) []*slack.SectionBlock {
 	convertedBlocks := make([]*slack.SectionBlock, len(events))
 
 	for index, event := range events {
 		convertedBlocks[index] = slack.NewSectionBlock(
 			slack.NewTextBlockObject(slack.MarkdownType, event.ToString(), false, false),
 			nil,
-			slack.NewAccessory(
-				slack.NewButtonBlockElement(
-					RemoveEventActionId,
-					fmt.Sprintf("remove_%s_%s", event.Day, event.Id),
-					slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false),
-				),
+			getRemoveButton(includeRemoveButton, event),
+			slack.SectionBlockOptionBlockID(event.Id),
+		)
+	}
+	return convertedBlocks
+}
+
+func getRemoveButton(includeRemoveButton bool, event model.Event) *slack.Accessory {
+	if includeRemoveButton {
+		return slack.NewAccessory(
+			slack.NewButtonBlockElement(
+				RemoveEventActionId,
+				fmt.Sprintf("remove_%s_%s", event.Day, event.Id),
+				slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false),
 			),
-			slack.SectionBlockOptionBlockID(event.Id),
 		)
 	}
-	return convertedBlocks
+	return nil
 }
-
-func convertToEventsWithoutRemoveButton(events []model.Event) []*slack.SectionBlock {
-	convertedBlocks := make([]*slack.SectionBlock, len(events))
-
-	for index, event := range events {
-		convertedBlocks[index] = slack.NewSectionBlock(
-			slack.NewTextBlockObject(slack.MarkdownType, event.ToString(), false, false),
-			nil,
-			nil,
-			slack.SectionBlockOptionBlockID(event.Id),
-		)
-	}
-	return convertedBlocks
-}
-
-
 
 func filterBlocks(vs []slack.Block, f func(slack.Block) bool) []slack.Block {
 	vsf := make([]slack.Block, 0)
@@ -97,7 +55,6 @@ func firstBlockOfTypeIndex(vs []slack.Block, t slack.MessageBlockType) int {
 	}
 	return -1
 }
-
 
 func minOption(num int) *slack.OptionBlockObject {
 	return slack.NewOptionBlockObject(fmt.Sprintf("min-%d", num), slack.NewTextBlockObject(slack.PlainTextType, fmt.Sprintf(func() string {
@@ -134,7 +91,6 @@ func mapOptions(vs []int, f func(int) *slack.OptionBlockObject) []*slack.OptionB
 func sectionBlockFilter(block slack.Block) bool {
 	return block.BlockType() == slack.MBTSection && block.(*slack.SectionBlock).Text.Text != NoEventsText
 }
-
 
 func mapToEvents(day string, blocks []slack.Block) []model.Event {
 	var events = make([]model.Event, len(blocks))

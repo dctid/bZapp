@@ -72,11 +72,11 @@ func ExtractEvents(blocks []slack.Block) ([]model.Event, []model.Event) {
 }
 
 func ConvertToEventsWithRemoveButton(todaysEvents []model.Event, tomorrowsEvents []model.Event) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	return convertToEventsWithRemoveButton(todaysEvents), convertToEventsWithRemoveButton(tomorrowsEvents)
+	return convertToSectionBlocks(true, todaysEvents), convertToSectionBlocks(true, tomorrowsEvents)
 }
 
 func ConvertToEventsWithoutRemoveButton(todaysEvents []model.Event, tomorrowsEvents []model.Event) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	return convertToEventsWithoutRemoveButton(todaysEvents), convertToEventsWithoutRemoveButton(tomorrowsEvents)
+	return convertToSectionBlocks(false, todaysEvents), convertToSectionBlocks(false, tomorrowsEvents)
 }
 
 func ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks []*slack.SectionBlock, tomorrowsSectionBlocks []*slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {
@@ -88,8 +88,6 @@ func ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks []*slack.SectionBlock
 	}
 	return todaysSectionBlocks, tomorrowsSectionBlocks
 }
-
-
 
 func ExtractInputIndex(blocks []slack.Block) int {
 	for _, block := range blocks {
