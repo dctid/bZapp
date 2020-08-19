@@ -1,10 +1,12 @@
 package model
 
 import (
+	"errors"
 	"fmt"
 )
 
 type Event struct {
+	Id string
 	Title string
 	Day   string
 	Hour  int
@@ -52,4 +54,28 @@ func (event Event) calcEventValue() int {
 		return (event.Hour+12)*100 + event.Min
 	}
 	return event.Hour*100 + event.Min
+}
+
+func RemoveEvent(id string, events []Event) []Event {
+	index, err := findByid(id, events)
+	if err != nil {
+		return events
+	}
+
+	return removeAtIndex(events, index)
+}
+
+func removeAtIndex(events []Event, index int) []Event {
+	copy(events[index:], events[index+1:])
+	events[len(events)-1] = Event{}
+	events = events[:len(events)-1]
+	return events
+}
+func findByid(id string, events []Event) (int, error) {
+	for index, event := range events {
+		if event.Id == id {
+			return index, nil
+		}
+	}
+	return 0, errors.New("not found")
 }

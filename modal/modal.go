@@ -41,19 +41,8 @@ type InteractionPayload struct {
 	ResponseUrls []ResponseUrl `json:"response_urls"`
 }
 
-func BuildNewEventSectionBlock(index int, values map[string]map[string]slack.BlockAction) (string, *slack.SectionBlock) {
-	eventTitle := values[fmt.Sprintf("%s-%d", AddEventTitleInputBlock, index)][AddEventTitleActionId].Value
-	eventDay := values[fmt.Sprintf("%s-%d", AddEventDayInputBlock, index)][AddEventDayActionId].SelectedOption.Value
-	eventHours := values[fmt.Sprintf("%s-%d", AddEventHoursInputBlock, index)][AddEventHoursActionId].SelectedOption.Text.Text
-	eventMins := values[fmt.Sprintf("%s-%d", AddEventMinsInputBlock, index)][AddEventMinsActionId].SelectedOption.Text.Text
 
-	fmt.Printf("Add Event title: %s, day: %s, hour: %s, mins: %s\n", eventTitle, eventDay, eventHours, eventMins)
-
-	newEvent := eventSectionWithoutRemoveButton(eventTitle, eventHours, eventMins)
-	return eventDay, newEvent
-}
-
-func BuildNewEventSectionBlock2(index int, values map[string]map[string]slack.BlockAction) (model.Event) {
+func BuildNewEventSectionBlock(index int, values map[string]map[string]slack.BlockAction) (model.Event) {
 	eventTitle := values[fmt.Sprintf("%s-%d", AddEventTitleInputBlock, index)][AddEventTitleActionId].Value
 	eventDay := values[fmt.Sprintf("%s-%d", AddEventDayInputBlock, index)][AddEventDayActionId].SelectedOption.Value
 	eventHours, _ := strconv.Atoi(strings.Split(values[fmt.Sprintf("%s-%d", AddEventHoursInputBlock, index)][AddEventHoursActionId].SelectedOption.Text.Text, " ")[0])
@@ -62,6 +51,7 @@ func BuildNewEventSectionBlock2(index int, values map[string]map[string]slack.Bl
 	fmt.Printf("Add Event title: %s, day: %s, hour: %d, mins: %d\n", eventTitle, eventDay, eventHours, eventMins)
 
 	return model.Event{
+		Id: model.Hash(),
 		Title: eventTitle,
 		Day:   eventDay,
 		Hour:  eventHours,
@@ -70,31 +60,7 @@ func BuildNewEventSectionBlock2(index int, values map[string]map[string]slack.Bl
 	}
 }
 
-func ExtractEvents(blocks []slack.Block) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	firstContextBlock := firstBlockOfTypeIndex(blocks, slack.MBTContext)
-	secondContextBlock := firstBlockOfTypeIndex(blocks[firstContextBlock+1:], slack.MBTContext)
-
-	sectionBlockFilter := func(block slack.Block) bool {
-		return block.BlockType() == slack.MBTSection && block.(*slack.SectionBlock).Text.Text != NoEventsText
-	}
-	todaysBlocks := filterBlocks(blocks[firstContextBlock:secondContextBlock+firstContextBlock], sectionBlockFilter)
-	fmt.Printf("Today filtered got: %v\n", len(todaysBlocks))
-	todaysSectionBlocks := make([]*slack.SectionBlock, len(todaysBlocks))
-	for i, todayBlock := range todaysBlocks {
-		todaysSectionBlocks[i] = todayBlock.(*slack.SectionBlock)
-	}
-
-	tomorrowsBlocks := filterBlocks(blocks[secondContextBlock+firstContextBlock:], sectionBlockFilter)
-	fmt.Printf("tomorrow filtered got: %v\n", len(todaysBlocks))
-	tomorrowsSectionBlocks := make([]*slack.SectionBlock, len(tomorrowsBlocks))
-	for i, tomorrowBlock := range tomorrowsBlocks {
-		sectionBlock := tomorrowBlock.(*slack.SectionBlock)
-		tomorrowsSectionBlocks[i] = sectionBlock
-	}
-	return todaysSectionBlocks, tomorrowsSectionBlocks
-}
-
-func ExtractEvents2(blocks []slack.Block) ([]model.Event, []model.Event) {
+func ExtractEvents(blocks []slack.Block) ([]model.Event, []model.Event) {
 	log.Println("New Events")
 	firstContextBlock := firstBlockOfTypeIndex(blocks, slack.MBTContext)
 	secondContextBlock := firstBlockOfTypeIndex(blocks[firstContextBlock+1:], slack.MBTContext)
@@ -105,68 +71,12 @@ func ExtractEvents2(blocks []slack.Block) ([]model.Event, []model.Event) {
 	return mapToEvents(TodayOptionValue, todaysBlocks), mapToEvents(TomorrowOptionValue, tomorrowsBlocks)
 }
 
-func ConvertToEventsWithRemoveButton(todaysSectionBlocks []*slack.SectionBlock, tomorrowsSectionBlocks []*slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	return convertToEventsWithRemoveButton(TodayOptionValue, todaysSectionBlocks),
-		convertToEventsWithRemoveButton(TomorrowOptionValue, tomorrowsSectionBlocks)
+func ConvertToEventsWithRemoveButton(todaysEvents []model.Event, tomorrowsEvents []model.Event) ([]*slack.SectionBlock, []*slack.SectionBlock) {
+	return convertToEventsWithRemoveButton(todaysEvents), convertToEventsWithRemoveButton(tomorrowsEvents)
 }
 
-func ConvertToEventsWithoutRemoveButton(todaysSectionBlocks []*slack.SectionBlock, tomorrowsSectionBlocks []*slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	return convertToEventsWithoutRemoveButton(todaysSectionBlocks, tomorrowsSectionBlocks)
-}
-
-func ConvertToEventsWithRemoveButton2(todaysEvents []model.Event, tomorrowsEvents []model.Event) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	return convertToEventsWithRemoveButton2(todaysEvents), convertToEventsWithRemoveButton2(tomorrowsEvents)
-}
-
-func ConvertToEventsWithoutRemoveButton2(todaysEvents []model.Event, tomorrowsEvents []model.Event) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	return convertToEventsWithoutRemoveButton2(todaysEvents), convertToEventsWithoutRemoveButton2(tomorrowsEvents)
-}
-
-func AddNewEventToDay(blocks []slack.Block, eventDay string, newEvent *slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	todaysSectionBlocks, tomorrowsSectionBlocks := ExtractEvents(blocks)
-	log.Printf("Extract got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
-	todaysSectionBlocks, tomorrowsSectionBlocks = addNewEventToCorrectDay(eventDay, todaysSectionBlocks, newEvent, tomorrowsSectionBlocks)
-	//todaysSectionBlocks, tomorrowsSectionBlocks = convertToEventsWithoutRemoveButton(todaysSectionBlocks, tomorrowsSectionBlocks)
-	log.Printf("AddNew got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
-	//	todaysSectionBlocks, tomorrowsSectionBlocks = ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks, tomorrowsSectionBlocks)
-	log.Printf("Replace got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
-	return todaysSectionBlocks, tomorrowsSectionBlocks
-}
-
-func AddNewEventToDay2(blocks []slack.Block, eventDay string, newEvent *slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	todaysSectionBlocks, tomorrowsSectionBlocks := ExtractEvents(blocks)
-	log.Printf("Extract got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
-	todaysSectionBlocks, tomorrowsSectionBlocks = addNewEventToCorrectDay(eventDay, todaysSectionBlocks, newEvent, tomorrowsSectionBlocks)
-	//todaysSectionBlocks, tomorrowsSectionBlocks = convertToEventsWithoutRemoveButton(todaysSectionBlocks, tomorrowsSectionBlocks)
-	log.Printf("AddNew got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
-	//	todaysSectionBlocks, tomorrowsSectionBlocks = ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks, tomorrowsSectionBlocks)
-	log.Printf("Replace got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
-	return todaysSectionBlocks, tomorrowsSectionBlocks
-}
-
-func RemoveEvent(blocks []slack.Block, actionValue string) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	log.Printf("remove action id %s\n", actionValue)
-	todaysSectionBlocks, tomorrowsSectionBlocks := ExtractEvents(blocks)
-	eventDay := extractDay(actionValue)
-	index, err := extractIndex(actionValue, func() []*slack.SectionBlock {
-		if eventDay == TodayOptionValue {
-			return todaysSectionBlocks
-		} else {
-			return tomorrowsSectionBlocks
-		}
-	}())
-	if err == nil {
-		log.Printf("day: %s, index: %d\n", eventDay, index)
-		log.Printf("Extracted got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
-		todaysSectionBlocks, tomorrowsSectionBlocks = removeEventFromCorrectDay(eventDay, todaysSectionBlocks, index, tomorrowsSectionBlocks)
-		log.Printf("AddNew got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
-	} else {
-		log.Printf("err: %s\n", err)
-	}
-	todaysSectionBlocks, tomorrowsSectionBlocks = ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks, tomorrowsSectionBlocks)
-	log.Printf("Replace got: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
-
-	return todaysSectionBlocks, tomorrowsSectionBlocks
+func ConvertToEventsWithoutRemoveButton(todaysEvents []model.Event, tomorrowsEvents []model.Event) ([]*slack.SectionBlock, []*slack.SectionBlock) {
+	return convertToEventsWithoutRemoveButton(todaysEvents), convertToEventsWithoutRemoveButton(tomorrowsEvents)
 }
 
 func ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks []*slack.SectionBlock, tomorrowsSectionBlocks []*slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {

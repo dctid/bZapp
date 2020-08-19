@@ -70,8 +70,8 @@ func publishbZapp(payload modal.InteractionPayload) (events.APIGatewayProxyRespo
 	log.Printf("Response Urls: %s", url)
 	headers := http.Header{"Content-type": []string{"application/json"}}
 
-	todaysEvents, tomorrowsEvents := modal.ExtractEvents2(payload.View.Blocks.BlockSet)
-	todaysSectionBlocks, tomorrowsSectionBlocks := modal.ConvertToEventsWithoutRemoveButton2(todaysEvents, tomorrowsEvents)
+	todaysEvents, tomorrowsEvents := modal.ExtractEvents(payload.View.Blocks.BlockSet)
+	todaysSectionBlocks, tomorrowsSectionBlocks := modal.ConvertToEventsWithoutRemoveButton(todaysEvents, tomorrowsEvents)
 	tomorrowsSectionBlocks, tomorrowsSectionBlocks = modal.ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks, tomorrowsSectionBlocks)
 	eventBlocks := modal.BuildEventsBlock(todaysSectionBlocks, tomorrowsSectionBlocks)
 
@@ -111,8 +111,19 @@ func actionEvent(payload modal.InteractionPayload) (events.APIGatewayProxyRespon
 func removeEvent(payload modal.InteractionPayload) (events.APIGatewayProxyResponse, error) {
 	log.Printf("remove starteddddddddddddddd	sss")
 	//actionId := payload.ActionCallback.BlockActions[0].ActionID
-	actionValue := payload.ActionCallback.BlockActions[0].Value
-	todaysSectionBlocks, tomorrowsSectionBlocks := modal.RemoveEvent(payload.View.Blocks.BlockSet, actionValue)
+	//actionValue := payload.ActionCallback.BlockActions[0].Value
+	blockIdToDelete := payload.ActionCallback.BlockActions[0].BlockID
+
+	todaysEvents, tomorrowsEvents := modal.ExtractEvents(payload.View.Blocks.BlockSet)
+
+	todaysEvents = model.RemoveEvent(blockIdToDelete, todaysEvents)
+	tomorrowsEvents = model.RemoveEvent(blockIdToDelete, tomorrowsEvents)
+	todaysSectionBlocks, tomorrowsSectionBlocks := modal.ConvertToEventsWithRemoveButton(todaysEvents, tomorrowsEvents)
+	todaysSectionBlocks, tomorrowsSectionBlocks = modal.ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks, tomorrowsSectionBlocks)
+
+
+	//todaysSectionBlocks, tomorrowsSectionBlocks := modal.RemoveEvent(payload.View.Blocks.BlockSet, actionValue)
+	//todaysSectionBlocks, tomorrowsSectionBlocks := modal.RemoveEvent(payload.View.Blocks.BlockSet, blockIdToDelete)
 	index := modal.ExtractInputIndex(payload.View.Blocks.BlockSet)
 
 	modalRequest := modal.NewEditEventsModal(index, todaysSectionBlocks, tomorrowsSectionBlocks)
@@ -144,12 +155,12 @@ func removeEvent(payload modal.InteractionPayload) (events.APIGatewayProxyRespon
 func pushModalWithAddedEvent(payload modal.InteractionPayload) (events.APIGatewayProxyResponse, error) {
 	action := payload.View.State.Values[modal.AddEventDayInputBlock][modal.AddEventDayActionId]
 	marshal, _ := json.Marshal(action)
-	fmt.Printf("Add Event button pressed by user %s with value %v\n", payload.User.Name, string(marshal))
+	fmt.Printf("aAdd Event button pressed by user %s with value %v\n", payload.User.Name, string(marshal))
 
 	index := modal.ExtractInputIndex(payload.View.Blocks.BlockSet)
-	todaysEvents, tomorrowsEvents := modal.ExtractEvents2(payload.View.Blocks.BlockSet)
+	todaysEvents, tomorrowsEvents := modal.ExtractEvents(payload.View.Blocks.BlockSet)
 
-	newEvent := modal.BuildNewEventSectionBlock2(index, payload.View.State.Values)
+	newEvent := modal.BuildNewEventSectionBlock(index, payload.View.State.Values)
 	switch newEvent.Day {
 	case modal.TodayOptionValue:
 		todaysEvents = model.AddEventInOrder(newEvent, todaysEvents)
@@ -161,7 +172,7 @@ func pushModalWithAddedEvent(payload modal.InteractionPayload) (events.APIGatewa
 
 
 	//todaysSectionBlocks, tomorrowsSectionBlocks := modal.AddNewEventToDay(payload.View.Blocks.BlockSet, eventDay, newEvent)
-	todaysSectionBlocks, tomorrowsSectionBlocks := modal.ConvertToEventsWithRemoveButton2(todaysEvents, tomorrowsEvents)
+	todaysSectionBlocks, tomorrowsSectionBlocks := modal.ConvertToEventsWithRemoveButton(todaysEvents, tomorrowsEvents)
 	todaysSectionBlocks, tomorrowsSectionBlocks = modal.ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks, tomorrowsSectionBlocks)
 	fmt.Printf("Addedsssss New gotasdf: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
 
@@ -201,8 +212,8 @@ func pushModalWithAddedEvent(payload modal.InteractionPayload) (events.APIGatewa
 func pushEditEventModal(payload modal.InteractionPayload) (events.APIGatewayProxyResponse, error) {
 	fmt.Printf("Message button pressed by user %s with value %v\n", payload.User.Name, payload)
 
-	todaysEvents, tomorrowsEvents := modal.ExtractEvents2(payload.View.Blocks.BlockSet)
-	todaysSectionBlocks, tomorrowsSectionEvents := modal.ConvertToEventsWithRemoveButton2(todaysEvents, tomorrowsEvents)
+	todaysEvents, tomorrowsEvents := modal.ExtractEvents(payload.View.Blocks.BlockSet)
+	todaysSectionBlocks, tomorrowsSectionEvents := modal.ConvertToEventsWithRemoveButton(todaysEvents, tomorrowsEvents)
 	todaysSectionBlocks, tomorrowsSectionEvents = modal.ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks, tomorrowsSectionEvents)
 	index :=modal.ExtractInputIndex(payload.View.Blocks.BlockSet)
 
@@ -240,8 +251,8 @@ func viewClosed(payload modal.InteractionPayload) (events.APIGatewayProxyRespons
 
 
 func returnToSummaryModal(payload modal.InteractionPayload) (events.APIGatewayProxyResponse, error) {
-	todaysEvents, tomorrowsEvents := modal.ExtractEvents2(payload.View.Blocks.BlockSet)
-	todaysSectionBlocks, tomorrowsSectionBlocks := modal.ConvertToEventsWithoutRemoveButton2(todaysEvents, tomorrowsEvents)
+	todaysEvents, tomorrowsEvents := modal.ExtractEvents(payload.View.Blocks.BlockSet)
+	todaysSectionBlocks, tomorrowsSectionBlocks := modal.ConvertToEventsWithoutRemoveButton(todaysEvents, tomorrowsEvents)
 	todaysSectionBlocks, tomorrowsSectionBlocks = modal.ReplaceEmptyEventsWithNoEventsYet(todaysSectionBlocks, tomorrowsSectionBlocks)
 
 	modalRequest := modal.NewSummaryModal(todaysSectionBlocks, tomorrowsSectionBlocks)

@@ -377,3 +377,55 @@ func Test_findIndexToInsertAt(t *testing.T) {
 		})
 	}
 }
+
+func Test_RemoveEvent(t *testing.T) {
+	type args struct {
+		id     string
+		events []Event
+	}
+	tests := []struct {
+		name string
+		args args
+		want []Event
+	}{
+		{
+			name: "empty",
+			args: args{
+				id:     "ABC",
+				events: []Event{},
+			},
+			want: []Event{},
+		},
+		{
+			name: "not found",
+			args: args{
+				id:     "ABC",
+				events: []Event{{Id: "DEF"}},
+			},
+			want: []Event{{Id: "DEF"}},
+		},
+		{
+			name: "first",
+			args: args{
+				id:     "ABC",
+				events: []Event{{Id: "ABC"}},
+			},
+			want: []Event{},
+		},
+		{
+			name: "second",
+			args: args{
+				id:     "ABC",
+				events: []Event{{Id: "DEF"}, {Id: "ABC"}},
+			},
+			want: []Event{{Id: "DEF"}},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := RemoveEvent(tt.args.id, tt.args.events); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("RemoveEvent() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

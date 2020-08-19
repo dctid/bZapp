@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/dctid/bZapp/format"
 	"github.com/dctid/bZapp/mocks"
+	"github.com/dctid/bZapp/model"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"log"
@@ -118,6 +119,9 @@ func TestInteraction(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		model.Hash = func() string {
+			return "Fake hash"
+		}
 		gotDo = do{}
 		mocks.GetDoFunc = func(req *http.Request) (*http.Response, error) {
 			log.Printf("url %s ", req.URL)
@@ -712,6 +716,7 @@ const addEventSubmissionResponse = `{
 			},
 			{
 				"type": "section",
+				"block_id": "Fakehash",
 				"text": {
 					"type": "mrkdwn",
 					"text": "4:45 retrob"
@@ -724,7 +729,7 @@ const addEventSubmissionResponse = `{
 						"type": "plain_text"
 					},
 					"type": "button",
-					"value": "remove_tomorrow_0"
+					"value": "remove_tomorrow_Fakehash"
 				}
 			},
 			{
@@ -946,6 +951,7 @@ const submissionJson = `{
 			"type": "divider"
 		},
 		{
+			"block_id": "FpV6",
 			"text": {
 				"text": "10:45gsfd",
 				"type": "mrkdwn"
@@ -968,6 +974,7 @@ const submissionJson = `{
 			"type": "divider"
 		},
 		{
+			"block_id": "xWAF3",
 			"text": {
 				"text": "4:30kljh",
 				"type": "mrkdwn"
@@ -1001,6 +1008,7 @@ const summaryModal = `{
 				"type": "divider"
 			},
 			{
+				"block_id": "qKG",
 				"text": {
 					"text": "10:45gsfd",
 					"type": "mrkdwn"

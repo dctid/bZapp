@@ -11,21 +11,6 @@ import (
 	"strings"
 )
 
-func convertToEventsWithoutRemoveButton(todaysSectionBlocks []*slack.SectionBlock, tomorrowsSectionBlocks []*slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	return removeAccessory(todaysSectionBlocks), removeAccessory(tomorrowsSectionBlocks)
-}
-
-func removeAccessory(sectionBlocks []*slack.SectionBlock) []*slack.SectionBlock {
-	result := make([]*slack.SectionBlock, len(sectionBlocks))
-	for index, sectionBlock := range sectionBlocks {
-		result[index] = slack.NewSectionBlock(
-			sectionBlock.Text,
-			sectionBlock.Fields,
-			nil,
-		)
-	}
-	return result
-}
 
 func extractDay(actionValue string) string {
 	return strings.Split(actionValue, "_")[1]
@@ -40,14 +25,6 @@ func extractIndex(actionId string, events []*slack.SectionBlock) (int, error) {
 	return -1, errors.New("couldn't find matching event")
 }
 
-func addNewEventToCorrectDay(eventDay string, todaysSectionBlocks []*slack.SectionBlock, newEvent *slack.SectionBlock, tomorrowsSectionBlocks []*slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {
-	if eventDay == TodayOptionValue {
-		todaysSectionBlocks = append(todaysSectionBlocks, newEvent)
-	} else {
-		tomorrowsSectionBlocks = append(tomorrowsSectionBlocks, newEvent)
-	}
-	return todaysSectionBlocks, tomorrowsSectionBlocks
-}
 
 func removeEventFromCorrectDay(eventDay string, todaysSectionBlocks []*slack.SectionBlock, indexToRemove int, tomorrowsSectionBlocks []*slack.SectionBlock) ([]*slack.SectionBlock, []*slack.SectionBlock) {
 	if eventDay == TodayOptionValue {
@@ -65,26 +42,8 @@ func remove(sectionBlocks []*slack.SectionBlock, indexToRemove int, ) []*slack.S
 	return sectionBlocks
 }
 
-func convertToEventsWithRemoveButton(day string, sectionBlocks []*slack.SectionBlock) []*slack.SectionBlock {
-	convertedBlocks := make([]*slack.SectionBlock, len(sectionBlocks))
 
-	for index, sectionBlock := range sectionBlocks {
-		convertedBlocks[index] = slack.NewSectionBlock(
-			sectionBlock.Text,
-			sectionBlock.Fields,
-			slack.NewAccessory(
-				slack.NewButtonBlockElement(
-					RemoveEventActionId,
-					fmt.Sprintf("remove_%s_%d", day, index),
-					slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false),
-				),
-			),
-		)
-	}
-	return convertedBlocks
-}
-
-func convertToEventsWithRemoveButton2(events []model.Event) []*slack.SectionBlock {
+func convertToEventsWithRemoveButton(events []model.Event) []*slack.SectionBlock {
 	convertedBlocks := make([]*slack.SectionBlock, len(events))
 
 	for index, event := range events {
@@ -94,16 +53,17 @@ func convertToEventsWithRemoveButton2(events []model.Event) []*slack.SectionBloc
 			slack.NewAccessory(
 				slack.NewButtonBlockElement(
 					RemoveEventActionId,
-					fmt.Sprintf("remove_%s_%d", event.Day, index),
+					fmt.Sprintf("remove_%s_%s", event.Day, event.Id),
 					slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false),
 				),
 			),
+			slack.SectionBlockOptionBlockID(event.Id),
 		)
 	}
 	return convertedBlocks
 }
 
-func convertToEventsWithoutRemoveButton2(events []model.Event) []*slack.SectionBlock {
+func convertToEventsWithoutRemoveButton(events []model.Event) []*slack.SectionBlock {
 	convertedBlocks := make([]*slack.SectionBlock, len(events))
 
 	for index, event := range events {
@@ -111,6 +71,7 @@ func convertToEventsWithoutRemoveButton2(events []model.Event) []*slack.SectionB
 			slack.NewTextBlockObject(slack.MarkdownType, event.ToString(), false, false),
 			nil,
 			nil,
+			slack.SectionBlockOptionBlockID(event.Id),
 		)
 	}
 	return convertedBlocks
@@ -135,14 +96,6 @@ func firstBlockOfTypeIndex(vs []slack.Block, t slack.MessageBlockType) int {
 		}
 	}
 	return -1
-}
-
-func eventSectionWithoutRemoveButton(title string, hour string, mins string) *slack.SectionBlock {
-	return slack.NewSectionBlock(
-		slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf("%s:%s %s", strings.Fields(hour)[0], mins, title), false, false),
-		nil,
-		nil,
-	)
 }
 
 
@@ -193,7 +146,8 @@ func mapToEvents(day string, blocks []slack.Block) []model.Event {
 
 func convertToEvent(day string, block slack.Block) model.Event {
 	spacesOrColon := regexp.MustCompile(`(?:\:|\s)+`)
-	text := block.(*slack.SectionBlock).Text.Text
+	sectionBlock := block.(*slack.SectionBlock)
+	text := sectionBlock.Text.Text
 	tokens := spacesOrColon.Split(text, -1)
 	log.Printf("text %s, %d", tokens, len(tokens))
 
@@ -201,5 +155,5 @@ func convertToEvent(day string, block slack.Block) model.Event {
 	mins, _ := strconv.Atoi(tokens[1])
 	amPm := amOrPm(hour)
 
-	return model.Event{Title: tokens[2], Day: day, Hour: hour, Min: mins, AmPm: amPm}
+	return model.Event{Id: sectionBlock.BlockID, Title: tokens[2], Day: day, Hour: hour, Min: mins, AmPm: amPm}
 }

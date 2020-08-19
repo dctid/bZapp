@@ -23,51 +23,20 @@ func TestBuildNewEventSectionBlock(t *testing.T) {
 		fmt.Sprintf("%s-%d", AddEventMinsInputBlock, 1):  {AddEventMinsActionId: slack.BlockAction{SelectedOption: slack.OptionBlockObject{Text: &slack.TextBlockObject{Text: "15"}}}},
 	}
 	tests := []struct {
-		name  string
-		args  args
-		want  string
-		want1 *slack.SectionBlock
-	}{
-		{name: "default", args: args{index: 1, values: values}, want: "today",
-			want1: eventSectionWithoutRemoveButton("title", "10 AM", "15"),
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := BuildNewEventSectionBlock(tt.args.index, tt.args.values)
-			if got != tt.want {
-				t.Errorf("BuildNewEventSectionBlock() got = %v, want %v", got, tt.want)
-			}
-			if !reflect.DeepEqual(got1, tt.want1) {
-				t.Errorf("BuildNewEventSectionBlock() got1 = %v, want %v", got1, tt.want1)
-			}
-		})
-	}
-}
-func TestBuildNewEventSectionBlock2(t *testing.T) {
-	type args struct {
-		index  int
-		values map[string]map[string]slack.BlockAction
-	}
-
-	values := map[string]map[string]slack.BlockAction{
-		fmt.Sprintf("%s-%d", AddEventTitleInputBlock, 1): {AddEventTitleActionId: slack.BlockAction{Value: "title"}},
-		fmt.Sprintf("%s-%d", AddEventDayInputBlock, 1):   {AddEventDayActionId: slack.BlockAction{SelectedOption: slack.OptionBlockObject{Value: TodayOptionValue}}},
-		fmt.Sprintf("%s-%d", AddEventHoursInputBlock, 1): {AddEventHoursActionId: slack.BlockAction{SelectedOption: slack.OptionBlockObject{Text: &slack.TextBlockObject{Text: "10 AM"}}}},
-		fmt.Sprintf("%s-%d", AddEventMinsInputBlock, 1):  {AddEventMinsActionId: slack.BlockAction{SelectedOption: slack.OptionBlockObject{Text: &slack.TextBlockObject{Text: "15"}}}},
-	}
-	tests := []struct {
-		name  string
-		args  args
-		want  model.Event
+		name string
+		args args
+		want model.Event
 	}{
 		{name: "default", args: args{index: 1, values: values},
-			want: model.Event{Title: "title", Day: TodayOptionValue, Hour: 10, Min: 15, AmPm: "AM"},
+			want: model.Event{Id: "FakeHash", Title: "title", Day: TodayOptionValue, Hour: 10, Min: 15, AmPm: "AM"},
 		},
 	}
 	for _, tt := range tests {
+		model.Hash = func() string {
+			return "FakeHash"
+		}
 		t.Run(tt.name, func(t *testing.T) {
-			got := BuildNewEventSectionBlock2(tt.args.index, tt.args.values)
+			got := BuildNewEventSectionBlock(tt.args.index, tt.args.values)
 			if got != tt.want {
 				t.Errorf("BuildNewEventSectionBlock() got = %v, want %v", got, tt.want)
 			}
@@ -76,45 +45,6 @@ func TestBuildNewEventSectionBlock2(t *testing.T) {
 }
 
 func TestExtractEvents(t *testing.T) {
-	type args struct {
-		blocks []slack.Block
-	}
-	tests := []struct {
-		name  string
-		args  args
-		want  []*slack.SectionBlock
-		want1 []*slack.SectionBlock
-	}{
-		{name: "empty",
-			args:  args{blocks: NewSummaryModal(NoEventYetSection, NoEventYetSection).Blocks.BlockSet},
-			want:  []*slack.SectionBlock{},
-			want1: []*slack.SectionBlock{},
-		},
-		{name: "one each",
-			args: args{
-				blocks: NewSummaryModal(
-					[]*slack.SectionBlock{eventSectionWithoutRemoveButton("Standup", "9 AM", "15")},
-					[]*slack.SectionBlock{eventSectionWithoutRemoveButton("Standdown", "10 AM", "30")},
-				).Blocks.BlockSet,
-			},
-			want:  []*slack.SectionBlock{eventSectionWithoutRemoveButton("Standup", "9 AM", "15")},
-			want1: []*slack.SectionBlock{eventSectionWithoutRemoveButton("Standdown", "10 AM", "30")},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := ExtractEvents(tt.args.blocks)
-			log.Printf("got: %v, got1: %v", len(got), len(got1))
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ExtractEvents() got = %v, want %v", got, tt.want)
-			}
-			if !reflect.DeepEqual(got1, tt.want1) {
-				t.Errorf("ExtractEvents() got1 = %v, want %v", got1, tt.want1)
-			}
-		})
-	}
-}
-func TestExtractEvents2(t *testing.T) {
 	type args struct {
 		blocks []slack.Block
 	}
@@ -132,12 +62,13 @@ func TestExtractEvents2(t *testing.T) {
 		{name: "one each",
 			args: args{
 				blocks: NewSummaryModal(
-					[]*slack.SectionBlock{eventSectionWithoutRemoveButton("Standup", "9 AM", "15")},
-					[]*slack.SectionBlock{eventSectionWithoutRemoveButton("Standdown", "10 AM", "30")},
+					[]*slack.SectionBlock{eventSectionWithoutRemoveButton("fake event id 1", "Standup", "9 AM", "15")},
+					[]*slack.SectionBlock{eventSectionWithoutRemoveButton("fake event id 2", "Standdown", "10 AM", "30")},
 				).Blocks.BlockSet,
 			},
 			want: []model.Event{
-				model.Event{
+				{
+					Id: "fake event id 1",
 					Title: "Standup",
 					Day:   "today",
 					Hour:  9,
@@ -145,7 +76,8 @@ func TestExtractEvents2(t *testing.T) {
 					AmPm:  "AM",
 				}},
 			want1: []model.Event{
-				model.Event{
+				{
+					Id: "fake event id 2",
 					Title: "Standdown",
 					Day:   "tomorrow",
 					Hour:  10,
@@ -157,7 +89,7 @@ func TestExtractEvents2(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := ExtractEvents2(tt.args.blocks)
+			got, got1 := ExtractEvents(tt.args.blocks)
 			log.Printf("got: %v, got1: %v", len(got), len(got1))
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ExtractEvents() got = %v, want %v", got, tt.want)
@@ -171,64 +103,6 @@ func TestExtractEvents2(t *testing.T) {
 
 func TestConvertToEventsWithRemoveButton(t *testing.T) {
 	type args struct {
-		todayEvents    []*slack.SectionBlock
-		tomorrowEvents []*slack.SectionBlock
-	}
-	tests := []struct {
-		name  string
-		args  args
-		want  []*slack.SectionBlock
-		want1 []*slack.SectionBlock
-	}{
-		{
-			name: "empty",
-			args: args{
-				todayEvents:    []*slack.SectionBlock{},
-				tomorrowEvents: []*slack.SectionBlock{},
-			},
-			want:  []*slack.SectionBlock{},
-			want1: []*slack.SectionBlock{},
-		},
-		{
-			name: "today has one",
-			args: args{
-				todayEvents:    []*slack.SectionBlock{eventSectionWithoutRemoveButton("today event", "9 AM", "12")},
-				tomorrowEvents: []*slack.SectionBlock{},
-			},
-			want:  []*slack.SectionBlock{EventSectionWithRemoveButton(TodayOptionValue, 0, "today event", "9 AM", "12")},
-			want1: []*slack.SectionBlock{},
-		},
-		{
-			name: "tomorrow has two",
-			args: args{
-				todayEvents: []*slack.SectionBlock{},
-				tomorrowEvents: []*slack.SectionBlock{
-					eventSectionWithoutRemoveButton("tomorrow event", "9 AM", "12"),
-					eventSectionWithoutRemoveButton("tomorrow event 2", "11 AM", "01"),
-				},
-			},
-			want: []*slack.SectionBlock{},
-			want1: []*slack.SectionBlock{
-				EventSectionWithRemoveButton(TomorrowOptionValue, 0, "tomorrow event", "9 AM", "12"),
-				EventSectionWithRemoveButton(TomorrowOptionValue, 1, "tomorrow event 2", "11 AM", "01"),
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := ConvertToEventsWithRemoveButton(tt.args.todayEvents, tt.args.tomorrowEvents)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ConvertToEventsWithRemoveButton() got = %v, want %v", got, tt.want)
-			}
-			if !reflect.DeepEqual(got1, tt.want1) {
-				t.Errorf("ConvertToEventsWithRemoveButton() got1 = %v, want %v", got1, tt.want1)
-			}
-		})
-	}
-}
-
-func TestConvertToEventsWithRemoveButton2(t *testing.T) {
-	type args struct {
 		todayEvents    []model.Event
 		tomorrowEvents []model.Event
 	}
@@ -250,10 +124,10 @@ func TestConvertToEventsWithRemoveButton2(t *testing.T) {
 		{
 			name: "today has one",
 			args: args{
-				todayEvents:    []model.Event{{Title: "today event", Day: TodayOptionValue, Hour: 9, Min: 12, AmPm: "AM"}},
+				todayEvents:    []model.Event{{Id: "Today Event", Title: "today event", Day: TodayOptionValue, Hour: 9, Min: 12, AmPm: "AM"}},
 				tomorrowEvents: []model.Event{},
 			},
-			want:  []*slack.SectionBlock{EventSectionWithRemoveButton(TodayOptionValue, 0, "today event", "9 AM", "12")},
+			want:  []*slack.SectionBlock{EventSectionWithRemoveButton(TodayOptionValue, 0, "Today Event", "today event", "9 AM", "12")},
 			want1: []*slack.SectionBlock{},
 		},
 		{
@@ -261,20 +135,20 @@ func TestConvertToEventsWithRemoveButton2(t *testing.T) {
 			args: args{
 				todayEvents: []model.Event{},
 				tomorrowEvents: []model.Event{
-					{Title: "tomorrow event", Day: TomorrowOptionValue, Hour: 9, Min: 12, AmPm: "AM"},
-					{Title: "tomorrow event 2", Day: TomorrowOptionValue, Hour: 11, Min: 1, AmPm: "AM"},
+					{Id: "Event 1", Title: "tomorrow event", Day: TomorrowOptionValue, Hour: 9, Min: 12, AmPm: "AM"},
+					{Id: "Event 2", Title: "tomorrow event 2", Day: TomorrowOptionValue, Hour: 11, Min: 1, AmPm: "AM"},
 				},
 			},
 			want: []*slack.SectionBlock{},
 			want1: []*slack.SectionBlock{
-				EventSectionWithRemoveButton(TomorrowOptionValue, 0, "tomorrow event", "9 AM", "12"),
-				EventSectionWithRemoveButton(TomorrowOptionValue, 1, "tomorrow event 2", "11 AM", "01"),
+				EventSectionWithRemoveButton(TomorrowOptionValue, 0, "Event 1", "tomorrow event", "9 AM", "12"),
+				EventSectionWithRemoveButton(TomorrowOptionValue, 1, "Event 2", "tomorrow event 2", "11 AM", "01"),
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := ConvertToEventsWithRemoveButton2(tt.args.todayEvents, tt.args.tomorrowEvents)
+			got, got1 := ConvertToEventsWithRemoveButton(tt.args.todayEvents, tt.args.tomorrowEvents)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ConvertToEventsWithRemoveButton() got = %v\n, want %v\n", got, tt.want)
 
@@ -286,7 +160,7 @@ func TestConvertToEventsWithRemoveButton2(t *testing.T) {
 	}
 }
 
-func TestConvertToEventsWithoutRemoveButton2(t *testing.T) {
+func TestConvertToEventsWithoutRemoveButton(t *testing.T) {
 	type args struct {
 		todayEvents    []model.Event
 		tomorrowEvents []model.Event
@@ -309,10 +183,10 @@ func TestConvertToEventsWithoutRemoveButton2(t *testing.T) {
 		{
 			name: "today has one",
 			args: args{
-				todayEvents:    []model.Event{{Title: "today event", Day: TodayOptionValue, Hour: 9, Min: 12, AmPm: "AM"}},
+				todayEvents:    []model.Event{{Id: "todays id", Title: "today event", Day: TodayOptionValue, Hour: 9, Min: 12, AmPm: "AM"}},
 				tomorrowEvents: []model.Event{},
 			},
-			want:  []*slack.SectionBlock{EventSectionWithoutRemoveButton("today event", "9 AM", "12")},
+			want:  []*slack.SectionBlock{EventSectionWithoutRemoveButton("todays id", "today event", "9 AM", "12")},
 			want1: []*slack.SectionBlock{},
 		},
 		{
@@ -320,20 +194,20 @@ func TestConvertToEventsWithoutRemoveButton2(t *testing.T) {
 			args: args{
 				todayEvents: []model.Event{},
 				tomorrowEvents: []model.Event{
-					{Title: "tomorrow event", Day: TomorrowOptionValue, Hour: 9, Min: 12, AmPm: "AM"},
-					{Title: "tomorrow event 2", Day: TomorrowOptionValue, Hour: 11, Min: 1, AmPm: "AM"},
+					{Id: "tomorrows 1", Title: "tomorrow event", Day: TomorrowOptionValue, Hour: 9, Min: 12, AmPm: "AM"},
+					{Id: "tomorrows 2", Title: "tomorrow event 2", Day: TomorrowOptionValue, Hour: 11, Min: 1, AmPm: "AM"},
 				},
 			},
 			want: []*slack.SectionBlock{},
 			want1: []*slack.SectionBlock{
-				EventSectionWithoutRemoveButton( "tomorrow event", "9 AM", "12"),
-				EventSectionWithoutRemoveButton("tomorrow event 2", "11 AM", "01"),
+				EventSectionWithoutRemoveButton("tomorrows 1", "tomorrow event", "9 AM", "12"),
+				EventSectionWithoutRemoveButton("tomorrows 2", "tomorrow event 2", "11 AM", "01"),
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := ConvertToEventsWithoutRemoveButton2(tt.args.todayEvents, tt.args.tomorrowEvents)
+			got, got1 := ConvertToEventsWithoutRemoveButton(tt.args.todayEvents, tt.args.tomorrowEvents)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ConvertToEventsWithoutRemoveButton() got = %v\n, want %v\n", got, tt.want)
 
@@ -344,184 +218,7 @@ func TestConvertToEventsWithoutRemoveButton2(t *testing.T) {
 		})
 	}
 }
-func TestAddNewEventToDay(t *testing.T) {
-	type args struct {
-		blocks   []slack.Block
-		eventDay string
-		newEvent *slack.SectionBlock
-	}
-	tests := []struct {
-		name  string
-		args  args
-		want  []*slack.SectionBlock
-		want1 []*slack.SectionBlock
-	}{
-		{
-			name: "add to today when empty",
-			args: args{
-				blocks:   buildEventBlocks(NoEventYetSection, NoEventYetSection),
-				eventDay: TodayOptionValue,
-				newEvent: eventSectionWithoutRemoveButton("retro", "1 PM", "44"),
-			},
-			want:  []*slack.SectionBlock{eventSectionWithoutRemoveButton("retro", "1 PM", "44")},
-			want1: []*slack.SectionBlock{},
-		},
-		{
-			name: "add to tomorrow when empty",
-			args: args{
-				blocks:   buildEventBlocks(NoEventYetSection, NoEventYetSection),
-				eventDay: TomorrowOptionValue,
-				newEvent: eventSectionWithoutRemoveButton("retroed", "3 PM", "22"),
-			},
-			want:  []*slack.SectionBlock{},
-			want1: []*slack.SectionBlock{eventSectionWithoutRemoveButton("retroed", "3 PM", "22")},
-		},
-		{
-			name: "add to today when not empty",
-			args: args{
-				blocks:   buildEventBlocks([]*slack.SectionBlock{EventSectionWithRemoveButton(TodayOptionValue, 0, "standup", "9 AM", "07")}, NoEventYetSection),
-				eventDay: TodayOptionValue,
-				newEvent: EventSectionWithRemoveButton(TodayOptionValue, 1, "retro", "1 PM", "44"),
-			},
-			want: []*slack.SectionBlock{
-				EventSectionWithRemoveButton(TodayOptionValue, 0, "standup", "9 AM", "07"),
-				EventSectionWithRemoveButton(TodayOptionValue, 1, "retro", "1 PM", "44"),
-			},
-			want1: []*slack.SectionBlock{},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := AddNewEventToDay(tt.args.blocks, tt.args.eventDay, tt.args.newEvent)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("AddNewEventToDay() got = %v, want %v", got, tt.want)
-			}
-			if !reflect.DeepEqual(got1, tt.want1) {
-				t.Errorf("AddNewEventToDay() got1 = %v, want %v", got1, tt.want1)
-			}
-		})
-	}
-}
 
-func TestAddNewEventToDay2(t *testing.T) {
-	type args struct {
-		blocks   []slack.Block
-		eventDay string
-		newEvent *slack.SectionBlock
-	}
-	tests := []struct {
-		name  string
-		args  args
-		want  []*slack.SectionBlock
-		want1 []*slack.SectionBlock
-	}{
-		{
-			name: "add to today when empty",
-			args: args{
-				blocks:   buildEventBlocks(NoEventYetSection, NoEventYetSection),
-				eventDay: TodayOptionValue,
-				newEvent: eventSectionWithoutRemoveButton("retro", "1 PM", "44"),
-			},
-			want:  []*slack.SectionBlock{eventSectionWithoutRemoveButton("retro", "1 PM", "44")},
-			want1: []*slack.SectionBlock{},
-		},
-		{
-			name: "add to tomorrow when empty",
-			args: args{
-				blocks:   buildEventBlocks(NoEventYetSection, NoEventYetSection),
-				eventDay: TomorrowOptionValue,
-				newEvent: eventSectionWithoutRemoveButton("retroed", "3 PM", "22"),
-			},
-			want:  []*slack.SectionBlock{},
-			want1: []*slack.SectionBlock{eventSectionWithoutRemoveButton("retroed", "3 PM", "22")},
-		},
-		{
-			name: "add to today when not empty",
-			args: args{
-				blocks:   buildEventBlocks([]*slack.SectionBlock{EventSectionWithRemoveButton(TodayOptionValue, 0, "standup", "9 AM", "07")}, NoEventYetSection),
-				eventDay: TodayOptionValue,
-				newEvent: EventSectionWithRemoveButton(TodayOptionValue, 1, "retro", "1 PM", "44"),
-			},
-			want: []*slack.SectionBlock{
-				EventSectionWithRemoveButton(TodayOptionValue, 0, "standup", "9 AM", "07"),
-				EventSectionWithRemoveButton(TodayOptionValue, 1, "retro", "1 PM", "44"),
-			},
-			want1: []*slack.SectionBlock{},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := AddNewEventToDay(tt.args.blocks, tt.args.eventDay, tt.args.newEvent)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("AddNewEventToDay() got = %v, want %v", got, tt.want)
-			}
-			if !reflect.DeepEqual(got1, tt.want1) {
-				t.Errorf("AddNewEventToDay() got1 = %v, want %v", got1, tt.want1)
-			}
-		})
-	}
-}
-
-func TestRemoveEvent(t *testing.T) {
-	type args struct {
-		blocks   []slack.Block
-		actionId string
-	}
-	tests := []struct {
-		name  string
-		args  args
-		want  []*slack.SectionBlock
-		want1 []*slack.SectionBlock
-	}{
-		{
-			name: "remove first today",
-			args: args{
-				blocks:   buildEventBlocks([]*slack.SectionBlock{EventSectionWithRemoveButton(TodayOptionValue, 0, "standup", "9 AM", "07")}, NoEventYetSection),
-				actionId: "remove_today_0",
-			},
-			want:  NoEventYetSection,
-			want1: NoEventYetSection,
-		},
-		{
-			name: "remove first tomorrow",
-			args: args{
-				blocks:   buildEventBlocks(NoEventYetSection, []*slack.SectionBlock{EventSectionWithRemoveButton(TomorrowOptionValue, 0, "standup", "9 AM", "07")}),
-				actionId: "remove_tomorrow_0",
-			},
-			want:  NoEventYetSection,
-			want1: NoEventYetSection,
-		},
-		{
-			name: "remove second today",
-			args: args{
-				blocks:   buildEventBlocks([]*slack.SectionBlock{EventSectionWithRemoveButton(TodayOptionValue, 0, "standup", "9 AM", "07"), EventSectionWithRemoveButton(TodayOptionValue, 1, "retro", "3 PM", "00")}, NoEventYetSection),
-				actionId: "remove_today_1",
-			},
-			want:  []*slack.SectionBlock{EventSectionWithRemoveButton(TodayOptionValue, 0, "standup", "9 AM", "07")},
-			want1: NoEventYetSection,
-		},
-		{
-			name: "remove first today with second",
-			args: args{
-				blocks:   buildEventBlocks([]*slack.SectionBlock{EventSectionWithRemoveButton(TodayOptionValue, 0, "standup", "9 AM", "07"), EventSectionWithRemoveButton(TodayOptionValue, 1, "retro", "3 PM", "00")}, NoEventYetSection),
-				actionId: "remove_today_0",
-			},
-			want:  []*slack.SectionBlock{EventSectionWithRemoveButton(TodayOptionValue, 1, "retro", "3 PM", "00")},
-			want1: NoEventYetSection,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := RemoveEvent(tt.args.blocks, tt.args.actionId)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("RemoveEvent() got = %v, want %v", got, tt.want)
-			}
-			if !reflect.DeepEqual(got1, tt.want1) {
-				t.Errorf("RemoveEvent() got1 = %v, want %v", got1, tt.want1)
-			}
-		})
-	}
-}
 
 func TestReplaceEmptyEventsWithNoEventsYet(t *testing.T) {
 	type args struct {
@@ -543,24 +240,24 @@ func TestReplaceEmptyEventsWithNoEventsYet(t *testing.T) {
 		},
 		{name: "today empty", args: args{
 			todaysSectionBlocks:    []*slack.SectionBlock{},
-			tomorrowsSectionBlocks: []*slack.SectionBlock{eventSectionWithoutRemoveButton("title", "10 AM", "15")},
+			tomorrowsSectionBlocks: []*slack.SectionBlock{eventSectionWithoutRemoveButton("fake event id", "title", "10 AM", "15")},
 		},
 			want:  []*slack.SectionBlock{slack.NewSectionBlock(slack.NewTextBlockObject(slack.MarkdownType, NoEventsText, false, false), nil, nil)},
-			want1: []*slack.SectionBlock{eventSectionWithoutRemoveButton("title", "10 AM", "15")},
+			want1: []*slack.SectionBlock{eventSectionWithoutRemoveButton("fake event id", "title", "10 AM", "15")},
 		},
 		{name: "tomorrow empty", args: args{
-			todaysSectionBlocks:    []*slack.SectionBlock{eventSectionWithoutRemoveButton("title", "10 AM", "15")},
+			todaysSectionBlocks:    []*slack.SectionBlock{eventSectionWithoutRemoveButton("fake event id", "title", "10 AM", "15")},
 			tomorrowsSectionBlocks: []*slack.SectionBlock{},
 		},
-			want:  []*slack.SectionBlock{eventSectionWithoutRemoveButton("title", "10 AM", "15")},
+			want:  []*slack.SectionBlock{eventSectionWithoutRemoveButton("fake event id", "title", "10 AM", "15")},
 			want1: []*slack.SectionBlock{slack.NewSectionBlock(slack.NewTextBlockObject(slack.MarkdownType, NoEventsText, false, false), nil, nil)},
 		},
 		{name: "none empty", args: args{
-			todaysSectionBlocks:    []*slack.SectionBlock{eventSectionWithoutRemoveButton("title", "10 AM", "15")},
-			tomorrowsSectionBlocks: []*slack.SectionBlock{eventSectionWithoutRemoveButton("title2", "11 AM", "30")},
+			todaysSectionBlocks:    []*slack.SectionBlock{eventSectionWithoutRemoveButton("fake event id", "title", "10 AM", "15")},
+			tomorrowsSectionBlocks: []*slack.SectionBlock{eventSectionWithoutRemoveButton("fake event id", "title2", "11 AM", "30")},
 		},
-			want:  []*slack.SectionBlock{eventSectionWithoutRemoveButton("title", "10 AM", "15")},
-			want1: []*slack.SectionBlock{eventSectionWithoutRemoveButton("title2", "11 AM", "30")},
+			want:  []*slack.SectionBlock{eventSectionWithoutRemoveButton("fake event id", "title", "10 AM", "15")},
+			want1: []*slack.SectionBlock{eventSectionWithoutRemoveButton("fake event id", "title2", "11 AM", "30")},
 		},
 	}
 	for _, tt := range tests {
@@ -576,25 +273,27 @@ func TestReplaceEmptyEventsWithNoEventsYet(t *testing.T) {
 	}
 }
 
-func EventSectionWithRemoveButton(day string, index int, title string, hour string, mins string) *slack.SectionBlock {
+func EventSectionWithRemoveButton(day string, index int, id string, title string, hour string, mins string) *slack.SectionBlock {
 	return slack.NewSectionBlock(
 		slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf("%s:%s %s", strings.Fields(hour)[0], mins, title), false, false),
 		nil,
 		slack.NewAccessory(
 			slack.NewButtonBlockElement(
 				RemoveEventActionId,
-				fmt.Sprintf("remove_%s_%d", day, index),
+				fmt.Sprintf("remove_%s_%s", day, id),
 				slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false),
 			),
 		),
+		slack.SectionBlockOptionBlockID(id),
 	)
 }
 
-func EventSectionWithoutRemoveButton(title string, hour string, mins string) *slack.SectionBlock {
+func EventSectionWithoutRemoveButton(id string, title string, hour string, mins string) *slack.SectionBlock {
 	return slack.NewSectionBlock(
 		slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf("%s:%s %s", strings.Fields(hour)[0], mins, title), false, false),
 		nil,
 		nil,
+		slack.SectionBlockOptionBlockID(id),
 	)
 }
 
@@ -644,4 +343,15 @@ func TestExtractInputIndex(t *testing.T) {
 			}
 		})
 	}
+}
+
+
+
+func eventSectionWithoutRemoveButton(id string, title string, hour string, mins string) *slack.SectionBlock {
+	return slack.NewSectionBlock(
+		slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf("%s:%s %s", strings.Fields(hour)[0], mins, title), false, false),
+		nil,
+		nil,
+		slack.SectionBlockOptionBlockID(id),
+	)
 }
