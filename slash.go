@@ -3,7 +3,7 @@ package bZapp
 import (
 	"context"
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/dctid/bZapp/modal"
+	"github.com/dctid/bZapp/view"
 	"github.com/slack-go/slack"
 	"log"
 	"net/url"
@@ -38,7 +38,7 @@ func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.API
 	//}
 
 	triggerId := m["trigger_id"][0]// fmt.Sprintf("%v", bodyMap["trigger_id"])
-	modalRequest := modal.NewSummaryModal(modal.NoEventYetSection, modal.NoEventYetSection)
+	modalRequest := view.NewSummaryModal(view.NoEventYetSection, view.NoEventYetSection)
 	//modalRequest.ExternalID = "adsbadfbadf"
 
 	getenv := os.Getenv("SLACK_TOKEN")
@@ -49,10 +49,10 @@ func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.API
 	statusCode := 200
 	if err != nil {
 		statusCode = 500
-		log.Printf("Err opening modal: %v", err)
+		log.Printf("Err opening view: %v", err)
 	} else {
 		//indent, _ := json.MarshalIndent(viewResponse, "", "\t")
-		//log.Printf("Success open modal: %v", string(indent))
+		//log.Printf("Success open view: %v", string(indent))
 	}
 
 	//jsonBytes, err := json.Marshal(modalRequest)

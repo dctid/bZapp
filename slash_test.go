@@ -125,7 +125,7 @@ const expected = `{
 		"error": "",
 		"id": "V018C5094DQ",
 		"team_id": "T7NS02BFB",
-		"type": "modal",
+		"type": "view",
 		"title": {
 			"type": "plain_text",
 			"text": "bZapp",
