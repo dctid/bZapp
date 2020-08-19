@@ -109,8 +109,6 @@ func actionEvent(payload modal.InteractionPayload) (events.APIGatewayProxyRespon
 
 func removeEvent(payload modal.InteractionPayload) (events.APIGatewayProxyResponse, error) {
 	log.Printf("remove starteddddddddddddddd	sss")
-	//actionId := payload.ActionCallback.BlockActions[0].ActionID
-	//actionValue := payload.ActionCallback.BlockActions[0].Value
 	blockIdToDelete := payload.ActionCallback.BlockActions[0].BlockID
 
 	todaysEvents, tomorrowsEvents := modal.ExtractEvents(payload.View.Blocks.BlockSet)
@@ -119,13 +117,9 @@ func removeEvent(payload modal.InteractionPayload) (events.APIGatewayProxyRespon
 	tomorrowsEvents = model.RemoveEvent(blockIdToDelete, tomorrowsEvents)
 	todaysSectionBlocks, tomorrowsSectionBlocks := modal.ConvertToEventsWithRemoveButton(todaysEvents, tomorrowsEvents)
 
-
-	//todaysSectionBlocks, tomorrowsSectionBlocks := modal.RemoveEvent(payload.View.Blocks.BlockSet, actionValue)
-	//todaysSectionBlocks, tomorrowsSectionBlocks := modal.RemoveEvent(payload.View.Blocks.BlockSet, blockIdToDelete)
 	index := modal.ExtractInputIndex(payload.View.Blocks.BlockSet)
 
 	modalRequest := modal.NewEditEventsModal(index, todaysSectionBlocks, tomorrowsSectionBlocks)
-	//update := slack.NewUpdateViewSubmissionResponse(&modalRequest)
 
 	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true), slack.OptionHTTPClient(Client))
 	viewResponse, err := api.UpdateView(modalRequest, payload.View.ExternalID, payload.Hash, payload.View.ID)
@@ -139,13 +133,9 @@ func removeEvent(payload modal.InteractionPayload) (events.APIGatewayProxyRespon
 	update := slack.NewUpdateViewSubmissionResponse(&modalRequest)
 	jsonBytes, err := json.Marshal(update)
 	log.Printf("Json bytes: %v\n", string(jsonBytes))
-	//jsonBytes, err := json.Marshal(update)
-	//indent, _ := json.MarshalIndent(update, "", "\t")
-	//log.Printf("body sent to slack: %v", string(indent))
 
 	return events.APIGatewayProxyResponse{
 		Headers: JsonHeaders(),
-		//Body:       string(jsonBytes),
 		StatusCode: 200,
 	}, nil
 }
@@ -165,28 +155,9 @@ func pushModalWithAddedEvent(payload modal.InteractionPayload) (events.APIGatewa
 	case modal.TomorrowOptionValue:
 		tomorrowsEvents = model.AddEventInOrder(newEvent, tomorrowsEvents)
 	}
-
-	//eventDay, newEvent := modal.BuildNewEventSectionBlock(index, payload.View.State.Values)
-
-
-	//todaysSectionBlocks, tomorrowsSectionBlocks := modal.AddNewEventToDay(payload.View.Blocks.BlockSet, eventDay, newEvent)
 	todaysSectionBlocks, tomorrowsSectionBlocks := modal.ConvertToEventsWithRemoveButton(todaysEvents, tomorrowsEvents)
-	fmt.Printf("Addedsssss New gotasdf: %v, got1: %v\n", len(todaysSectionBlocks), len(tomorrowsSectionBlocks))
-
 
 	modalRequest := modal.NewEditEventsModal(index + 1, todaysSectionBlocks, tomorrowsSectionBlocks)
-	//modalRequest.PrivateMetadata = "test metadata"
-
-	//api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true))
-	//viewResponse, err := api.OpenView(payload.TriggerID, modalRequest)
-	////interaction, err := api.UpdateView(modalRequest, payload.View.ExternalID, payload.Hash, payload.View.ID)
-	//if err != nil {
-	//	log.Printf("Err opening modal: %v\n", err)
-	//} else {
-	//	log.Printf("Success open modal: %v\n", viewResponse)
-	//	indent, _ := json.MarshalIndent(viewResponse, "", "\t")
-	//	log.Printf("Success open modal2: %v", string(indent))
-	//}
 	update := slack.NewUpdateViewSubmissionResponse(&modalRequest)
 	jsonBytes, err := json.Marshal(update)
 	if err != nil {
@@ -215,7 +186,6 @@ func pushEditEventModal(payload modal.InteractionPayload) (events.APIGatewayProx
 
 	modalRequest := modal.NewEditEventsModal(index +1, todaysSectionBlocks, tomorrowsSectionEvents)
 	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true), slack.OptionHTTPClient(Client))
-	//viewResponse, err := api.UpdateView(modalRequest, payload.View.ExternalID, payload.Hash, payload.View.ID)
 	viewResponse, err := api.PushView(payload.TriggerID, modalRequest)
 	if err != nil {
 		log.Printf("Err opening modalss: %v\n", err)
