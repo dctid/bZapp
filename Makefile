@@ -1,5 +1,5 @@
 export AWS_DEFAULT_REGION ?= us-east-1
-APP ?= bzapp
+export APP ?= bzapp
 
 app: dev
 
@@ -11,7 +11,7 @@ deploy: BUCKET = pkgs-$(shell aws sts get-caller-identity --output text --query 
 deploy: handlers
 	@aws s3api head-bucket --bucket $(BUCKET) || aws s3 mb s3://$(BUCKET) --region $(AWS_DEFAULT_REGION)
 	sam package --output-template-file out.yml --s3-bucket $(BUCKET) --template-file template.yml
-	sam deploy --capabilities CAPABILITY_NAMED_IAM  --template-file out.yml --stack-name $(APP) --parameter-overrides SlackToken=$(SLACK_TOKEN) SlackSigningSecret=$(SLACK_SIGNING_SECRET)
+	sam deploy --capabilities CAPABILITY_NAMED_IAM  --template-file out.yml --stack-name $(APP) --parameter-overrides SlackSigningSecret=$(SLACK_SIGNING_SECRET) SlackToken=$(SLACK_TOKEN)
 
 
 dev-debug:
