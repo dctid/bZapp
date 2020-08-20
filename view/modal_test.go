@@ -62,8 +62,8 @@ func TestExtractEvents(t *testing.T) {
 		{name: "one each",
 			args: args{
 				blocks: NewSummaryModal(
-					[]*slack.SectionBlock{eventSectionWithoutRemoveButton("fake event id 1", "Standup", "9 AM", "15")},
-					[]*slack.SectionBlock{eventSectionWithoutRemoveButton("fake event id 2", "Standdown", "10 AM", "30")},
+					[]slack.Block{eventSectionWithoutRemoveButton("fake event id 1", "Standup", "9 AM", "15")},
+					[]slack.Block{eventSectionWithoutRemoveButton("fake event id 2", "Standdown", "10 AM", "30")},
 				).Blocks.BlockSet,
 			},
 			want: []model.Event{
@@ -109,8 +109,8 @@ func TestConvertToEventsWithRemoveButton(t *testing.T) {
 	tests := []struct {
 		name  string
 		args  args
-		want  []*slack.SectionBlock
-		want1 []*slack.SectionBlock
+		want  []slack.Block
+		want1 []slack.Block
 	}{
 		{
 			name: "empty",
@@ -127,7 +127,7 @@ func TestConvertToEventsWithRemoveButton(t *testing.T) {
 				todayEvents:    []model.Event{{Id: "Today Event", Title: "today event", Day: TodayOptionValue, Hour: 9, Min: 12, AmPm: "AM"}},
 				tomorrowEvents: []model.Event{},
 			},
-			want:  []*slack.SectionBlock{EventSectionWithRemoveButton(TodayOptionValue, 0, "Today Event", "today event", "9 AM", "12")},
+			want:  []slack.Block{EventSectionWithRemoveButton(TodayOptionValue, 0, "Today Event", "today event", "9 AM", "12")},
 			want1: NoEventYetSection,
 		},
 		{
@@ -140,7 +140,7 @@ func TestConvertToEventsWithRemoveButton(t *testing.T) {
 				},
 			},
 			want: NoEventYetSection,
-			want1: []*slack.SectionBlock{
+			want1: []slack.Block{
 				EventSectionWithRemoveButton(TomorrowOptionValue, 0, "Event 1", "tomorrow event", "9 AM", "12"),
 				EventSectionWithRemoveButton(TomorrowOptionValue, 1, "Event 2", "tomorrow event 2", "11 AM", "01"),
 			},
@@ -168,8 +168,8 @@ func TestConvertToEventsWithoutRemoveButton(t *testing.T) {
 	tests := []struct {
 		name  string
 		args  args
-		want  []*slack.SectionBlock
-		want1 []*slack.SectionBlock
+		want  []slack.Block
+		want1 []slack.Block
 	}{
 		{
 			name: "empty",
@@ -186,7 +186,7 @@ func TestConvertToEventsWithoutRemoveButton(t *testing.T) {
 				todayEvents:    []model.Event{{Id: "todays id", Title: "today event", Day: TodayOptionValue, Hour: 9, Min: 12, AmPm: "AM"}},
 				tomorrowEvents: []model.Event{},
 			},
-			want:  []*slack.SectionBlock{EventSectionWithoutRemoveButton("todays id", "today event", "9 AM", "12")},
+			want:  []slack.Block{EventSectionWithoutRemoveButton("todays id", "today event", "9 AM", "12")},
 			want1: NoEventYetSection,
 		},
 		{
@@ -199,7 +199,7 @@ func TestConvertToEventsWithoutRemoveButton(t *testing.T) {
 				},
 			},
 			want: NoEventYetSection,
-			want1: []*slack.SectionBlock{
+			want1: []slack.Block{
 				EventSectionWithoutRemoveButton("tomorrows 1", "tomorrow event", "9 AM", "12"),
 				EventSectionWithoutRemoveButton("tomorrows 2", "tomorrow event 2", "11 AM", "01"),
 			},

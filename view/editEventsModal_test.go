@@ -370,7 +370,7 @@ func TestNewEditEventsModal(t *testing.T) {
 		slack.NewTextBlockObject(slack.MarkdownType, "3:15 Retro", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_today_3_action_id", "remove_today_3", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("today_3"),
 	)
 
-	todaysEvents := []*slack.SectionBlock{standup, synthesis, retro}
+	todaysEvents := []slack.Block{standup, synthesis, retro}
 
 	tomorrowStandup := slack.NewSectionBlock(
 		slack.NewTextBlockObject(slack.MarkdownType, "9:15 Standup", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_tomorrow_1_action_id", "remove_tomorrow_1", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("tomorrow_1"),
@@ -382,7 +382,7 @@ func TestNewEditEventsModal(t *testing.T) {
 		slack.NewTextBlockObject(slack.MarkdownType, "3:00 Synthesis", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_tomorrow_3_action_id", "remove_tomorrow_3", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("tomorrow_3"),
 	)
 
-	 tomorrowsEvents := []*slack.SectionBlock{
+	 tomorrowsEvents := []slack.Block{
 		tomorrowStandup, userInterview, tomorrowsSynthesis,
 	}
 

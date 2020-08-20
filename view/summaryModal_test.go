@@ -150,7 +150,7 @@ func TestNewSummaryModal(t *testing.T) {
 		slack.NewTextBlockObject(slack.MarkdownType, "3:15 Retro", false, false), nil, nil,
 	)
 
-	todaysEvents := []*slack.SectionBlock{standup, synthesis, retro}
+	todaysEvents := []slack.Block{standup, synthesis, retro}
 
 	tomorrowStandup := slack.NewSectionBlock(
 		slack.NewTextBlockObject(slack.MarkdownType, "9:15 Standup", false, false), nil, nil,
@@ -162,13 +162,12 @@ func TestNewSummaryModal(t *testing.T) {
 		slack.NewTextBlockObject(slack.MarkdownType, "3:00 Synthesis", false, false), nil, nil,
 	)
 
-	 tomorrowsEvents := []*slack.SectionBlock{
+	 tomorrowsEvents := []slack.Block{
 		tomorrowStandup, userInterview, tomorrowsSynthesis,
 	}
 
 	result := NewSummaryModal(todaysEvents, tomorrowsEvents)
 	actualJson, _ := json.Marshal(result)
-	//assert.EqualValues(t, expected, result)
 	expectedJsonString, _ := format.PrettyJson(summaryModal)
 	actualJsonString, _ := format.PrettyJson(string(actualJson))
 	assert.EqualValues(t, expectedJsonString, actualJsonString)

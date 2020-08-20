@@ -10,13 +10,13 @@ import (
 )
 
 
-func convertToSectionBlocks(includeRemoveButton bool, events []model.Event) []*slack.SectionBlock {
+func convertToSectionBlocks(includeRemoveButton bool, events []model.Event) []slack.Block {
 
 	numEvents := len(events)
 	if numEvents == 0 {
 		return NoEventYetSection
 	}
-	convertedBlocks := make([]*slack.SectionBlock, numEvents)
+	convertedBlocks := make([]slack.Block, numEvents)
 
 	for index, event := range events {
 		convertedBlocks[index] = slack.NewSectionBlock(
@@ -119,3 +119,20 @@ func convertToEvent(day string, block slack.Block) model.Event {
 	return model.Event{Id: sectionBlock.BlockID, Title: tokens[2], Day: day, Hour: hour, Min: mins, AmPm: amPm}
 }
 
+func header(title string) []slack.Block {
+	return []slack.Block{
+		slack.NewDividerBlock(),
+		slack.NewContextBlock("", slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf("*%s*", title), false, false)),
+		slack.NewDividerBlock(),
+	}
+}
+
+func buildEventsBlock(todayEvents []slack.Block, tomorrowEvents []slack.Block) []slack.Block {
+	blocks := header("Today's Events")
+	blocks = append(blocks, todayEvents...)
+
+	blocks = append(blocks, header("Tomorrow's Events")...)
+	blocks = append(blocks, tomorrowEvents...)
+
+	return blocks
+}

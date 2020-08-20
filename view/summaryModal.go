@@ -4,7 +4,7 @@ import (
 	"github.com/slack-go/slack"
 )
 
-func NewSummaryModal(todayEvents []*slack.SectionBlock, tomorrowEvents []*slack.SectionBlock) slack.ModalViewRequest {
+func NewSummaryModal(todayEvents []slack.Block, tomorrowEvents []slack.Block) slack.ModalViewRequest {
 	return slack.ModalViewRequest{
 		Type:   slack.VTModal,
 		Title:  slack.NewTextBlockObject(slack.PlainTextType, "bZapp", true, false),
@@ -16,7 +16,7 @@ func NewSummaryModal(todayEvents []*slack.SectionBlock, tomorrowEvents []*slack.
 	}
 }
 
-func buildEventBlocks(todayEvents []*slack.SectionBlock, tomorrowEvents []*slack.SectionBlock) []slack.Block {
+func buildEventBlocks(todayEvents []slack.Block, tomorrowEvents []slack.Block) []slack.Block {
 	blocks := buildEventsBlock(todayEvents, tomorrowEvents)
 
 	blocks = append(blocks,
@@ -42,27 +42,7 @@ func buildEventBlocks(todayEvents []*slack.SectionBlock, tomorrowEvents []*slack
 	return blocks
 }
 
-func buildEventsBlock(todayEvents []*slack.SectionBlock, tomorrowEvents []*slack.SectionBlock) []slack.Block {
-	blocks := []slack.Block{
-		slack.NewDividerBlock(),
-		slack.NewContextBlock("", slack.NewTextBlockObject(slack.MarkdownType, "*Today's Events*", false, false)),
-		slack.NewDividerBlock(),
-	}
 
-	for _, event := range todayEvents {
-		blocks = append(blocks, event)
-	}
-
-	blocks = append(blocks, slack.NewDividerBlock(),
-		slack.NewContextBlock("", slack.NewTextBlockObject(slack.MarkdownType, "*Tomorrow's Events*", false, false)),
-		slack.NewDividerBlock(),
-	)
-
-	for _, event := range tomorrowEvents {
-		blocks = append(blocks, event)
-	}
-	return blocks
-}
 
 func SummaryModalWithEventsAddedInEditModal(payload InteractionPayload) slack.ModalViewRequest {
 	todaysEvents, tomorrowsEvents := ExtractEvents(payload.View.Blocks.BlockSet)

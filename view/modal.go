@@ -27,7 +27,7 @@ const RemoveEventActionId = "remove_event"
 
 const NoEventsText = "_No events yet_"
 
-var NoEventYetSection = []*slack.SectionBlock{slack.NewSectionBlock(slack.NewTextBlockObject(slack.MarkdownType, NoEventsText, false, false), nil, nil)}
+var NoEventYetSection = []slack.Block{slack.NewSectionBlock(slack.NewTextBlockObject(slack.MarkdownType, NoEventsText, false, false), nil, nil)}
 
 type ResponseUrl struct {
 	BlockId     string `json:"block_id"`
@@ -70,12 +70,12 @@ func ExtractEvents(blocks []slack.Block) ([]model.Event, []model.Event) {
 	return mapToEvents(TodayOptionValue, todaysBlocks), mapToEvents(TomorrowOptionValue, tomorrowsBlocks)
 }
 
-func ConvertToEventsWithRemoveButton(todaysEvents []model.Event, tomorrowsEvents []model.Event) ([]*slack.SectionBlock, []*slack.SectionBlock) {
+func ConvertToEventsWithRemoveButton(todaysEvents []model.Event, tomorrowsEvents []model.Event) ([]slack.Block, []slack.Block) {
 	return convertToSectionBlocks(true, todaysEvents),
 		convertToSectionBlocks(true, tomorrowsEvents)
 }
 
-func ConvertToEventsWithoutRemoveButton(todaysEvents []model.Event, tomorrowsEvents []model.Event) ([]*slack.SectionBlock, []*slack.SectionBlock) {
+func ConvertToEventsWithoutRemoveButton(todaysEvents []model.Event, tomorrowsEvents []model.Event) ([]slack.Block, []slack.Block) {
 	return convertToSectionBlocks(false, todaysEvents),
 		convertToSectionBlocks(false, tomorrowsEvents)
 }

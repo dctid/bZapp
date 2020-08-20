@@ -7,7 +7,7 @@ import (
 	"github.com/slack-go/slack"
 )
 
-func NewEditEventsModal(index int, todayEvents []*slack.SectionBlock, tomorrowEvents []*slack.SectionBlock) slack.ModalViewRequest {
+func NewEditEventsModal(index int, todayEvents []slack.Block, tomorrowEvents []slack.Block) slack.ModalViewRequest {
 	return slack.ModalViewRequest{
 		Type:   slack.VTModal,
 		Title:  slack.NewTextBlockObject(slack.PlainTextType, "bZapp - Edit Events", true, false),
@@ -20,32 +20,21 @@ func NewEditEventsModal(index int, todayEvents []*slack.SectionBlock, tomorrowEv
 	}
 }
 
-func buildSummaryEventBlocks(index int, todayEvents []*slack.SectionBlock, tomorrowEvents []*slack.SectionBlock) []slack.Block {
+func buildSummaryEventBlocks(index int, todayEvents []slack.Block, tomorrowEvents []slack.Block) []slack.Block {
+
+	blocks := buildEventsBlock(todayEvents, tomorrowEvents)
+	blocks = append(blocks, addEventsActions(index)...)
+
+	return blocks
+}
+
+func addEventsActions(index int) []slack.Block {
 	hours := []int{9, 10, 11, 12, 1, 2, 3, 4}
 	hourOptions := mapOptions(hours, hourOption)
 
 	mins := []int{0, 15, 30, 45}
 	minOptions := mapOptions(mins, minOption)
-
-	blocks := []slack.Block{
-		slack.NewDividerBlock(),
-		slack.NewContextBlock("", slack.NewTextBlockObject(slack.MarkdownType, "*Today's Events*", false, false)),
-		slack.NewDividerBlock(),
-	}
-	for _, event := range todayEvents {
-		blocks = append(blocks, event)
-	}
-
-	blocks = append(blocks, slack.NewDividerBlock(),
-		slack.NewContextBlock("", slack.NewTextBlockObject(slack.MarkdownType, "*Tomorrow's Events*", false, false)),
-		slack.NewDividerBlock())
-
-	for _, event := range tomorrowEvents {
-		blocks = append(blocks, event)
-	}
-
-	blocks = append(blocks,
-
+	return []slack.Block{
 		slack.NewDividerBlock(),
 		slack.NewInputBlock(fmt.Sprintf("%s-%d", AddEventTitleInputBlock, index), slack.NewTextBlockObject(slack.PlainTextType, "Add Event", false, false),
 			slack.NewPlainTextInputBlockElement(slack.NewTextBlockObject(slack.PlainTextType, "Title", false, false), AddEventTitleActionId),
@@ -60,8 +49,8 @@ func buildSummaryEventBlocks(index int, todayEvents []*slack.SectionBlock, tomor
 		),
 		slack.NewInputBlock(fmt.Sprintf("%s-%d", AddEventMinsInputBlock, index), slack.NewTextBlockObject(slack.PlainTextType, "Minutes", true, false),
 			slack.NewOptionsSelectBlockElement("static_select", slack.NewTextBlockObject(slack.PlainTextType, "Select Minutes", true, false), AddEventMinsActionId, minOptions...),
-		))
-	return blocks
+		),
+	}
 }
 
 func AddEventToEditModal(payload InteractionPayload) *slack.ViewSubmissionResponse {
@@ -108,4 +97,3 @@ func RemoveEventFromEditModal(payload InteractionPayload) slack.ModalViewRequest
 	modalRequest := NewEditEventsModal(index, todaysSectionBlocks, tomorrowsSectionBlocks)
 	return modalRequest
 }
-
