@@ -17,7 +17,7 @@ func NewSummaryModal(todayEvents []*slack.SectionBlock, tomorrowEvents []*slack.
 }
 
 func buildEventBlocks(todayEvents []*slack.SectionBlock, tomorrowEvents []*slack.SectionBlock) []slack.Block {
-	blocks := BuildEventsBlock(todayEvents, tomorrowEvents)
+	blocks := buildEventsBlock(todayEvents, tomorrowEvents)
 
 	blocks = append(blocks,
 		slack.NewDividerBlock(),
@@ -42,7 +42,7 @@ func buildEventBlocks(todayEvents []*slack.SectionBlock, tomorrowEvents []*slack
 	return blocks
 }
 
-func BuildEventsBlock(todayEvents []*slack.SectionBlock, tomorrowEvents []*slack.SectionBlock) []slack.Block {
+func buildEventsBlock(todayEvents []*slack.SectionBlock, tomorrowEvents []*slack.SectionBlock) []slack.Block {
 	blocks := []slack.Block{
 		slack.NewDividerBlock(),
 		slack.NewContextBlock("", slack.NewTextBlockObject(slack.MarkdownType, "*Today's Events*", false, false)),
@@ -62,4 +62,12 @@ func BuildEventsBlock(todayEvents []*slack.SectionBlock, tomorrowEvents []*slack
 		blocks = append(blocks, event)
 	}
 	return blocks
+}
+
+func SummaryModalWithEventsAddedInEditModal(payload InteractionPayload) slack.ModalViewRequest {
+	todaysEvents, tomorrowsEvents := ExtractEvents(payload.View.Blocks.BlockSet)
+	todaysSectionBlocks, tomorrowsSectionBlocks := ConvertToEventsWithoutRemoveButton(todaysEvents, tomorrowsEvents)
+
+	modalRequest := NewSummaryModal(todaysSectionBlocks, tomorrowsSectionBlocks)
+	return modalRequest
 }

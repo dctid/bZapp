@@ -1,7 +1,9 @@
 package view
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/dctid/bZapp/model"
 	"github.com/slack-go/slack"
 )
 
@@ -61,3 +63,49 @@ func buildSummaryEventBlocks(index int, todayEvents []*slack.SectionBlock, tomor
 		))
 	return blocks
 }
+
+func AddEventToEditModal(payload InteractionPayload) *slack.ViewSubmissionResponse {
+	action := payload.View.State.Values[AddEventDayInputBlock][AddEventDayActionId]
+	marshal, _ := json.Marshal(action)
+	fmt.Printf("aAdd Event button pressed by user %s with value %v\n", payload.User.Name, string(marshal))
+
+	index := ExtractInputIndex(payload.View.Blocks.BlockSet)
+	todaysEvents, tomorrowsEvents := ExtractEvents(payload.View.Blocks.BlockSet)
+
+	newEvent := BuildNewEventSectionBlock(index, payload.View.State.Values)
+	switch newEvent.Day {
+	case TodayOptionValue:
+		todaysEvents = model.AddEventInOrder(newEvent, todaysEvents)
+	case TomorrowOptionValue:
+		tomorrowsEvents = model.AddEventInOrder(newEvent, tomorrowsEvents)
+	}
+	todaysSectionBlocks, tomorrowsSectionBlocks := ConvertToEventsWithRemoveButton(todaysEvents, tomorrowsEvents)
+
+	modalRequest := NewEditEventsModal(index+1, todaysSectionBlocks, tomorrowsSectionBlocks)
+	return slack.NewUpdateViewSubmissionResponse(&modalRequest)
+}
+
+func OpenEditEventModalFromSummaryModal(payload InteractionPayload) slack.ModalViewRequest {
+	todaysEvents, tomorrowsEvents := ExtractEvents(payload.View.Blocks.BlockSet)
+	todaysSectionBlocks, tomorrowsSectionEvents := ConvertToEventsWithRemoveButton(todaysEvents, tomorrowsEvents)
+	index := ExtractInputIndex(payload.View.Blocks.BlockSet)
+
+	modalRequest := NewEditEventsModal(index+1, todaysSectionBlocks, tomorrowsSectionEvents)
+	return modalRequest
+}
+
+func RemoveEventFromEditModal(payload InteractionPayload) slack.ModalViewRequest {
+	blockIdToDelete := payload.ActionCallback.BlockActions[0].BlockID
+
+	todaysEvents, tomorrowsEvents := ExtractEvents(payload.View.Blocks.BlockSet)
+
+	todaysEvents = model.RemoveEvent(blockIdToDelete, todaysEvents)
+	tomorrowsEvents = model.RemoveEvent(blockIdToDelete, tomorrowsEvents)
+	todaysSectionBlocks, tomorrowsSectionBlocks := ConvertToEventsWithRemoveButton(todaysEvents, tomorrowsEvents)
+
+	index := ExtractInputIndex(payload.View.Blocks.BlockSet)
+
+	modalRequest := NewEditEventsModal(index, todaysSectionBlocks, tomorrowsSectionBlocks)
+	return modalRequest
+}
+
