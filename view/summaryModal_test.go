@@ -103,6 +103,21 @@ var summaryModal = `{
 			"type": "divider"
 		},
 		{
+			"elements": [
+				{
+					"text": "*Goals*",
+					"type": "mrkdwn"
+				}
+			],
+			"type": "context"
+		},
+		{
+			"type": "divider"
+		},
+		{
+			"type": "divider"
+		},
+		{
 		  "type": "actions",
 		  "block_id": "actions_block",
 		  "elements": [
@@ -147,30 +162,28 @@ var summaryModal = `{
 
 func TestNewSummaryModal(t *testing.T) {
 
-	standup := slack.NewSectionBlock(
-		slack.NewTextBlockObject(slack.MarkdownType, "9:15 Standup", false, false), nil, nil,
-	)
-	synthesis := slack.NewSectionBlock(
-		slack.NewTextBlockObject(slack.MarkdownType, "11:30 IPM", false, false), nil, nil,
-	)
-	retro := slack.NewSectionBlock(
-		slack.NewTextBlockObject(slack.MarkdownType, "3:15 Retro", false, false), nil, nil,
-	)
+	todaysEvents := []slack.Block{
+		slack.NewSectionBlock(
+			slack.NewTextBlockObject(slack.MarkdownType, "9:15 Standup", false, false), nil, nil,
+		),
+		slack.NewSectionBlock(
+			slack.NewTextBlockObject(slack.MarkdownType, "11:30 IPM", false, false), nil, nil,
+		),
+		slack.NewSectionBlock(
+			slack.NewTextBlockObject(slack.MarkdownType, "3:15 Retro", false, false), nil, nil,
+		),
+	}
 
-	todaysEvents := []slack.Block{standup, synthesis, retro}
-
-	tomorrowStandup := slack.NewSectionBlock(
-		slack.NewTextBlockObject(slack.MarkdownType, "9:15 Standup", false, false), nil, nil,
-	)
-	userInterview := slack.NewSectionBlock(
-		slack.NewTextBlockObject(slack.MarkdownType, "1:30 User Interview", false, false), nil, nil,
-	)
-	tomorrowsSynthesis := slack.NewSectionBlock(
-		slack.NewTextBlockObject(slack.MarkdownType, "3:00 Synthesis", false, false), nil, nil,
-	)
-
-	 tomorrowsEvents := []slack.Block{
-		tomorrowStandup, userInterview, tomorrowsSynthesis,
+	tomorrowsEvents := []slack.Block{
+		slack.NewSectionBlock(
+			slack.NewTextBlockObject(slack.MarkdownType, "9:15 Standup", false, false), nil, nil,
+		),
+		slack.NewSectionBlock(
+			slack.NewTextBlockObject(slack.MarkdownType, "1:30 User Interview", false, false), nil, nil,
+		),
+		slack.NewSectionBlock(
+			slack.NewTextBlockObject(slack.MarkdownType, "3:00 Synthesis", false, false), nil, nil,
+		),
 	}
 
 	result := NewSummaryModal(todaysEvents, tomorrowsEvents)

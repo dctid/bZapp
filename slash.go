@@ -13,7 +13,7 @@ import (
 
 func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
-	log.Printf("Body: %v", event.Body)
+	log.Printf("bbbBody: %v", event.Body)
 
 	body, err := url.ParseQuery(event.Body)
 	if err != nil {

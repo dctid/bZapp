@@ -357,30 +357,29 @@ var editEventsModal = `{
 
 func TestNewEditEventsModal(t *testing.T) {
 
-	standup := slack.NewSectionBlock(
-		slack.NewTextBlockObject(slack.MarkdownType, "9:15 Standup", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_today_1_action_id", "remove_today_1", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("today_1"),
-	)
-	synthesis := slack.NewSectionBlock(
-		slack.NewTextBlockObject(slack.MarkdownType, "11:30 IPM", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_today_2_action_id", "remove_today_2", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("today_2"),
-	)
-	retro := slack.NewSectionBlock(
-		slack.NewTextBlockObject(slack.MarkdownType, "3:15 Retro", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_today_3_action_id", "remove_today_3", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("today_3"),
-	)
+	todaysEvents := []slack.Block{
+		slack.NewSectionBlock(
+			slack.NewTextBlockObject(slack.MarkdownType, "9:15 Standup", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_today_1_action_id", "remove_today_1", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("today_1"),
+		),
+		slack.NewSectionBlock(
+			slack.NewTextBlockObject(slack.MarkdownType, "11:30 IPM", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_today_2_action_id", "remove_today_2", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("today_2"),
+		),
+		slack.NewSectionBlock(
+			slack.NewTextBlockObject(slack.MarkdownType, "3:15 Retro", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_today_3_action_id", "remove_today_3", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("today_3"),
+		),
+	}
 
-	todaysEvents := []slack.Block{standup, synthesis, retro}
+	tomorrowsEvents := []slack.Block{
+		slack.NewSectionBlock(
+			slack.NewTextBlockObject(slack.MarkdownType, "9:15 Standup", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_tomorrow_1_action_id", "remove_tomorrow_1", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("tomorrow_1"),
+		),
+		slack.NewSectionBlock(
+			slack.NewTextBlockObject(slack.MarkdownType, "1:30 User Interview", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_tomorrow_2_action_id", "remove_tomorrow_2", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("tomorrow_2"),
+		),
+		slack.NewSectionBlock(
+			slack.NewTextBlockObject(slack.MarkdownType, "3:00 Synthesis", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_tomorrow_3_action_id", "remove_tomorrow_3", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("tomorrow_3"),
+		),
 
-	tomorrowStandup := slack.NewSectionBlock(
-		slack.NewTextBlockObject(slack.MarkdownType, "9:15 Standup", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_tomorrow_1_action_id", "remove_tomorrow_1", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("tomorrow_1"),
-	)
-	userInterview := slack.NewSectionBlock(
-		slack.NewTextBlockObject(slack.MarkdownType, "1:30 User Interview", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_tomorrow_2_action_id", "remove_tomorrow_2", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("tomorrow_2"),
-	)
-	tomorrowsSynthesis := slack.NewSectionBlock(
-		slack.NewTextBlockObject(slack.MarkdownType, "3:00 Synthesis", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_tomorrow_3_action_id", "remove_tomorrow_3", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("tomorrow_3"),
-	)
-
-	 tomorrowsEvents := []slack.Block{
-		tomorrowStandup, userInterview, tomorrowsSynthesis,
 	}
 
 	result := NewEditEventsModal(666, todaysEvents, tomorrowsEvents)

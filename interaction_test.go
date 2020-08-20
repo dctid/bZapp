@@ -1041,6 +1041,21 @@ const summaryModal = `{
 				"type": "divider"
 			},
 			{
+				"elements": [
+					{
+						"text": "*Goals*",
+						"type": "mrkdwn"
+					}
+				],
+				"type": "context"
+			},
+			{
+				"type": "divider"
+			},
+			{
+				"type": "divider"
+			},
+			{
 				"block_id": "actions_block",
 				"elements": [
 					{

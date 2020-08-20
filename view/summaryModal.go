@@ -18,11 +18,14 @@ func NewSummaryModal(todayEvents []slack.Block, tomorrowEvents []slack.Block) sl
 
 func buildEventBlocks(todayEvents []slack.Block, tomorrowEvents []slack.Block) []slack.Block {
 	blocks := buildEventsBlock(todayEvents, tomorrowEvents)
+	blocks = append(blocks, buildGoalsBlock()...)
 
 	blocks = append(blocks, actionBlock()...)
 
 	return blocks
 }
+
+
 
 func actionBlock() []slack.Block {
 	return []slack.Block{

@@ -9,7 +9,6 @@ import (
 	"strconv"
 )
 
-
 func convertToSectionBlocks(includeRemoveButton bool, events []model.Event) []slack.Block {
 
 	numEvents := len(events)
@@ -134,5 +133,10 @@ func buildEventsBlock(todayEvents []slack.Block, tomorrowEvents []slack.Block) [
 	blocks = append(blocks, header("Tomorrow's Events")...)
 	blocks = append(blocks, tomorrowEvents...)
 
+	return blocks
+}
+
+func buildGoalsBlock() []slack.Block {
+	blocks := header("Goals")
 	return blocks
 }

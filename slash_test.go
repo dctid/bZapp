@@ -81,6 +81,21 @@ const expected = `{
 		  }
 		},
 		{
+			"type": "divider"
+		},
+		{
+			"elements": [
+				{
+					"text": "*Goals*",
+					"type": "mrkdwn"
+				}
+			],
+			"type": "context"
+		},
+		{
+			"type": "divider"
+		},
+		{
 		  "type": "divider"
 		},
 		{
