@@ -85,6 +85,10 @@ Parameters:
     Default: "Slack token not set"
     Description: "Slack token"
     Type: String
+  SlackSigningSecret:
+    Default: "Slack signing secret not set"
+    Description: "Slack signing secret"
+    Type: String
 
 Resources:
   ApiGatewayAccount:
@@ -142,6 +146,7 @@ Resources:
           CLIENT_SECRET: "secret"
           SLACK_KEY: slack_key
           SLACK_TOKEN: !Ref SlackToken
+          SLACK_SIGNING_SECRET: !Ref SlackSigningSecret
       Events:
         Request:
           Properties:
@@ -173,6 +178,7 @@ Resources:
       Environment:
         Variables:
           SLACK_TOKEN: !Ref SlackToken
+          SLACK_SIGNING_SECRET: !Ref SlackSigningSecret
       Events:
         Request:
           Properties:
@@ -197,6 +203,7 @@ Resources:
       Environment:
         Variables:
           SLACK_TOKEN: !Ref SlackToken
+          SLACK_SIGNING_SECRET: !Ref SlackSigningSecret
       Events:
         Request:
           Properties:

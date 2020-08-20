@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-	lambda.Start(bZapp.NotifyAPIGateway(bZapp.Interaction))
+	lambda.Start(bZapp.VerifyRequestInterceptor(bZapp.Interaction))
 }

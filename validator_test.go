@@ -11,9 +11,9 @@ func TestValidator_ReturnsTrue_IfSecretNotSet(t *testing.T) {
 
 	json := `{"name":"Test Name","full_name":"test full name","owner":{"login": "octocat"}}`
 
-	var reqHeaders = map[string][]string{"X-Slack-Signature": []string{"Anything"}}
+	var reqHeaders = map[string]string{"X-Slack-Signature": "Anything"}
 
-	assert.True(t, VerifySigning([]byte(json), reqHeaders))
+	assert.True(t, verifySigning(json, reqHeaders))
 
 }
 
@@ -25,7 +25,7 @@ func TestValidator_ReturnsTrue_IfSecretNotSet(t *testing.T) {
 //	var reqHeaders = map[string][]string{"X-Slack-Signature": []string{"v0=64550a5d5c969ce2447a9df41d7fbe830fe5e3e7c352681efd7cb0fc31e0e9cd"},
 //		"X-Slack-Request-Timestamp": []string{"1590708241"}}
 //
-//	assert.True(t, VerifySigning([]byte(json), reqHeaders))
+//	assert.True(t, verifySigning([]byte(json), reqHeaders))
 //
 //}
 
@@ -34,8 +34,8 @@ func TestValidator_ReturnsFalse_SecretSetAndRequestInvalid(t *testing.T) {
 	os.Setenv("SLACK_SIGNING_SECRET", "INVALID")
 	json := `{"name":"Test Name","full_name":"test full name","owner":{"login": "octocat"}}`
 
-	var reqHeaders = map[string][]string{"X-Slack-Signature": []string{"Anything"}}
+	var reqHeaders = map[string]string{"X-Slack-Signature": "Anything"}
 
-	assert.False(t, VerifySigning([]byte(json), reqHeaders))
+	assert.False(t, verifySigning(json, reqHeaders))
 
 }

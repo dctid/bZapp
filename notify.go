@@ -56,8 +56,8 @@ func notify(ctx context.Context, err error) {
 	msg := fmt.Sprintf("%+v\n", err)
 	log.Printf("%s %s\n", subj, msg)
 
-	topic := os.Getenv("NOTIFICATION_TOPIC")
-	if topic == "" {
+	topic, topicSet := os.LookupEnv("NOTIFICATION_TOPIC")
+	if topicSet {
 		return
 	}
 
