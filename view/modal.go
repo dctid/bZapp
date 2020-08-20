@@ -25,9 +25,16 @@ const TomorrowOptionValue = "tomorrow"
 const EditEventsActionId = "edit_events"
 const RemoveEventActionId = "remove_event"
 
-const NoEventsText = "_No events yet_"
+const TodaysEventsHeader = "*Today's Events*"
+const TomorrowsEventsHeader = "*Tomorrow's Events*"
+const GoalsHeader = "*Goals*"
 
+
+const NoEventsText = "_No events yet_"
 var NoEventYetSection = []slack.Block{slack.NewSectionBlock(slack.NewTextBlockObject(slack.MarkdownType, NoEventsText, false, false), nil, nil)}
+
+const NoGoalsYetText = "_No goals yet_"
+var NoGoalsYetSection = []slack.Block{slack.NewSectionBlock(slack.NewTextBlockObject(slack.MarkdownType, NoGoalsYetText, false, false), nil, nil)}
 
 type ResponseUrl struct {
 	BlockId     string `json:"block_id"`
@@ -59,15 +66,15 @@ func BuildNewEventSectionBlock(index int, values map[string]map[string]slack.Blo
 	}
 }
 
-func ExtractEvents(blocks []slack.Block) ([]model.Event, []model.Event) {
+func ExtractModel(blocks []slack.Block) ([]model.Event, []model.Event, []model.Goal) {
 	log.Println("New Events")
-	firstContextBlock := firstBlockOfTypeIndex(blocks, slack.MBTContext)
-	secondContextBlock := firstBlockOfTypeIndex(blocks[firstContextBlock+1:], slack.MBTContext)
 
-	todaysBlocks := filterBlocks(blocks[firstContextBlock:secondContextBlock+firstContextBlock], sectionBlockFilter)
-	tomorrowsBlocks := filterBlocks(blocks[secondContextBlock+firstContextBlock:], sectionBlockFilter)
+	contentBlockMap := groupSectionBlocks(blocks)
+	todaysBlocks := contentBlockMap[TodaysEventsHeader]
+	tomorrowsBlocks := contentBlockMap[TomorrowsEventsHeader]
+	goalsBlocks := contentBlockMap[GoalsHeader]
 
-	return mapToEvents(TodayOptionValue, todaysBlocks), mapToEvents(TomorrowOptionValue, tomorrowsBlocks)
+	return mapToEvents(TodayOptionValue, todaysBlocks), mapToEvents(TomorrowOptionValue, tomorrowsBlocks), mapToGoals(goalsBlocks)
 }
 
 func ConvertToEventsWithRemoveButton(todaysEvents []model.Event, tomorrowsEvents []model.Event) ([]slack.Block, []slack.Block) {

@@ -96,6 +96,13 @@ const expected = `{
 			"type": "divider"
 		},
 		{
+			"text": {
+				"text": "_Nogoalsyet_",
+				"type": "mrkdwn"
+			},
+			"type": "section"
+		},
+		{
 		  "type": "divider"
 		},
 		{

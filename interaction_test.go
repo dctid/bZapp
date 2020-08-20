@@ -1053,6 +1053,13 @@ const summaryModal = `{
 				"type": "divider"
 			},
 			{
+				"text": {
+					"text": "_Nogoalsyet_",
+					"type": "mrkdwn"
+				},
+				"type": "section"
+			},
+			{
 				"type": "divider"
 			},
 			{

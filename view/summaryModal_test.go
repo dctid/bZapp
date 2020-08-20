@@ -115,6 +115,13 @@ var summaryModal = `{
 			"type": "divider"
 		},
 		{
+			"text": {
+				"text": "_Nogoalsyet_",
+				"type": "mrkdwn"
+			},
+			"type": "section"
+		},
+		{
 			"type": "divider"
 		},
 		{
@@ -186,7 +193,7 @@ func TestNewSummaryModal(t *testing.T) {
 		),
 	}
 
-	result := NewSummaryModal(todaysEvents, tomorrowsEvents)
+	result := NewSummaryModal(todaysEvents, tomorrowsEvents, NoGoalsYetSection)
 	actualJson, _ := json.Marshal(result)
 	expectedJsonString, _ := format.PrettyJson(summaryModal)
 	actualJsonString, _ := format.PrettyJson(string(actualJson))

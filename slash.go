@@ -24,7 +24,7 @@ func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.API
 	}
 
 	triggerId := body["trigger_id"][0]
-	modalRequest := view.NewSummaryModal(view.NoEventYetSection, view.NoEventYetSection)
+	modalRequest := view.NewSummaryModal(view.NoEventYetSection, view.NoEventYetSection, view.NoGoalsYetSection)
 
 	getenv := os.Getenv("SLACK_TOKEN")
 	log.Printf("token: %s, trigger: %s", getenv, triggerId)

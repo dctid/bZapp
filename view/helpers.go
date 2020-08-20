@@ -41,6 +41,23 @@ func getRemoveButton(includeRemoveButton bool, event model.Event) *slack.Accesso
 	return nil
 }
 
+func groupSectionBlocks(blocks []slack.Block) map[string][]slack.Block {
+	result := map[string][]slack.Block{}
+	var key string
+	for _, block := range blocks {
+		if block.BlockType() == slack.MBTContext {
+			key = block.(*slack.ContextBlock).ContextElements.Elements[0].(*slack.TextBlockObject).Text
+			result[key] = []slack.Block{}
+		} else if block.BlockType() == slack.MBTSection {
+			if block.(*slack.SectionBlock).Text.Text != NoEventsText {
+				blockMap := append(result[key], block)
+				result[key] = blockMap
+			}
+		}
+	}
+	return result
+}
+
 func filterBlocks(vs []slack.Block, f func(slack.Block) bool) []slack.Block {
 	vsf := make([]slack.Block, 0)
 	for _, v := range vs {
@@ -104,6 +121,10 @@ func mapToEvents(day string, blocks []slack.Block) []model.Event {
 	return events
 }
 
+func mapToGoals(blocks []slack.Block) []model.Goal {
+	return []model.Goal{}
+}
+
 func convertToEvent(day string, block slack.Block) model.Event {
 	spacesOrColon := regexp.MustCompile(`(?:\:|\s)+`)
 	sectionBlock := block.(*slack.SectionBlock)
@@ -121,22 +142,23 @@ func convertToEvent(day string, block slack.Block) model.Event {
 func header(title string) []slack.Block {
 	return []slack.Block{
 		slack.NewDividerBlock(),
-		slack.NewContextBlock("", slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf("*%s*", title), false, false)),
+		slack.NewContextBlock("", slack.NewTextBlockObject(slack.MarkdownType,  title, false, false)),
 		slack.NewDividerBlock(),
 	}
 }
 
 func buildEventsBlock(todayEvents []slack.Block, tomorrowEvents []slack.Block) []slack.Block {
-	blocks := header("Today's Events")
+	blocks := header(TodaysEventsHeader)
 	blocks = append(blocks, todayEvents...)
 
-	blocks = append(blocks, header("Tomorrow's Events")...)
+	blocks = append(blocks, header(TomorrowsEventsHeader)...)
 	blocks = append(blocks, tomorrowEvents...)
 
 	return blocks
 }
 
-func buildGoalsBlock() []slack.Block {
-	blocks := header("Goals")
+func buildGoalsBlock(goals []slack.Block) []slack.Block {
+	blocks := header(GoalsHeader)
+	blocks = append(blocks, goals...)
 	return blocks
 }

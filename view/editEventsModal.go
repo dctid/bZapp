@@ -59,7 +59,7 @@ func AddEventToEditModal(payload InteractionPayload) *slack.ViewSubmissionRespon
 	fmt.Printf("aAdd Event button pressed by user %s with value %v\n", payload.User.Name, string(marshal))
 
 	index := ExtractInputIndex(payload.View.Blocks.BlockSet)
-	todaysEvents, tomorrowsEvents := ExtractEvents(payload.View.Blocks.BlockSet)
+	todaysEvents, tomorrowsEvents, _ := ExtractModel(payload.View.Blocks.BlockSet)
 
 	newEvent := BuildNewEventSectionBlock(index, payload.View.State.Values)
 	switch newEvent.Day {
@@ -75,7 +75,7 @@ func AddEventToEditModal(payload InteractionPayload) *slack.ViewSubmissionRespon
 }
 
 func OpenEditEventModalFromSummaryModal(payload InteractionPayload) slack.ModalViewRequest {
-	todaysEvents, tomorrowsEvents := ExtractEvents(payload.View.Blocks.BlockSet)
+	todaysEvents, tomorrowsEvents, _ := ExtractModel(payload.View.Blocks.BlockSet)
 	todaysSectionBlocks, tomorrowsSectionEvents := ConvertToEventsWithRemoveButton(todaysEvents, tomorrowsEvents)
 	index := ExtractInputIndex(payload.View.Blocks.BlockSet)
 
@@ -86,7 +86,7 @@ func OpenEditEventModalFromSummaryModal(payload InteractionPayload) slack.ModalV
 func RemoveEventFromEditModal(payload InteractionPayload) slack.ModalViewRequest {
 	blockIdToDelete := payload.ActionCallback.BlockActions[0].BlockID
 
-	todaysEvents, tomorrowsEvents := ExtractEvents(payload.View.Blocks.BlockSet)
+	todaysEvents, tomorrowsEvents, _ := ExtractModel(payload.View.Blocks.BlockSet)
 
 	todaysEvents = model.RemoveEvent(blockIdToDelete, todaysEvents)
 	tomorrowsEvents = model.RemoveEvent(blockIdToDelete, tomorrowsEvents)

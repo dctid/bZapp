@@ -44,7 +44,7 @@ func TestBuildNewEventSectionBlock(t *testing.T) {
 	}
 }
 
-func TestExtractEvents(t *testing.T) {
+func TestExtractModel(t *testing.T) {
 	type args struct {
 		blocks []slack.Block
 	}
@@ -53,22 +53,25 @@ func TestExtractEvents(t *testing.T) {
 		args  args
 		want  []model.Event
 		want1 []model.Event
+		want2 []model.Goal
 	}{
 		{name: "empty",
-			args:  args{blocks: NewSummaryModal(NoEventYetSection, NoEventYetSection).Blocks.BlockSet},
+			args:  args{blocks: NewSummaryModal(NoEventYetSection, NoEventYetSection, NoGoalsYetSection).Blocks.BlockSet},
 			want:  []model.Event{},
 			want1: []model.Event{},
+			want2: []model.Goal{},
 		},
 		{name: "one each",
 			args: args{
 				blocks: NewSummaryModal(
 					[]slack.Block{eventSectionWithoutRemoveButton("fake event id 1", "Standup", "9 AM", "15")},
 					[]slack.Block{eventSectionWithoutRemoveButton("fake event id 2", "Standdown", "10 AM", "30")},
+					NoGoalsYetSection,
 				).Blocks.BlockSet,
 			},
 			want: []model.Event{
 				{
-					Id: "fake event id 1",
+					Id:    "fake event id 1",
 					Title: "Standup",
 					Day:   "today",
 					Hour:  9,
@@ -77,7 +80,7 @@ func TestExtractEvents(t *testing.T) {
 				}},
 			want1: []model.Event{
 				{
-					Id: "fake event id 2",
+					Id:    "fake event id 2",
 					Title: "Standdown",
 					Day:   "tomorrow",
 					Hour:  10,
@@ -85,17 +88,21 @@ func TestExtractEvents(t *testing.T) {
 					AmPm:  "AM",
 				},
 			},
+			want2: []model.Goal{},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := ExtractEvents(tt.args.blocks)
+			got, got1, got2 := ExtractModel(tt.args.blocks)
 			log.Printf("got: %v, got1: %v", len(got), len(got1))
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ExtractEvents() got = %v, want %v", got, tt.want)
+				t.Errorf("ExtractModel() got = %v, want %v", got, tt.want)
 			}
 			if !reflect.DeepEqual(got1, tt.want1) {
-				t.Errorf("ExtractEvents() got1 = %v, want %v", got1, tt.want1)
+				t.Errorf("ExtractModel() got1 = %v, want %v", got1, tt.want1)
+			}
+			if !reflect.DeepEqual(got2, tt.want2) {
+				t.Errorf("ExtractModel() got2 = %v, want %v", got2, tt.want2)
 			}
 		})
 	}
@@ -219,8 +226,6 @@ func TestConvertToEventsWithoutRemoveButton(t *testing.T) {
 	}
 }
 
-
-
 func EventSectionWithRemoveButton(day string, index int, id string, title string, hour string, mins string) *slack.SectionBlock {
 	return slack.NewSectionBlock(
 		slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf("%s:%s %s", strings.Fields(hour)[0], mins, title), false, false),
@@ -292,8 +297,6 @@ func TestExtractInputIndex(t *testing.T) {
 		})
 	}
 }
-
-
 
 func eventSectionWithoutRemoveButton(id string, title string, hour string, mins string) *slack.SectionBlock {
 	return slack.NewSectionBlock(
