@@ -357,9 +357,6 @@ var editEventsModal = `{
 
 func TestNewEditEventsModal(t *testing.T) {
 
-	//expected := slack.ModalViewRequest{}
-
-	//expectedJson, _ := json.Marshal(editEventsModal)
 	standup := slack.NewSectionBlock(
 		slack.NewTextBlockObject(slack.MarkdownType, "9:15 Standup", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_today_1_action_id", "remove_today_1", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("today_1"),
 	)
@@ -388,7 +385,6 @@ func TestNewEditEventsModal(t *testing.T) {
 
 	result := NewEditEventsModal(666, todaysEvents, tomorrowsEvents)
 	actualJson, _ := json.Marshal(result)
-	//assert.EqualValues(t, expected, result)
 	expectedJsonString, _ := format.PrettyJson(editEventsModal)
 	actualJsonString, _ := format.PrettyJson(string(actualJson))
 

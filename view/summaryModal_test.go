@@ -115,6 +115,16 @@ var summaryModal = `{
 				"emoji": true
 			  },
 			  "value": "edit_events"
+			},
+			{
+				"action_id": "edit_goals",
+				"text": {
+					"emoji": true,
+					"text": "EditGoals",
+					"type": "plain_text"
+				},
+				"type": "button",
+				"value": "edit_goals"
 			}
 		  ]
 		},
@@ -137,9 +147,6 @@ var summaryModal = `{
 
 func TestNewSummaryModal(t *testing.T) {
 
-	//expected := slack.ModalViewRequest{}
-
-	//expectedJson, _ := json.Marshal(editEventsModal)
 	standup := slack.NewSectionBlock(
 		slack.NewTextBlockObject(slack.MarkdownType, "9:15 Standup", false, false), nil, nil,
 	)

@@ -19,11 +19,18 @@ func NewSummaryModal(todayEvents []slack.Block, tomorrowEvents []slack.Block) sl
 func buildEventBlocks(todayEvents []slack.Block, tomorrowEvents []slack.Block) []slack.Block {
 	blocks := buildEventsBlock(todayEvents, tomorrowEvents)
 
-	blocks = append(blocks,
+	blocks = append(blocks, actionBlock()...)
+
+	return blocks
+}
+
+func actionBlock() []slack.Block {
+	return []slack.Block{
 		slack.NewDividerBlock(),
 		slack.NewActionBlock(
 			"actions_block",
 			slack.NewButtonBlockElement("edit_events", "edit_events", slack.NewTextBlockObject(slack.PlainTextType, "Edit Events", true, false)),
+			slack.NewButtonBlockElement("edit_goals", "edit_goals", slack.NewTextBlockObject(slack.PlainTextType, "Edit Goals", true, false)),
 		),
 		slack.InputBlock{
 			Type:    "input",
@@ -37,12 +44,8 @@ func buildEventBlocks(todayEvents []slack.Block, tomorrowEvents []slack.Block) [
 			},
 			Optional: false,
 		},
-	)
-
-	return blocks
+	}
 }
-
-
 
 func SummaryModalWithEventsAddedInEditModal(payload InteractionPayload) slack.ModalViewRequest {
 	todaysEvents, tomorrowsEvents := ExtractEvents(payload.View.Blocks.BlockSet)

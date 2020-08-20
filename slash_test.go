@@ -3,7 +3,6 @@ package bZapp
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"github.com/dctid/bZapp/format"
 	"io/ioutil"
 	"log"
@@ -18,101 +17,114 @@ import (
 )
 
 const expected = `{
-  "type": "modal",
-  "title": {
-    "type": "plain_text",
-    "text": "bZapp",
-    "emoji": true
-  },
-  "submit": {
-    "type": "plain_text",
-    "text": "Submit",
-    "emoji": true
-  },
-  "close": {
-    "type": "plain_text",
-    "text": "Cancel",
-    "emoji": true
-  },
-  "blocks": [
-    {
-      "type": "divider"
-    },
-    {
-      "type": "context",
-      "elements": [
-        {
-          "type": "mrkdwn",
-          "text": "*Today's Events*"
-        }
-      ]
-    },
-    {
-      "type": "divider"
-    },
-    {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": "_No events yet_"
-      }
-    },
-    {
-      "type": "divider"
-    },
-    {
-      "type": "context",
-      "elements": [
-        {
-          "type": "mrkdwn",
-          "text": "*Tomorrow's Events*"
-        }
-      ]
-    },
-    {
-      "type": "divider"
-    },
-    {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": "_No events yet_"
-      }
-    },
-    {
-      "type": "divider"
-    },
-    {
-      "type": "actions",
-	  "block_id": "actions_block",
-      "elements": [
-        {
-          "type": "button",
-		  "action_id": "edit_events",
-          "text": {
-            "type": "plain_text",
-            "text": "Edit Events",
-            "emoji": true
-          },
-          "value": "edit_events"
-        }
-      ]
-    },
-	{
-		"block_id": "convo_input_id",
-		"element": {
-			"action_id": "conversation_select_action_id",
-			"default_to_current_conversation": true,
-			"response_url_enabled": true,
-			"type": "conversations_select"
+	"trigger_id": "1282571347205.260884079521.45166c59ef86cfcf9409d2ec2d4b4a58",
+    "view": {
+	  "type": "modal",
+	  "title": {
+		"type": "plain_text",
+		"text": "bZapp",
+		"emoji": true
+	  },
+	  "submit": {
+		"type": "plain_text",
+		"text": "Submit",
+		"emoji": true
+	  },
+	  "close": {
+		"type": "plain_text",
+		"text": "Cancel",
+		"emoji": true
+	  },
+	  "blocks": [
+		{
+		  "type": "divider"
 		},
-		"label": {
-			"text": "Selectachanneltoposttheresulton",
-			"type": "plain_text"
+		{
+		  "type": "context",
+		  "elements": [
+			{
+			  "type": "mrkdwn",
+			  "text": "*Today's Events*"
+			}
+		  ]
 		},
-		"type": "input"
+		{
+		  "type": "divider"
+		},
+		{
+		  "type": "section",
+		  "text": {
+			"type": "mrkdwn",
+			"text": "_No events yet_"
+		  }
+		},
+		{
+		  "type": "divider"
+		},
+		{
+		  "type": "context",
+		  "elements": [
+			{
+			  "type": "mrkdwn",
+			  "text": "*Tomorrow's Events*"
+			}
+		  ]
+		},
+		{
+		  "type": "divider"
+		},
+		{
+		  "type": "section",
+		  "text": {
+			"type": "mrkdwn",
+			"text": "_No events yet_"
+		  }
+		},
+		{
+		  "type": "divider"
+		},
+		{
+		  "type": "actions",
+		  "block_id": "actions_block",
+		  "elements": [
+			{
+			  "type": "button",
+			  "action_id": "edit_events",
+			  "text": {
+				"type": "plain_text",
+				"text": "Edit Events",
+				"emoji": true
+			  },
+			  "value": "edit_events"
+			},
+			{
+				"action_id": "edit_goals",
+				"text": {
+					"emoji": true,
+					"text": "EditGoals",
+					"type": "plain_text"
+				},
+				"type": "button",
+				"value": "edit_goals"
+			}
+		  ]
+		},
+		{
+			"block_id": "convo_input_id",
+			"element": {
+				"action_id": "conversation_select_action_id",
+				"default_to_current_conversation": true,
+				"response_url_enabled": true,
+				"type": "conversations_select"
+			},
+			"label": {
+				"text": "Selectachanneltoposttheresulton",
+				"type": "plain_text"
+			},
+			"type": "input"
+		}
+	  ]
 	}
-  ]
 }`
 
 
@@ -382,13 +394,7 @@ func TestSlash(t *testing.T) {
 	expectUrl, _ := url.Parse("https://slack.com/api/views.open")
 	Client = &mocks.MockClient{}
 
-	expected2 := fmt.Sprintf(
-`{
-	"trigger_id": "1282571347205.260884079521.45166c59ef86cfcf9409d2ec2d4b4a58",
-    "view": %s
-}`, expected)
-
-	prettyJsonExpected, err := format.PrettyJson(expected2)
+	prettyJsonExpected, err := format.PrettyJson(expected)
 	assert.NoError(t, err)
 
 	mocks.GetDoFunc = func(req *http.Request) (*http.Response, error) {
@@ -404,7 +410,6 @@ func TestSlash(t *testing.T) {
 
 	result, err := Slash(context.Background(), events.APIGatewayProxyRequest{
 		Body: encodedBody,
-			//`{"text": "none"}`,
 	})
 	assert.NoError(t, err)
 	assert.EqualValues(t, expectUrl, urlCalled)

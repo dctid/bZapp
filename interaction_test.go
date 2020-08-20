@@ -1052,6 +1052,16 @@ const summaryModal = `{
 						},
 						"type": "button",
 						"value": "edit_events"
+					},
+					{
+						"action_id": "edit_goals",
+						"text": {
+							"emoji": true,
+							"text": "EditGoals",
+							"type": "plain_text"
+						},
+						"type": "button",
+						"value": "edit_goals"
 					}
 				],
 				"type": "actions"
