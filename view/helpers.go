@@ -93,6 +93,10 @@ func hourOption(num int) *slack.OptionBlockObject {
 	}()), true, false))
 }
 
+func goalCategoryOption(goal string) *slack.OptionBlockObject {
+	return slack.NewOptionBlockObject(fmt.Sprintf("goal-%s", goal), slack.NewTextBlockObject(slack.PlainTextType, fmt.Sprintf("%s", goal ), true, false))
+}
+
 func amOrPm(num int) string {
 	if num < 9 || num == 12 {
 		return "PM"
@@ -109,9 +113,14 @@ func mapOptions(vs []int, f func(int) *slack.OptionBlockObject) []*slack.OptionB
 	return vsm
 }
 
-func sectionBlockFilter(block slack.Block) bool {
-	return block.BlockType() == slack.MBTSection && block.(*slack.SectionBlock).Text.Text != NoEventsText
+func mapStringOptions(vs []string, f func(string) *slack.OptionBlockObject) []*slack.OptionBlockObject {
+	vsm := make([]*slack.OptionBlockObject, len(vs))
+	for i, v := range vs {
+		vsm[i] = f(v)
+	}
+	return vsm
 }
+
 
 func mapToEvents(day string, blocks []slack.Block) []model.Event {
 	var events = make([]model.Event, len(blocks))
