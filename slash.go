@@ -25,6 +25,8 @@ func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.API
 
 	triggerId := body["trigger_id"][0]
 	modalRequest := view.NewSummaryModal(view.NoEventYetSection, view.NoEventYetSection, view.NoGoalsYetSection)
+	requestAsJson, _ := json.MarshalIndent(modalRequest, "", "\t")
+	log.Printf("Body sent to slack to open modal: %v", string(requestAsJson))
 
 	getenv := os.Getenv("SLACK_TOKEN")
 	log.Printf("token: %s, trigger: %s", getenv, triggerId)
@@ -35,6 +37,8 @@ func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.API
 	if err != nil {
 		statusCode = 500
 		log.Printf("Err opening view: %v", err)
+		indent, _ := json.MarshalIndent(viewResponse, "", "\t")
+		log.Printf("Success opening bZap modal: %v", string(indent))
 	} else {
 		indent, _ := json.MarshalIndent(viewResponse, "", "\t")
 		log.Printf("Success opening bZap modal: %v", string(indent))

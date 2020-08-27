@@ -103,6 +103,8 @@ func actionEvent(payload view.InteractionPayload) (events.APIGatewayProxyRespons
 	switch payload.ActionCallback.BlockActions[0].ActionID {
 	case view.EditEventsActionId:
 		return pushEditEventModal(payload)
+	case view.EditGoalsActionId:
+		return pushEditGoalsModal(payload)
 	case view.RemoveEventActionId:
 		return removeEvent(payload)
 	}
@@ -116,6 +118,35 @@ func actionEvent(payload view.InteractionPayload) (events.APIGatewayProxyRespons
 func pushEditEventModal(payload view.InteractionPayload) (events.APIGatewayProxyResponse, error) {
 
 	modalRequest := view.OpenEditEventModalFromSummaryModal(payload)
+
+	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true), slack.OptionHTTPClient(Client))
+	viewResponse, err := api.PushView(payload.TriggerID, modalRequest)
+	if err != nil {
+		log.Printf("Err opening modalss: %v\n", err)
+	} else {
+		responseFromSlack, _ := json.MarshalIndent(viewResponse, "", "\t")
+		log.Printf("Success pushing edit modal: %v", string(responseFromSlack))
+	}
+	update := slack.NewUpdateViewSubmissionResponse(&modalRequest)
+	jsonBytes, err := json.Marshal(update)
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			Headers:    JsonHeaders(),
+			Body:       "Error processing request",
+			StatusCode: 500,
+		}, err
+	}
+	log.Printf("Json bytes: %v\n", format.PrettyJsonNoError(string(jsonBytes)))
+
+	return events.APIGatewayProxyResponse{
+		Headers:    JsonHeaders(),
+		StatusCode: 200,
+	}, nil
+}
+
+func pushEditGoalsModal(payload view.InteractionPayload) (events.APIGatewayProxyResponse, error) {
+
+	modalRequest := view.OpenEditGoalsModalFromSummaryModal(payload)
 
 	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true), slack.OptionHTTPClient(Client))
 	viewResponse, err := api.PushView(payload.TriggerID, modalRequest)

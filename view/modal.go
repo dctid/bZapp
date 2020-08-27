@@ -23,11 +23,12 @@ const TodayOptionValue = "today"
 const TomorrowOptionValue = "tomorrow"
 
 const EditEventsActionId = "edit_events"
+const EditGoalsActionId = "edit_goals"
 const RemoveEventActionId = "remove_event"
 
 const TodaysEventsHeader = "*Today's Events*"
 const TomorrowsEventsHeader = "*Tomorrow's Events*"
-const GoalsHeader = "*Goals*"
+const GoalsHeader = "Goals"
 
 
 const NoEventsText = "_No events yet_"

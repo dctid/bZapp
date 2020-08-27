@@ -8,6 +8,7 @@ import (
 )
 
 func TestValidator_ReturnsTrue_IfSecretNotSet(t *testing.T) {
+	os.Unsetenv("SLACK_SIGNING_SECRET")
 
 	json := `{"name":"Test Name","full_name":"test full name","owner":{"login": "octocat"}}`
 

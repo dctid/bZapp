@@ -1,5 +1,10 @@
 package model
 
-type Goal struct {
+type Goals struct {
+	Title string
+	Goals []Goal
+}
 
+type Goal struct {
+	string
 }

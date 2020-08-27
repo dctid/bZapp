@@ -99,7 +99,7 @@ func TestExtractModel(t *testing.T) {
 				t.Errorf("ExtractModel() got = %v, want %v", got, tt.want)
 			}
 			if !reflect.DeepEqual(got1, tt.want1) {
-				t.Errorf("ExtractModel() got1 = %v, want %v", got1, tt.want1)
+				t.Errorf("ExtractModel() got1 = %#v, want %#v", got1, tt.want1)
 			}
 			if !reflect.DeepEqual(got2, tt.want2) {
 				t.Errorf("ExtractModel() got2 = %v, want %v", got2, tt.want2)

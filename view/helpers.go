@@ -45,8 +45,11 @@ func groupSectionBlocks(blocks []slack.Block) map[string][]slack.Block {
 	result := map[string][]slack.Block{}
 	var key string
 	for _, block := range blocks {
-		if block.BlockType() == slack.MBTContext {
+		if block.BlockType() == slack.MBTContext  {
 			key = block.(*slack.ContextBlock).ContextElements.Elements[0].(*slack.TextBlockObject).Text
+			result[key] = []slack.Block{}
+		} else if  block.BlockType() == slack.MBTHeader {
+			key = block.(*slack.HeaderBlock).Text.Text
 			result[key] = []slack.Block{}
 		} else if block.BlockType() == slack.MBTSection {
 			if block.(*slack.SectionBlock).Text.Text != NoEventsText {
@@ -58,24 +61,6 @@ func groupSectionBlocks(blocks []slack.Block) map[string][]slack.Block {
 	return result
 }
 
-func filterBlocks(vs []slack.Block, f func(slack.Block) bool) []slack.Block {
-	vsf := make([]slack.Block, 0)
-	for _, v := range vs {
-		if f(v) {
-			vsf = append(vsf, v)
-		}
-	}
-	return vsf
-}
-
-func firstBlockOfTypeIndex(vs []slack.Block, t slack.MessageBlockType) int {
-	for i, v := range vs {
-		if v.BlockType() == t {
-			return i
-		}
-	}
-	return -1
-}
 
 func minOption(num int) *slack.OptionBlockObject {
 	return slack.NewOptionBlockObject(fmt.Sprintf("min-%d", num), slack.NewTextBlockObject(slack.PlainTextType, fmt.Sprintf(func() string {
@@ -156,6 +141,14 @@ func header(title string) []slack.Block {
 	}
 }
 
+func sectionHeader(title string) []slack.Block {
+	return []slack.Block{
+		slack.NewDividerBlock(),
+		slack.NewHeaderBlock(slack.NewTextBlockObject(slack.PlainTextType,  title, false, false)),
+		slack.NewDividerBlock(),
+	}
+}
+
 func buildEventsBlock(todayEvents []slack.Block, tomorrowEvents []slack.Block) []slack.Block {
 	blocks := header(TodaysEventsHeader)
 	blocks = append(blocks, todayEvents...)
@@ -167,7 +160,7 @@ func buildEventsBlock(todayEvents []slack.Block, tomorrowEvents []slack.Block) [
 }
 
 func buildGoalsBlock(goals []slack.Block) []slack.Block {
-	blocks := header(GoalsHeader)
+	blocks := sectionHeader(GoalsHeader)
 	blocks = append(blocks, goals...)
 	return blocks
 }

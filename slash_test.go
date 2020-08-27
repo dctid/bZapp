@@ -84,13 +84,12 @@ const expected = `{
 			"type": "divider"
 		},
 		{
-			"elements": [
+			"text": 
 				{
-					"text": "*Goals*",
-					"type": "mrkdwn"
-				}
-			],
-			"type": "context"
+					"text": "Goals",
+					"type": "plain_text"
+				},
+			"type": "header"
 		},
 		{
 			"type": "divider"
