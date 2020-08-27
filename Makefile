@@ -31,13 +31,8 @@ HANDLERS=$(addsuffix main,$(wildcard handlers/*/))
 $(HANDLERS): handlers/%/main: *.go handlers/%/main.go
 	cd ./$(dir $@) && GOOS=linux go build -gcflags="${GCFLAGS}" -o main .
 
-HANDLERS_JS=$(addsuffix node_modules,$(wildcard web/handlers/*/))
-$(HANDLERS_JS): web/handlers/%/node_modules: web/handlers/%/package.json
-	cd ./$(dir $@) && npm install && node-prune >/dev/null && touch node_modules
-
-handlers: handlers-go handlers-js
+handlers: handlers-go
 handlers-go: $(HANDLERS)
-handlers-js: $(HANDLERS_JS)
 
 test:
 	go test -v ./...

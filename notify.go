@@ -17,33 +17,12 @@ type HandlerAPIGateway func(context.Context, events.APIGatewayProxyRequest) (eve
 // HandlerCloudWatch is a CloudWatchEvent handler function
 type HandlerCloudWatch func(context.Context, events.CloudWatchEvent) error
 
-// HandlerWorker is a Worker handler function
-type HandlerWorker func(context.Context, WorkerEvent) error
-
 // NotifyAPIGateway wraps a handler func and sends an SNS notification on error
 func NotifyAPIGateway(h HandlerAPIGateway) HandlerAPIGateway {
 	return func(ctx context.Context, e events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 		r, err := h(ctx, e)
 		notify(ctx, err)
 		return r, err
-	}
-}
-
-// NotifyCloudWatch wraps a handler func and sends an SNS notification on error
-func NotifyCloudWatch(h HandlerCloudWatch) HandlerCloudWatch {
-	return func(ctx context.Context, e events.CloudWatchEvent) error {
-		err := h(ctx, e)
-		notify(ctx, err)
-		return err
-	}
-}
-
-// NotifyWorker wraps a handler func and sends an SNS notification on error
-func NotifyWorker(h HandlerWorker) HandlerWorker {
-	return func(ctx context.Context, e WorkerEvent) error {
-		err := h(ctx, e)
-		notify(ctx, err)
-		return err
 	}
 }
 

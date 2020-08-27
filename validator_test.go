@@ -7,8 +7,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var signingSecret string
-var siginingSet bool
+var (
+	signingSecret string
+	siginingSet   bool
+)
 
 func TestMain(m *testing.M) {
 	setup()
