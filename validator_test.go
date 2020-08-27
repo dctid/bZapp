@@ -7,7 +7,28 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var signingSecret string
+var siginingSet bool
+
+func TestMain(m *testing.M) {
+	setup()
+	code := m.Run()
+	shutdown()
+	os.Exit(code)
+}
+
+func shutdown() {
+	signingSecret, siginingSet = os.LookupEnv("SLACK_SIGNING_SECRET")
+}
+
+func setup() {
+	if siginingSet {
+		os.Setenv("SLACK_SIGNING_SECRET", signingSecret)
+	}
+}
+
 func TestValidator_ReturnsTrue_IfSecretNotSet(t *testing.T) {
+
 	os.Unsetenv("SLACK_SIGNING_SECRET")
 
 	json := `{"name":"Test Name","full_name":"test full name","owner":{"login": "octocat"}}`
