@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/dctid/bZapp/model"
 	"github.com/slack-go/slack"
+	"log"
 )
 
 const AddGoalCategoryInputBlock = "add_goal_category_input_block"
@@ -32,20 +33,12 @@ func NewEditGoalsModal(index int, goals map[string][]model.Goal) slack.ModalView
 
 func buildEditGoalsBlock(index int, goals map[string][]model.Goal) []slack.Block {
 
-	blocks := header("*Customer Questions?*")
-	blocks = append(blocks, ConvertToGoalsWithRemoveButton("*Customer Questions?*", goals["*Customer Questions?*"])...)
+	var blocks []slack.Block
 
-	blocks = append(blocks, header("*Team Needs*")...)
-	blocks = append(blocks, NoGoalsYetSection...)
-
-	blocks = append(blocks, header("*Learnings*")...)
-	blocks = append(blocks, NoGoalsYetSection...)
-
-	blocks = append(blocks, header("*Questions?*")...)
-	blocks = append(blocks, NoGoalsYetSection...)
-
-	blocks = append(blocks, header("*Other*")...)
-	blocks = append(blocks, NoGoalsYetSection...)
+	for _, category := range GoalCategories {
+		blocks = append(blocks, header(fmt.Sprintf("*%s*", category))...)
+		blocks = append(blocks, ConvertToGoalsWithRemoveButton(category, goals[category])...)
+	}
 
 	blocks = append(blocks, actionsBlock(index)...)
 
@@ -72,16 +65,8 @@ func OpenEditGoalsModalFromSummaryModal(payload InteractionPayload) slack.ModalV
 	//todaysEvents, tomorrowsEvents, _ := ExtractModel(payload.View.Blocks.BlockSet)
 	//todaysSectionBlocks, tomorrowsSectionEvents := ConvertToEventsWithRemoveButton(todaysEvents, tomorrowsEvents)
 	index := ExtractInputIndex(payload.View.Blocks.BlockSet)
-	category, goal := BuildNewGoalSectionBlock(index, payload.View.State.Values)
 
-	goals := map[string][]model.Goal{
-		category: {
-			{
-				Value: goal,
-				Id:    model.Hash(),
-			}},
-	}
-	modalRequest := NewEditGoalsModal(index+1, goals)
+	modalRequest := NewEditGoalsModal(index+1, map[string][]model.Goal{})
 	return modalRequest
 }
 
@@ -90,8 +75,18 @@ func AddGoalToEditModal(payload InteractionPayload) *slack.ViewSubmissionRespons
 	marshal, _ := json.Marshal(action)
 	fmt.Printf("bAdd Event button pressed by user %s with value %v\n", payload.User.Name, string(marshal))
 
+
+
 	index := ExtractInputIndex(payload.View.Blocks.BlockSet)
 	_, _, goals := ExtractModel(payload.View.Blocks.BlockSet)
+	category, goal := BuildNewGoalSectionBlock(index, payload.View.State.Values)
+
+	goals[category] = append(goals[category], model.Goal{
+		Id:    model.Hash(),
+		Value: goal,
+	})
+
+	log.Printf("goals %+v", goals)
 
 	modalRequest := NewEditGoalsModal(index+1, goals)
 	return slack.NewUpdateViewSubmissionResponse(&modalRequest)

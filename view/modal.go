@@ -30,6 +30,7 @@ const TodaysEventsHeader = "*Today's Events*"
 const TomorrowsEventsHeader = "*Tomorrow's Events*"
 const GoalsHeader = "Goals"
 const RemoveGoalActionId = "remove_goal"
+const GoalCategoryDropdownPrefix = "goal-"
 
 
 const NoEventsText = "_No events yet_"
@@ -70,12 +71,13 @@ func BuildNewEventSectionBlock(index int, values map[string]map[string]slack.Blo
 
 
 func BuildNewGoalSectionBlock(index int, values map[string]map[string]slack.BlockAction) (string, string) {
-	category := values[fmt.Sprintf("%s-%d", AddGoalCategoryInputBlock, index)][AddGoalCategoryActionId].Value
-	goal := values[fmt.Sprintf("%s-%d", AddGoalInputBlock, index)][AddGoalActionId].SelectedOption.Value
+	log.Printf("index: %d, goals values: %v", index, values)
+	category := values[fmt.Sprintf("%s-%d", AddGoalCategoryInputBlock, index)][AddGoalCategoryActionId].SelectedOption.Value
+	goal := values[fmt.Sprintf("%s-%d", AddGoalInputBlock, index)][AddGoalActionId].Value
 
 	fmt.Printf("Add Goal category: %s, goal: %s\n", category, goal)
 
-	return category, goal
+	return strings.TrimPrefix(category, GoalCategoryDropdownPrefix), goal
 }
 
 func ExtractModel(blocks []slack.Block) ([]model.Event, []model.Event, map[string][]model.Goal) {

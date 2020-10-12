@@ -110,7 +110,7 @@ func hourOption(num int) *slack.OptionBlockObject {
 }
 
 func goalCategoryOption(goal string) *slack.OptionBlockObject {
-	return slack.NewOptionBlockObject(fmt.Sprintf("goal-%s", goal), slack.NewTextBlockObject(slack.PlainTextType, fmt.Sprintf("%s", goal ), true, false))
+	return slack.NewOptionBlockObject(fmt.Sprintf("%s%s", GoalCategoryDropdownPrefix, goal), slack.NewTextBlockObject(slack.PlainTextType, fmt.Sprintf("%s", goal ), true, false))
 }
 
 func amOrPm(num int) string {
