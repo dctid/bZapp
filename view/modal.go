@@ -67,7 +67,7 @@ func BuildNewEventSectionBlock(index int, values map[string]map[string]slack.Blo
 	}
 }
 
-func ExtractModel(blocks []slack.Block) ([]model.Event, []model.Event, []model.Goal) {
+func ExtractModel(blocks []slack.Block) ([]model.Event, []model.Event, *model.Goals) {
 	log.Println("New Events")
 
 	contentBlockMap := groupSectionBlocks(blocks)

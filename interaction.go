@@ -57,6 +57,8 @@ func Interaction(ctx context.Context, event events.APIGatewayProxyRequest) (even
 func viewSubmission(payload view.InteractionPayload) (events.APIGatewayProxyResponse, error) {
 	if len(payload.View.State.Values) == 1 && payload.View.State.Values["convo_input_id"]["conversation_select_action_id"].Type == "conversations_select" {
 		return publishbZapp(payload)
+	} else if payload.View.Title.Text == view.EditGoalsTitle {
+		return pushModalWithAddedGoal(payload)
 	} else {
 		return pushModalWithAddedEvent(payload)
 	}
@@ -172,6 +174,26 @@ func pushEditGoalsModal(payload view.InteractionPayload) (events.APIGatewayProxy
 		StatusCode: 200,
 	}, nil
 }
+
+func pushModalWithAddedGoal(payload view.InteractionPayload) (events.APIGatewayProxyResponse, error) {
+	modalUpdatedWithNewEvent := view.AddGoalToEditModal(payload)
+	jsonBytes, err := json.Marshal(modalUpdatedWithNewEvent)
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			Headers:    JsonHeaders(),
+			Body:       "Error processing request",
+			StatusCode: 500,
+		}, err
+	}
+	log.Printf("body sent to slack: %v", string(jsonBytes))
+
+	return events.APIGatewayProxyResponse{
+		Headers:    JsonHeaders(),
+		Body:       string(jsonBytes),
+		StatusCode: 200,
+	}, nil
+}
+
 
 func removeEvent(payload view.InteractionPayload) (events.APIGatewayProxyResponse, error) {
 	modalRequest := view.RemoveEventFromEditModal(payload)

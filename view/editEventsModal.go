@@ -1,7 +1,6 @@
 package view
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/dctid/bZapp/model"
 	"github.com/slack-go/slack"
@@ -54,9 +53,9 @@ func addEventsActions(index int) []slack.Block {
 }
 
 func AddEventToEditModal(payload InteractionPayload) *slack.ViewSubmissionResponse {
-	action := payload.View.State.Values[AddEventDayInputBlock][AddEventDayActionId]
-	marshal, _ := json.Marshal(action)
-	fmt.Printf("aAdd Event button pressed by user %s with value %v\n", payload.User.Name, string(marshal))
+	//action := payload.View.State.Values[AddEventDayInputBlock][AddEventDayActionId]
+	//marshal, _ := json.Marshal(action)
+	//fmt.Printf("Add Event button pressed by user %s with value %v\n", payload.User.Name, string(marshal))
 
 	index := ExtractInputIndex(payload.View.Blocks.BlockSet)
 	todaysEvents, tomorrowsEvents, _ := ExtractModel(payload.View.Blocks.BlockSet)
@@ -87,7 +86,7 @@ func OpenEditGoalsModalFromSummaryModal(payload InteractionPayload) slack.ModalV
 	//todaysSectionBlocks, tomorrowsSectionEvents := ConvertToEventsWithRemoveButton(todaysEvents, tomorrowsEvents)
 	index := ExtractInputIndex(payload.View.Blocks.BlockSet)
 
-	modalRequest := NewEditGoalsModal(index+1, map[string][]model.Goal{})
+	modalRequest := NewEditGoalsModal(index+1, &model.Goals{})
 	return modalRequest
 }
 

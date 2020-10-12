@@ -13,7 +13,7 @@ func TestNewEditGoalsModal(t *testing.T) {
 
 	type args struct {
 		index int
-		goals map[string][]model.Goal
+		goals *model.Goals
 	}
 	tests := []struct {
 		name string
@@ -24,7 +24,7 @@ func TestNewEditGoalsModal(t *testing.T) {
 			name: "empty",
 			args: args{
 				index: 1,
-				goals: map[string][]model.Goal{},
+				goals: &model.Goals{},
 			},
 			want: format.PrettyJsonNoError(expectModalJson),
 		},

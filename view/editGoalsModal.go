@@ -1,6 +1,7 @@
 package view
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/dctid/bZapp/model"
 	"github.com/slack-go/slack"
@@ -11,14 +12,15 @@ const AddGoalInputBlock = "add_goal_input_block"
 
 const AddGoalCategoryActionId = "add_goal_category"
 const AddGoalActionId = "add_goal"
+const EditGoalsTitle = "bZapp - Edit Goals"
 
 var GoalCategories = []string{"Customer Questions?", "Team Needs", "Learnings", "Questions?", "Other"}
 
-func NewEditGoalsModal(index int,goalMap map[string][]model.Goal) slack.ModalViewRequest {
+func NewEditGoalsModal(index int, goals *model.Goals) slack.ModalViewRequest {
 
 	return slack.ModalViewRequest{
-		Type: slack.VTModal,
-		Title: slack.NewTextBlockObject(slack.PlainTextType, "bZapp - Edit Goals", true, false),
+		Type:   slack.VTModal,
+		Title:  slack.NewTextBlockObject(slack.PlainTextType, EditGoalsTitle, true, false),
 		Close:  slack.NewTextBlockObject(slack.PlainTextType, "Back", true, false),
 		Submit: slack.NewTextBlockObject(slack.PlainTextType, "Add", true, false),
 		Blocks: slack.Blocks{
@@ -50,7 +52,7 @@ func buildEditGoalsBlock(index int) []slack.Block {
 	return blocks
 }
 
-func actionsBlock(index int) []slack.Block  {
+func actionsBlock(index int) []slack.Block {
 
 	categoryOptions := mapStringOptions(GoalCategories, goalCategoryOption)
 	blocks := []slack.Block{
@@ -64,4 +66,18 @@ func actionsBlock(index int) []slack.Block  {
 	}
 
 	return blocks
+}
+
+
+func AddGoalToEditModal(payload InteractionPayload) *slack.ViewSubmissionResponse {
+	action := payload.View.State.Values[AddEventDayInputBlock][AddEventDayActionId]
+	marshal, _ := json.Marshal(action)
+	fmt.Printf("bAdd Event button pressed by user %s with value %v\n", payload.User.Name, string(marshal))
+
+	index := ExtractInputIndex(payload.View.Blocks.BlockSet)
+	_, _, goals := ExtractModel(payload.View.Blocks.BlockSet)
+
+
+	modalRequest := NewEditGoalsModal(index+1, goals)
+	return slack.NewUpdateViewSubmissionResponse(&modalRequest)
 }

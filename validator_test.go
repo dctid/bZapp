@@ -9,7 +9,7 @@ import (
 
 var (
 	signingSecret string
-	siginingSet   bool
+	signingSet    bool
 )
 
 func TestMain(m *testing.M) {
@@ -20,11 +20,11 @@ func TestMain(m *testing.M) {
 }
 
 func shutdown() {
-	signingSecret, siginingSet = os.LookupEnv("SLACK_SIGNING_SECRET")
+	signingSecret, signingSet = os.LookupEnv("SLACK_SIGNING_SECRET")
 }
 
 func setup() {
-	if siginingSet {
+	if signingSet {
 		os.Setenv("SLACK_SIGNING_SECRET", signingSecret)
 	}
 }

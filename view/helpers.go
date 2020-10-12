@@ -115,8 +115,8 @@ func mapToEvents(day string, blocks []slack.Block) []model.Event {
 	return events
 }
 
-func mapToGoals(blocks []slack.Block) []model.Goal {
-	return []model.Goal{}
+func mapToGoals(blocks []slack.Block) *model.Goals {
+	return &model.Goals{}
 }
 
 func convertToEvent(day string, block slack.Block) model.Event {
