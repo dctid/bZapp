@@ -103,12 +103,13 @@ var summaryModal = `{
 			"type": "divider"
 		},
 		{
-			"text": 
+			"elements": [
 				{
-					"text": "Goals",
-					"type": "plain_text"
-				},
-			"type": "header"
+				"text": "Goals",
+				"type": "mrkdwn"
+				}
+			],
+			"type": "context"
 		},
 		{
 			"type": "divider"

@@ -1,7 +1,7 @@
 export AWS_DEFAULT_REGION ?= us-east-1
 export APP ?= bzapp
 
-app: dev
+app: clean dev
 
 clean:
 	rm -f $(wildcard handlers/*/main)

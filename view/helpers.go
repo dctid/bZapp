@@ -144,7 +144,7 @@ func header(title string) []slack.Block {
 func sectionHeader(title string) []slack.Block {
 	return []slack.Block{
 		slack.NewDividerBlock(),
-		slack.NewHeaderBlock(slack.NewTextBlockObject(slack.PlainTextType,  title, false, false)),
+		slack.NewContextBlock("", slack.NewTextBlockObject(slack.MarkdownType,  title, false, false)),
 		slack.NewDividerBlock(),
 	}
 }

@@ -1041,12 +1041,13 @@ const summaryModal = `{
 				"type": "divider"
 			},
 			{
-				"text":
+				"elements": [
 					{
 						"text": "Goals",
-						"type": "plain_text"
-					},
-				"type": "header"
+						"type": "mrkdwn"
+					}
+				],
+				"type": "context"
 			},
 			{
 				"type": "divider"
