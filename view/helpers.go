@@ -28,12 +28,43 @@ func convertToSectionBlocks(includeRemoveButton bool, events []model.Event) []sl
 	return convertedBlocks
 }
 
+func convertGoalToSectionBlocks(includeRemoveButton bool, category string, goals []model.Goal) []slack.Block {
+
+	numEvents := len(goals)
+	if numEvents == 0 {
+		return NoGoalsYetSection
+	}
+	convertedBlocks := make([]slack.Block, numEvents)
+
+	for index, goal := range goals {
+		convertedBlocks[index] = slack.NewSectionBlock(
+			slack.NewTextBlockObject(slack.MarkdownType, goal.Value, false, false),
+			nil,
+			getGoalRemoveButton(includeRemoveButton, category, goal),
+			slack.SectionBlockOptionBlockID(goal.Id),
+		)
+	}
+	return convertedBlocks
+}
+
 func getRemoveButton(includeRemoveButton bool, event model.Event) *slack.Accessory {
 	if includeRemoveButton {
 		return slack.NewAccessory(
 			slack.NewButtonBlockElement(
 				RemoveEventActionId,
 				fmt.Sprintf("remove_%s_%s", event.Day, event.Id),
+				slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false),
+			),
+		)
+	}
+	return nil
+}
+func getGoalRemoveButton(includeRemoveButton bool, category string, goal model.Goal) *slack.Accessory {
+	if includeRemoveButton {
+		return slack.NewAccessory(
+			slack.NewButtonBlockElement(
+				RemoveGoalActionId,
+				fmt.Sprintf("remove_%s_%s", category, goal.Id),
 				slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false),
 			),
 		)
@@ -115,8 +146,8 @@ func mapToEvents(day string, blocks []slack.Block) []model.Event {
 	return events
 }
 
-func mapToGoals(blocks []slack.Block) *model.Goals {
-	return &model.Goals{}
+func mapToGoals(blocks []slack.Block) map[string][]model.Goal {
+	return map[string][]model.Goal{}
 }
 
 func convertToEvent(day string, block slack.Block) model.Event {

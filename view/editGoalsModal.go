@@ -16,7 +16,7 @@ const EditGoalsTitle = "bZapp - Edit Goals"
 
 var GoalCategories = []string{"Customer Questions?", "Team Needs", "Learnings", "Questions?", "Other"}
 
-func NewEditGoalsModal(index int, goals *model.Goals) slack.ModalViewRequest {
+func NewEditGoalsModal(index int, goals map[string][]model.Goal) slack.ModalViewRequest {
 
 	return slack.ModalViewRequest{
 		Type:   slack.VTModal,
@@ -24,16 +24,16 @@ func NewEditGoalsModal(index int, goals *model.Goals) slack.ModalViewRequest {
 		Close:  slack.NewTextBlockObject(slack.PlainTextType, "Back", true, false),
 		Submit: slack.NewTextBlockObject(slack.PlainTextType, "Add", true, false),
 		Blocks: slack.Blocks{
-			BlockSet: buildEditGoalsBlock(index),
+			BlockSet: buildEditGoalsBlock(index, goals),
 		},
 		NotifyOnClose: true,
 	}
 }
 
-func buildEditGoalsBlock(index int) []slack.Block {
+func buildEditGoalsBlock(index int, goals map[string][]model.Goal) []slack.Block {
 
 	blocks := header("*Customer Questions?*")
-	blocks = append(blocks, NoGoalsYetSection...)
+	blocks = append(blocks, ConvertToGoalsWithRemoveButton("*Customer Questions?*", goals["*Customer Questions?*"])...)
 
 	blocks = append(blocks, header("*Team Needs*")...)
 	blocks = append(blocks, NoGoalsYetSection...)
@@ -68,6 +68,22 @@ func actionsBlock(index int) []slack.Block {
 	return blocks
 }
 
+func OpenEditGoalsModalFromSummaryModal(payload InteractionPayload) slack.ModalViewRequest {
+	//todaysEvents, tomorrowsEvents, _ := ExtractModel(payload.View.Blocks.BlockSet)
+	//todaysSectionBlocks, tomorrowsSectionEvents := ConvertToEventsWithRemoveButton(todaysEvents, tomorrowsEvents)
+	index := ExtractInputIndex(payload.View.Blocks.BlockSet)
+	category, goal := BuildNewGoalSectionBlock(index, payload.View.State.Values)
+
+	goals := map[string][]model.Goal{
+		category: {
+			{
+				Value: goal,
+				Id:    model.Hash(),
+			}},
+	}
+	modalRequest := NewEditGoalsModal(index+1, goals)
+	return modalRequest
+}
 
 func AddGoalToEditModal(payload InteractionPayload) *slack.ViewSubmissionResponse {
 	action := payload.View.State.Values[AddEventDayInputBlock][AddEventDayActionId]
@@ -76,7 +92,6 @@ func AddGoalToEditModal(payload InteractionPayload) *slack.ViewSubmissionRespons
 
 	index := ExtractInputIndex(payload.View.Blocks.BlockSet)
 	_, _, goals := ExtractModel(payload.View.Blocks.BlockSet)
-
 
 	modalRequest := NewEditGoalsModal(index+1, goals)
 	return slack.NewUpdateViewSubmissionResponse(&modalRequest)

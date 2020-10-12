@@ -53,13 +53,13 @@ func TestExtractModel(t *testing.T) {
 		args  args
 		want  []model.Event
 		want1 []model.Event
-		want2 *model.Goals
+		want2 map[string][]model.Goal
 	}{
 		{name: "empty",
 			args:  args{blocks: NewSummaryModal(NoEventYetSection, NoEventYetSection, NoGoalsYetSection).Blocks.BlockSet},
 			want:  []model.Event{},
 			want1: []model.Event{},
-			want2: &model.Goals{},
+			want2: map[string][]model.Goal{},
 		},
 		{name: "one each",
 			args: args{
@@ -88,7 +88,7 @@ func TestExtractModel(t *testing.T) {
 					AmPm:  "AM",
 				},
 			},
-			want2: &model.Goals{},
+			want2: map[string][]model.Goal{},
 		},
 	}
 	for _, tt := range tests {

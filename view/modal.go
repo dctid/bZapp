@@ -29,6 +29,7 @@ const RemoveEventActionId = "remove_event"
 const TodaysEventsHeader = "*Today's Events*"
 const TomorrowsEventsHeader = "*Tomorrow's Events*"
 const GoalsHeader = "Goals"
+const RemoveGoalActionId = "remove_goal"
 
 
 const NoEventsText = "_No events yet_"
@@ -67,7 +68,17 @@ func BuildNewEventSectionBlock(index int, values map[string]map[string]slack.Blo
 	}
 }
 
-func ExtractModel(blocks []slack.Block) ([]model.Event, []model.Event, *model.Goals) {
+
+func BuildNewGoalSectionBlock(index int, values map[string]map[string]slack.BlockAction) (string, string) {
+	category := values[fmt.Sprintf("%s-%d", AddGoalCategoryInputBlock, index)][AddGoalCategoryActionId].Value
+	goal := values[fmt.Sprintf("%s-%d", AddGoalInputBlock, index)][AddGoalActionId].SelectedOption.Value
+
+	fmt.Printf("Add Goal category: %s, goal: %s\n", category, goal)
+
+	return category, goal
+}
+
+func ExtractModel(blocks []slack.Block) ([]model.Event, []model.Event, map[string][]model.Goal) {
 	log.Println("New Events")
 
 	contentBlockMap := groupSectionBlocks(blocks)
@@ -87,6 +98,11 @@ func ConvertToEventsWithoutRemoveButton(todaysEvents []model.Event, tomorrowsEve
 	return convertToSectionBlocks(false, todaysEvents),
 		convertToSectionBlocks(false, tomorrowsEvents)
 }
+
+func ConvertToGoalsWithRemoveButton(category string, goals []model.Goal) []slack.Block {
+	return convertGoalToSectionBlocks(true, category, goals)
+}
+
 
 func ExtractInputIndex(blocks []slack.Block) int {
 	for _, block := range blocks {
