@@ -29,6 +29,8 @@ const closeEditEvents = `payload=%7B%22type%22%3A%22view_closed%22%2C%22team%22%
 
 const addGoalSubmission = `payload=%7B%22type%22%3A%22view_submission%22%2C%22team%22%3A%7B%22id%22%3A%22T7NS02BFB%22%2C%22domain%22%3A%22ford-community%22%7D%2C%22user%22%3A%7B%22id%22%3A%22U7QNBA36K%22%2C%22username%22%3A%22cdorman1%22%2C%22name%22%3A%22cdorman1%22%2C%22team_id%22%3A%22T7NS02BFB%22%7D%2C%22api_app_id%22%3A%22A0131JT7VPF%22%2C%22token%22%3A%228KTh0sVRkeZozlTxrBRqk1NO%22%2C%22trigger_id%22%3A%221416625528774.260884079521.682e20059f237a92f0391dcba6a064cb%22%2C%22view%22%3A%7B%22id%22%3A%22V01CFG53H99%22%2C%22team_id%22%3A%22T7NS02BFB%22%2C%22type%22%3A%22modal%22%2C%22blocks%22%3A%5B%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22gzF%22%7D%2C%7B%22type%22%3A%22context%22%2C%22block_id%22%3A%22A6T2X%22%2C%22elements%22%3A%5B%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2ACustomer+Questions%3F%2A%22%2C%22verbatim%22%3Afalse%7D%5D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%224WtFP%22%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22FzT%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22_No+goals+yet_%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22wCg%22%7D%2C%7B%22type%22%3A%22context%22%2C%22block_id%22%3A%229eI%22%2C%22elements%22%3A%5B%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2ATeam+Needs%2A%22%2C%22verbatim%22%3Afalse%7D%5D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22zzoeZ%22%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22wvDnw%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22_No+goals+yet_%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%229qw%22%7D%2C%7B%22type%22%3A%22context%22%2C%22block_id%22%3A%22V8z%22%2C%22elements%22%3A%5B%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2ALearnings%2A%22%2C%22verbatim%22%3Afalse%7D%5D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22USX9G%22%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22OmVn8%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22_No+goals+yet_%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%220cKt%22%7D%2C%7B%22type%22%3A%22context%22%2C%22block_id%22%3A%22h3X4f%22%2C%22elements%22%3A%5B%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2AQuestions%3F%2A%22%2C%22verbatim%22%3Afalse%7D%5D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22Y48F%22%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%222%3DS47%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22_No+goals+yet_%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%226FB%22%7D%2C%7B%22type%22%3A%22context%22%2C%22block_id%22%3A%22wCU%22%2C%22elements%22%3A%5B%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2AOther%2A%22%2C%22verbatim%22%3Afalse%7D%5D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%224Eo%22%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22Wn4%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22_No+goals+yet_%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22wrz6%22%7D%2C%7B%22type%22%3A%22input%22%2C%22block_id%22%3A%22add_goal_category_input_block-4%22%2C%22label%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Goal+to+Add+to%22%2C%22emoji%22%3Atrue%7D%2C%22optional%22%3Afalse%2C%22dispatch_action%22%3Afalse%2C%22element%22%3A%7B%22type%22%3A%22static_select%22%2C%22action_id%22%3A%22add_goal_category%22%2C%22placeholder%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Choose+Goal%22%2C%22emoji%22%3Atrue%7D%2C%22options%22%3A%5B%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Customer+Questions%3F%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22goal-Customer+Questions%3F%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Team+Needs%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22goal-Team+Needs%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Learnings%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22goal-Learnings%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Questions%3F%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22goal-Questions%3F%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Other%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22goal-Other%22%7D%5D%7D%7D%2C%7B%22type%22%3A%22input%22%2C%22block_id%22%3A%22add_goal_input_block-4%22%2C%22label%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Goal+to+Add%22%2C%22emoji%22%3Atrue%7D%2C%22optional%22%3Afalse%2C%22dispatch_action%22%3Afalse%2C%22element%22%3A%7B%22type%22%3A%22plain_text_input%22%2C%22action_id%22%3A%22add_goal%22%2C%22placeholder%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Goal%22%2C%22emoji%22%3Atrue%7D%2C%22dispatch_action_config%22%3A%7B%22trigger_actions_on%22%3A%5B%22on_enter_pressed%22%5D%7D%7D%7D%5D%2C%22private_metadata%22%3A%22%22%2C%22callback_id%22%3A%22%22%2C%22state%22%3A%7B%22values%22%3A%7B%22add_goal_category_input_block-4%22%3A%7B%22add_goal_category%22%3A%7B%22type%22%3A%22static_select%22%2C%22selected_option%22%3A%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Customer+Questions%3F%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22goal-Customer+Questions%3F%22%7D%7D%7D%2C%22add_goal_input_block-4%22%3A%7B%22add_goal%22%3A%7B%22type%22%3A%22plain_text_input%22%2C%22value%22%3A%22adsfads%22%7D%7D%7D%7D%2C%22hash%22%3A%221602533827.7T3dy93R%22%2C%22title%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22bZapp+-+Edit+Goals%22%2C%22emoji%22%3Atrue%7D%2C%22clear_on_close%22%3Afalse%2C%22notify_on_close%22%3Atrue%2C%22close%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Back%22%2C%22emoji%22%3Atrue%7D%2C%22submit%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Add%22%2C%22emoji%22%3Atrue%7D%2C%22previous_view_id%22%3A%22V01C0HPLSEB%22%2C%22root_view_id%22%3A%22V01C0HPLSEB%22%2C%22app_id%22%3A%22A0131JT7VPF%22%2C%22external_id%22%3A%22%22%2C%22app_installed_team_id%22%3A%22T7NS02BFB%22%2C%22bot_id%22%3A%22B0133F8RE11%22%7D%2C%22response_urls%22%3A%5B%5D%7D`
 
+const add2ndGoalSubmission = `payload=%7B%22type%22%3A%22view_submission%22%2C%22team%22%3A%7B%22id%22%3A%22T7NS02BFB%22%2C%22domain%22%3A%22ford-community%22%7D%2C%22user%22%3A%7B%22id%22%3A%22U7QNBA36K%22%2C%22username%22%3A%22cdorman1%22%2C%22name%22%3A%22cdorman1%22%2C%22team_id%22%3A%22T7NS02BFB%22%7D%2C%22api_app_id%22%3A%22A0131JT7VPF%22%2C%22token%22%3A%228KTh0sVRkeZozlTxrBRqk1NO%22%2C%22trigger_id%22%3A%221410528021047.260884079521.2dd5693d02f4b233d7c5b345ff489f5c%22%2C%22view%22%3A%7B%22id%22%3A%22V01CE58KMTP%22%2C%22team_id%22%3A%22T7NS02BFB%22%2C%22type%22%3A%22modal%22%2C%22blocks%22%3A%5B%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22%3DIPPq%22%7D%2C%7B%22type%22%3A%22context%22%2C%22block_id%22%3A%22axP3%22%2C%22elements%22%3A%5B%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2ACustomer+Questions%3F%2A%22%2C%22verbatim%22%3Afalse%7D%5D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22QqhF%22%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22CfOUbJ%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22adsf%22%2C%22verbatim%22%3Afalse%7D%2C%22accessory%22%3A%7B%22type%22%3A%22button%22%2C%22action_id%22%3A%22remove_goal%22%2C%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Remove%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22remove_Customer+Questions%3F_CfOUbJ%22%7D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22A6Kk%22%7D%2C%7B%22type%22%3A%22context%22%2C%22block_id%22%3A%22x0oY9%22%2C%22elements%22%3A%5B%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2ATeam+Needs%2A%22%2C%22verbatim%22%3Afalse%7D%5D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22GrQL%22%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22wABJ%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22_No+goals+yet_%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%226AAm%22%7D%2C%7B%22type%22%3A%22context%22%2C%22block_id%22%3A%22GVuWC%22%2C%22elements%22%3A%5B%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2ALearnings%2A%22%2C%22verbatim%22%3Afalse%7D%5D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22Jap%22%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22w3eYj%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22_No+goals+yet_%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22IXor%22%7D%2C%7B%22type%22%3A%22context%22%2C%22block_id%22%3A%22f9j%22%2C%22elements%22%3A%5B%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2AQuestions%3F%2A%22%2C%22verbatim%22%3Afalse%7D%5D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22qkaE6%22%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22zCw%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22_No+goals+yet_%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22twZ%22%7D%2C%7B%22type%22%3A%22context%22%2C%22block_id%22%3A%22%3DrUq%22%2C%22elements%22%3A%5B%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2AOther%2A%22%2C%22verbatim%22%3Afalse%7D%5D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%220oBE2%22%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22v8SlY%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22_No+goals+yet_%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22Rn%5C%2Fp%22%7D%2C%7B%22type%22%3A%22input%22%2C%22block_id%22%3A%22add_goal_category_input_block-2%22%2C%22label%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Goal+to+Add+to%22%2C%22emoji%22%3Atrue%7D%2C%22optional%22%3Afalse%2C%22dispatch_action%22%3Afalse%2C%22element%22%3A%7B%22type%22%3A%22static_select%22%2C%22action_id%22%3A%22add_goal_category%22%2C%22placeholder%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Choose+Goal%22%2C%22emoji%22%3Atrue%7D%2C%22options%22%3A%5B%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Customer+Questions%3F%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22goal-Customer+Questions%3F%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Team+Needs%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22goal-Team+Needs%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Learnings%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22goal-Learnings%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Questions%3F%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22goal-Questions%3F%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Other%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22goal-Other%22%7D%5D%7D%7D%2C%7B%22type%22%3A%22input%22%2C%22block_id%22%3A%22add_goal_input_block-2%22%2C%22label%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Goal+to+Add%22%2C%22emoji%22%3Atrue%7D%2C%22optional%22%3Afalse%2C%22dispatch_action%22%3Afalse%2C%22element%22%3A%7B%22type%22%3A%22plain_text_input%22%2C%22action_id%22%3A%22add_goal%22%2C%22placeholder%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Goal%22%2C%22emoji%22%3Atrue%7D%2C%22dispatch_action_config%22%3A%7B%22trigger_actions_on%22%3A%5B%22on_enter_pressed%22%5D%7D%7D%7D%5D%2C%22private_metadata%22%3A%22%22%2C%22callback_id%22%3A%22%22%2C%22state%22%3A%7B%22values%22%3A%7B%22add_goal_category_input_block-2%22%3A%7B%22add_goal_category%22%3A%7B%22type%22%3A%22static_select%22%2C%22selected_option%22%3A%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Customer+Questions%3F%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22goal-Customer+Questions%3F%22%7D%7D%7D%2C%22add_goal_input_block-2%22%3A%7B%22add_goal%22%3A%7B%22type%22%3A%22plain_text_input%22%2C%22value%22%3A%22hlkj%22%7D%7D%7D%7D%2C%22hash%22%3A%221602601527.0KQGWgbM%22%2C%22title%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22bZapp+-+Edit+Goals%22%2C%22emoji%22%3Atrue%7D%2C%22clear_on_close%22%3Afalse%2C%22notify_on_close%22%3Atrue%2C%22close%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Back%22%2C%22emoji%22%3Atrue%7D%2C%22submit%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Add%22%2C%22emoji%22%3Atrue%7D%2C%22previous_view_id%22%3A%22V01CE58EDEH%22%2C%22root_view_id%22%3A%22V01CE58EDEH%22%2C%22app_id%22%3A%22A0131JT7VPF%22%2C%22external_id%22%3A%22%22%2C%22app_installed_team_id%22%3A%22T7NS02BFB%22%2C%22bot_id%22%3A%22B0133F8RE11%22%7D%2C%22response_urls%22%3A%5B%5D%7D`
+
 func TestInteraction(t *testing.T) {
 	Client = &mocks.MockClient{}
 
@@ -126,6 +128,17 @@ func TestInteraction(t *testing.T) {
 				StatusCode: 200,
 				Headers:    JsonHeaders(),
 				Body:       format.PrettyJsonNoError(addGoalSubmissionResponse),
+			},
+			wantErr: false,
+			wantDo:  do{},
+		},
+		{
+			name: "add goal 2nd submission",
+			args: args{event: events.APIGatewayProxyRequest{Body: add2ndGoalSubmission}},
+			want: events.APIGatewayProxyResponse{
+				StatusCode: 200,
+				Headers:    JsonHeaders(),
+				Body:       format.PrettyJsonNoError(add2ndGoalSubmissionResponse),
 			},
 			wantErr: false,
 			wantDo:  do{},
@@ -1333,6 +1346,250 @@ const addGoalSubmissionResponse = `{
       {
         "type": "input",
         "block_id": "add_goal_input_block-5",
+        "label": {
+          "type": "plain_text",
+          "text": "Goal to Add",
+          "emoji": true
+        },
+        "element": {
+          "type": "plain_text_input",
+          "action_id": "add_goal",
+          "placeholder": {
+            "type": "plain_text",
+            "text": "Goal"
+          }
+        }
+      }
+    ],
+    "close": {
+      "type": "plain_text",
+      "text": "Back",
+      "emoji": true
+    },
+    "submit": {
+      "type": "plain_text",
+      "text": "Add",
+      "emoji": true
+    },
+    "notify_on_close": true
+  }
+}`
+
+const add2ndGoalSubmissionResponse = `{
+  "response_action": "update",
+  "view": {
+    "type": "modal",
+    "title": {
+      "type": "plain_text",
+      "text": "bZapp - Edit Goals",
+      "emoji": true
+    },
+    "blocks": [
+      {
+        "type": "divider"
+      },
+      {
+        "type": "context",
+        "elements": [
+          {
+            "type": "mrkdwn",
+            "text": "*Customer Questions?*"
+          }
+        ]
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "adsf"
+        },
+        "block_id": "CfOUbJ",
+        "accessory": {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "Remove",
+            "emoji": true
+          },
+          "action_id": "remove_goal",
+          "value": "remove_CustomerQuestions?_CfOUbJ"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "hlkj"
+        },
+        "block_id": "Fakehash",
+        "accessory": {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "Remove",
+            "emoji": true
+          },
+          "action_id": "remove_goal",
+          "value": "remove_CustomerQuestions?_Fakehash"
+        }
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "context",
+        "elements": [
+          {
+            "type": "mrkdwn",
+            "text": "*Team Needs*"
+          }
+        ]
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "_No goals yet_"
+        }
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "context",
+        "elements": [
+          {
+            "type": "mrkdwn",
+            "text": "*Learnings*"
+          }
+        ]
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "_No goals yet_"
+        }
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "context",
+        "elements": [
+          {
+            "type": "mrkdwn",
+            "text": "*Questions?*"
+          }
+        ]
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "_No goals yet_"
+        }
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "context",
+        "elements": [
+          {
+            "type": "mrkdwn",
+            "text": "*Other*"
+          }
+        ]
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "_No goals yet_"
+        }
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "input",
+        "block_id": "add_goal_category_input_block-3",
+        "label": {
+          "type": "plain_text",
+          "text": "Goal to Add to",
+          "emoji": true
+        },
+        "element": {
+          "type": "static_select",
+          "placeholder": {
+            "type": "plain_text",
+            "text": "Choose Goal",
+            "emoji": true
+          },
+          "action_id": "add_goal_category",
+          "options": [
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "Customer Questions?",
+                "emoji": true
+              },
+              "value": "goal-Customer Questions?"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "Team Needs",
+                "emoji": true
+              },
+              "value": "goal-Team Needs"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "Learnings",
+                "emoji": true
+              },
+              "value": "goal-Learnings"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "Questions?",
+                "emoji": true
+              },
+              "value": "goal-Questions?"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "Other",
+                "emoji": true
+              },
+              "value": "goal-Other"
+            }
+          ]
+        }
+      },
+      {
+        "type": "input",
+        "block_id": "add_goal_input_block-3",
         "label": {
           "type": "plain_text",
           "text": "Goal to Add",

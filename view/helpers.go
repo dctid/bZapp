@@ -7,6 +7,7 @@ import (
 	"log"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 func convertToSectionBlocks(includeRemoveButton bool, events []model.Event) []slack.Block {
@@ -77,13 +78,13 @@ func groupSectionBlocks(blocks []slack.Block) map[string][]slack.Block {
 	var key string
 	for _, block := range blocks {
 		if block.BlockType() == slack.MBTContext  {
-			key = block.(*slack.ContextBlock).ContextElements.Elements[0].(*slack.TextBlockObject).Text
+			key = strings.Trim(block.(*slack.ContextBlock).ContextElements.Elements[0].(*slack.TextBlockObject).Text, "*")
 			result[key] = []slack.Block{}
 		} else if  block.BlockType() == slack.MBTHeader {
 			key = block.(*slack.HeaderBlock).Text.Text
 			result[key] = []slack.Block{}
 		} else if block.BlockType() == slack.MBTSection {
-			if block.(*slack.SectionBlock).Text.Text != NoEventsText {
+			if block.(*slack.SectionBlock).Text.Text != NoEventsText && block.(*slack.SectionBlock).Text.Text != NoGoalsYetText {
 				blockMap := append(result[key], block)
 				result[key] = blockMap
 			}
@@ -146,8 +147,32 @@ func mapToEvents(day string, blocks []slack.Block) []model.Event {
 	return events
 }
 
-func mapToGoals(blocks []slack.Block) map[string][]model.Goal {
-	return map[string][]model.Goal{}
+func mapToGoals(contentBlockMap map[string][]slack.Block) map[string][]model.Goal {
+	var goals = make(map[string][]model.Goal)
+	log.Printf("content map %+v", contentBlockMap[GoalCategories[0]])
+	for _, category := range GoalCategories {
+		blocks := contentBlockMap[category]
+		goals[category] = mapBlocksToGoals(category, blocks)
+	}
+	log.Printf("mapped goals %+v", goals)
+
+	return goals
+}
+
+func mapBlocksToGoals(category string, blocks []slack.Block) []model.Goal {
+	log.Printf("goals blocks for %s %d", category, len(blocks))
+	var events = make([]model.Goal, len(blocks))
+	for index, block := range blocks {
+		events[index] = convertToGoal(category, block)
+	}
+	return events
+}
+
+func convertToGoal(category string, block slack.Block) model.Goal {
+	sectionBlock := block.(*slack.SectionBlock)
+	text := sectionBlock.Text.Text
+
+	return model.Goal{Id: sectionBlock.BlockID, Value: text}
 }
 
 func convertToEvent(day string, block slack.Block) model.Event {
@@ -181,10 +206,10 @@ func sectionHeader(title string) []slack.Block {
 }
 
 func buildEventsBlock(todayEvents []slack.Block, tomorrowEvents []slack.Block) []slack.Block {
-	blocks := header(TodaysEventsHeader)
+	blocks := header(markupBold(TodaysEventsHeader))
 	blocks = append(blocks, todayEvents...)
 
-	blocks = append(blocks, header(TomorrowsEventsHeader)...)
+	blocks = append(blocks, header(markupBold(TomorrowsEventsHeader))...)
 	blocks = append(blocks, tomorrowEvents...)
 
 	return blocks
@@ -194,4 +219,13 @@ func buildGoalsBlock(goals []slack.Block) []slack.Block {
 	blocks := sectionHeader(GoalsHeader)
 	blocks = append(blocks, goals...)
 	return blocks
+}
+
+
+func markupBold(value string) string {
+	return fmt.Sprintf("*%s*", value)
+}
+
+func markupItalics(value string) string {
+	return fmt.Sprintf("_%s_", value)
 }

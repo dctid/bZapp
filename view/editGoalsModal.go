@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/dctid/bZapp/model"
 	"github.com/slack-go/slack"
-	"log"
 )
 
 const AddGoalCategoryInputBlock = "add_goal_category_input_block"
@@ -85,8 +84,6 @@ func AddGoalToEditModal(payload InteractionPayload) *slack.ViewSubmissionRespons
 		Id:    model.Hash(),
 		Value: goal,
 	})
-
-	log.Printf("goals %+v", goals)
 
 	modalRequest := NewEditGoalsModal(index+1, goals)
 	return slack.NewUpdateViewSubmissionResponse(&modalRequest)
