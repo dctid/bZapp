@@ -13,7 +13,7 @@ func TestNewEditGoalsModal(t *testing.T) {
 
 	type args struct {
 		index int
-		goals map[string][]model.Goal
+		model model.Model
 	}
 	tests := []struct {
 		name string
@@ -24,14 +24,14 @@ func TestNewEditGoalsModal(t *testing.T) {
 			name: "empty",
 			args: args{
 				index: 1,
-				goals: map[string][]model.Goal{},
+				model: model.Model{},
 			},
 			want: format.PrettyJsonNoError(expectModalJson),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewEditGoalsModal(tt.args.index, tt.args.goals); !assert.EqualValues(t, format.PrettyJsonNoError(marshalNoError(got)), tt.want) {
+			if got := NewEditGoalsModal(tt.args.index, tt.args.model); !assert.EqualValues(t, format.PrettyJsonNoError(marshalNoError(got)), tt.want) {
 				t.Errorf("NewEditGoalsModal() = %v, want %v", got, tt.want)
 			}
 		})
@@ -56,6 +56,7 @@ const expectModalJson = `{
 		"emoji": true
 	},
 	"notify_on_close": true,
+	"private_metadata": "{\"Events\":{\"TodaysEvents\":null,\"TomorrowsEvents\":null},\"Goals\":null}",
 	"submit": {
 		"type": "plain_text",
 		"text": "Add",

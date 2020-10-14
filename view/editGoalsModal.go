@@ -16,21 +16,23 @@ const EditGoalsTitle = "bZapp - Edit Goals"
 
 var GoalCategories = []string{"Customer Questions?", "Team Needs", "Learnings", "Questions?", "Other"}
 
-func NewEditGoalsModal(index int, goals map[string][]model.Goal) slack.ModalViewRequest {
+func NewEditGoalsModal(index int, updatedModel model.Model) slack.ModalViewRequest {
 
+	jsonBytes, _ := json.Marshal(updatedModel)
 	return slack.ModalViewRequest{
 		Type:   slack.VTModal,
 		Title:  slack.NewTextBlockObject(slack.PlainTextType, EditGoalsTitle, true, false),
 		Close:  slack.NewTextBlockObject(slack.PlainTextType, "Back", true, false),
 		Submit: slack.NewTextBlockObject(slack.PlainTextType, "Add", true, false),
 		Blocks: slack.Blocks{
-			BlockSet: buildEditGoalsBlock(index, goals),
+			BlockSet: buildEditGoalsBlock(index, updatedModel.Goals),
 		},
-		NotifyOnClose: true,
+		NotifyOnClose:   true,
+		PrivateMetadata: string(jsonBytes),
 	}
 }
 
-func buildEditGoalsBlock(index int, goals map[string][]model.Goal) []slack.Block {
+func buildEditGoalsBlock(index int, goals model.Goals) []slack.Block {
 
 	var blocks []slack.Block
 
@@ -61,11 +63,11 @@ func actionsBlock(index int) []slack.Block {
 }
 
 func OpenEditGoalsModalFromSummaryModal(payload InteractionPayload) slack.ModalViewRequest {
-	//todaysEvents, tomorrowsEvents, _ := ExtractModel(payload.View.Blocks.BlockSet)
+	currentModel := ExtractModel(payload.View.Blocks.BlockSet)
 	//todaysSectionBlocks, tomorrowsSectionEvents := ConvertToEventsWithRemoveButton(todaysEvents, tomorrowsEvents)
 	index := ExtractInputIndex(payload.View.Blocks.BlockSet)
 
-	modalRequest := NewEditGoalsModal(index+1, map[string][]model.Goal{})
+	modalRequest := NewEditGoalsModal(index+1, currentModel)
 	return modalRequest
 }
 
@@ -74,31 +76,29 @@ func AddGoalToEditModal(payload InteractionPayload) *slack.ViewSubmissionRespons
 	marshal, _ := json.Marshal(action)
 	fmt.Printf("bAdd Event button pressed by user %s with value %v\n", payload.User.Name, string(marshal))
 
-
-
 	index := ExtractInputIndex(payload.View.Blocks.BlockSet)
-	goals := ExtractModel(payload.View.Blocks.BlockSet).Goals
+	currentModel := ExtractModel(payload.View.Blocks.BlockSet)
 
 	category, goal := BuildNewGoalSectionBlock(index, payload.View.State.Values)
 
-	goals[category] = append(goals[category], model.Goal{
+	currentModel.Goals[category] = append(currentModel.Goals[category], model.Goal{
 		Id:    model.Hash(),
 		Value: goal,
 	})
 
-	modalRequest := NewEditGoalsModal(index+1, goals)
+	modalRequest := NewEditGoalsModal(index+1, currentModel)
 	return slack.NewUpdateViewSubmissionResponse(&modalRequest)
 }
 
 func RemoveGoalFromEditModal(payload InteractionPayload) slack.ModalViewRequest {
 	blockIdToDelete := payload.ActionCallback.BlockActions[0].BlockID
 
-	goals := ExtractModel(payload.View.Blocks.BlockSet).Goals
+	currentModel := ExtractModel(payload.View.Blocks.BlockSet)
 
-	goals = model.RemoveGoal(blockIdToDelete, goals)
+	currentModel.Goals = model.RemoveGoal(blockIdToDelete, currentModel.Goals)
 
 	index := ExtractInputIndex(payload.View.Blocks.BlockSet)
 
-	modalRequest := NewEditGoalsModal(index, goals)
+	modalRequest := NewEditGoalsModal(index, currentModel)
 	return modalRequest
 }
