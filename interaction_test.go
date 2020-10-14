@@ -1385,7 +1385,7 @@ const editGoalsModal = `{
 			"type": "plain_text"
 		},
 		"notify_on_close": true,
-		"private_metadata": "{\"Events\":{\"TodaysEvents\":[],\"TomorrowsEvents\":[]},\"Goals\":{\"CustomerQuestions?\":[],\"Learnings\":[],\"Other\":[],\"Questions?\":[],\"TeamNeeds\":[]}}",
+		"private_metadata": "{\"Index\":1,\"Events\":{\"TodaysEvents\":[],\"TomorrowsEvents\":[]},\"Goals\":{\"CustomerQuestions?\":[],\"Learnings\":[],\"Other\":[],\"Questions?\":[],\"TeamNeeds\":[]}}",
 		"submit": {
 			"emoji": true,
 			"text": "Add",
@@ -1622,7 +1622,7 @@ const addGoalSubmissionResponse = `{
       "emoji": true
     },
     "notify_on_close": true,
-	"private_metadata": "{\"Events\":{\"TodaysEvents\":[],\"TomorrowsEvents\":[]},\"Goals\":{\"CustomerQuestions?\":[{\"Id\":\"Fakehash\",\"Value\":\"adsfads\"}],\"Learnings\":[],\"Other\":[],\"Questions?\":[],\"TeamNeeds\":[]}}"
+	"private_metadata": "{\"Index\":5,\"Events\":{\"TodaysEvents\":[],\"TomorrowsEvents\":[]},\"Goals\":{\"CustomerQuestions?\":[{\"Id\":\"Fakehash\",\"Value\":\"adsfads\"}],\"Learnings\":[],\"Other\":[],\"Questions?\":[],\"TeamNeeds\":[]}}"
   }
 }`
 
@@ -1867,7 +1867,7 @@ const add2ndGoalSubmissionResponse = `{
       "emoji": true
     },
     "notify_on_close": true,
-	"private_metadata": "{\"Events\":{\"TodaysEvents\":[],\"TomorrowsEvents\":[]},\"Goals\":{\"CustomerQuestions?\":[{\"Id\":\"CfOUbJ\",\"Value\":\"adsf\"},{\"Id\":\"Fakehash\",\"Value\":\"hlkj\"}],\"Learnings\":[],\"Other\":[],\"Questions?\":[],\"TeamNeeds\":[]}}"
+	"private_metadata": "{\"Index\":3,\"Events\":{\"TodaysEvents\":[],\"TomorrowsEvents\":[]},\"Goals\":{\"CustomerQuestions?\":[{\"Id\":\"CfOUbJ\",\"Value\":\"adsf\"},{\"Id\":\"Fakehash\",\"Value\":\"hlkj\"}],\"Learnings\":[],\"Other\":[],\"Questions?\":[],\"TeamNeeds\":[]}}"
   }
 }`
 
@@ -2081,5 +2081,5 @@ const removeGoalsModal = `{
 		"emoji": true
 	},
 	"notify_on_close": true,
-	"private_metadata": "{\"Events\":{\"TodaysEvents\":[],\"TomorrowsEvents\":[]},\"Goals\":{\"CustomerQuestions?\":[],\"Learnings\":[],\"Other\":[],\"Questions?\":[],\"TeamNeeds\":[]}}"
+	"private_metadata": "{\"Index\":2,\"Events\":{\"TodaysEvents\":[],\"TomorrowsEvents\":[]},\"Goals\":{\"CustomerQuestions?\":[],\"Learnings\":[],\"Other\":[],\"Questions?\":[],\"TeamNeeds\":[]}}"
 }`

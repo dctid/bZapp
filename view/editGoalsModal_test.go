@@ -12,7 +12,6 @@ import (
 func TestNewEditGoalsModal(t *testing.T) {
 
 	type args struct {
-		index int
 		model model.Model
 	}
 	tests := []struct {
@@ -23,15 +22,14 @@ func TestNewEditGoalsModal(t *testing.T) {
 		{
 			name: "empty",
 			args: args{
-				index: 1,
-				model: model.Model{},
+				model: model.Model{Index: 1},
 			},
 			want: format.PrettyJsonNoError(expectModalJson),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewEditGoalsModal(tt.args.index, tt.args.model); !assert.EqualValues(t, format.PrettyJsonNoError(marshalNoError(got)), tt.want) {
+			if got := NewEditGoalsModal(tt.args.model); !assert.EqualValues(t, format.PrettyJsonNoError(marshalNoError(got)), tt.want) {
 				t.Errorf("NewEditGoalsModal() = %v, want %v", got, tt.want)
 			}
 		})
@@ -56,7 +54,7 @@ const expectModalJson = `{
 		"emoji": true
 	},
 	"notify_on_close": true,
-	"private_metadata": "{\"Events\":{\"TodaysEvents\":null,\"TomorrowsEvents\":null},\"Goals\":null}",
+	"private_metadata": "{\"Index\":1,\"Events\":{\"TodaysEvents\":null,\"TomorrowsEvents\":null},\"Goals\":null}",
 	"submit": {
 		"type": "plain_text",
 		"text": "Add",

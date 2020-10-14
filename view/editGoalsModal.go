@@ -16,7 +16,7 @@ const EditGoalsTitle = "bZapp - Edit Goals"
 
 var GoalCategories = []string{"Customer Questions?", "Team Needs", "Learnings", "Questions?", "Other"}
 
-func NewEditGoalsModal(index int, updatedModel model.Model) slack.ModalViewRequest {
+func NewEditGoalsModal(updatedModel model.Model) slack.ModalViewRequest {
 
 	jsonBytes, _ := json.Marshal(updatedModel)
 	return slack.ModalViewRequest{
@@ -25,7 +25,7 @@ func NewEditGoalsModal(index int, updatedModel model.Model) slack.ModalViewReque
 		Close:  slack.NewTextBlockObject(slack.PlainTextType, "Back", true, false),
 		Submit: slack.NewTextBlockObject(slack.PlainTextType, "Add", true, false),
 		Blocks: slack.Blocks{
-			BlockSet: buildEditGoalsBlock(index, updatedModel.Goals),
+			BlockSet: buildEditGoalsBlock(updatedModel.Index, updatedModel.Goals),
 		},
 		NotifyOnClose:   true,
 		PrivateMetadata: string(jsonBytes),
@@ -66,8 +66,8 @@ func OpenEditGoalsModalFromSummaryModal(payload InteractionPayload) slack.ModalV
 	currentModel := ExtractModel(payload.View.Blocks.BlockSet)
 	//todaysSectionBlocks, tomorrowsSectionEvents := ConvertToEventsWithRemoveButton(todaysEvents, tomorrowsEvents)
 	index := ExtractInputIndex(payload.View.Blocks.BlockSet)
-
-	modalRequest := NewEditGoalsModal(index+1, currentModel)
+	currentModel.Index = index+1
+	modalRequest := NewEditGoalsModal(currentModel)
 	return modalRequest
 }
 
@@ -85,8 +85,9 @@ func AddGoalToEditModal(payload InteractionPayload) *slack.ViewSubmissionRespons
 		Id:    model.Hash(),
 		Value: goal,
 	})
+	currentModel.Index = index+1
 
-	modalRequest := NewEditGoalsModal(index+1, currentModel)
+	modalRequest := NewEditGoalsModal(currentModel)
 	return slack.NewUpdateViewSubmissionResponse(&modalRequest)
 }
 
@@ -97,8 +98,8 @@ func RemoveGoalFromEditModal(payload InteractionPayload) slack.ModalViewRequest 
 
 	currentModel.Goals = model.RemoveGoal(blockIdToDelete, currentModel.Goals)
 
-	index := ExtractInputIndex(payload.View.Blocks.BlockSet)
+	currentModel.Index = ExtractInputIndex(payload.View.Blocks.BlockSet)
 
-	modalRequest := NewEditGoalsModal(index, currentModel)
+	modalRequest := NewEditGoalsModal(currentModel)
 	return modalRequest
 }
