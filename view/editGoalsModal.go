@@ -88,3 +88,16 @@ func AddGoalToEditModal(payload InteractionPayload) *slack.ViewSubmissionRespons
 	modalRequest := NewEditGoalsModal(index+1, goals)
 	return slack.NewUpdateViewSubmissionResponse(&modalRequest)
 }
+
+func RemoveGoalFromEditModal(payload InteractionPayload) slack.ModalViewRequest {
+	blockIdToDelete := payload.ActionCallback.BlockActions[0].BlockID
+
+	_, _, goals := ExtractModel(payload.View.Blocks.BlockSet)
+
+	goals = model.RemoveGoal(blockIdToDelete, goals)
+
+	index := ExtractInputIndex(payload.View.Blocks.BlockSet)
+
+	modalRequest := NewEditGoalsModal(index, goals)
+	return modalRequest
+}

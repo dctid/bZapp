@@ -109,6 +109,8 @@ func actionEvent(payload view.InteractionPayload) (events.APIGatewayProxyRespons
 		return pushEditGoalsModal(payload)
 	case view.RemoveEventActionId:
 		return removeEvent(payload)
+	case view.RemoveGoalActionId:
+		return removeGoal(payload)
 	}
 	return events.APIGatewayProxyResponse{
 		Headers:    JsonHeaders(),
@@ -199,6 +201,25 @@ func removeEvent(payload view.InteractionPayload) (events.APIGatewayProxyRespons
 	modalRequest := view.RemoveEventFromEditModal(payload)
 	requestAsJson, _ := json.MarshalIndent(modalRequest, "", "\t")
 	log.Printf("Body sent to slack after removing event: %v", string(requestAsJson))
+
+	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true), slack.OptionHTTPClient(Client))
+	viewResponse, err := api.UpdateView(modalRequest, payload.View.ExternalID, payload.Hash, payload.View.ID)
+	if err != nil {
+		log.Printf("Err removing event from modal: %v\n", err)
+	} else {
+		responseFromSlack, _ := json.MarshalIndent(viewResponse, "", "\t")
+		log.Printf("Success event from modal: %v", string(responseFromSlack))
+	}
+	return events.APIGatewayProxyResponse{
+		Headers:    JsonHeaders(),
+		StatusCode: 200,
+	}, nil
+}
+
+func removeGoal(payload view.InteractionPayload) (events.APIGatewayProxyResponse, error) {
+	modalRequest := view.RemoveGoalFromEditModal(payload)
+	requestAsJson, _ := json.MarshalIndent(modalRequest, "", "\t")
+	log.Printf("Body sent to slack after removing goal: %v", string(requestAsJson))
 
 	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true), slack.OptionHTTPClient(Client))
 	viewResponse, err := api.UpdateView(modalRequest, payload.View.ExternalID, payload.Hash, payload.View.ID)

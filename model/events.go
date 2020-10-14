@@ -57,7 +57,7 @@ func (event Event) calcEventValue() int {
 }
 
 func RemoveEvent(id string, events []Event) []Event {
-	index, err := findByid(id, events)
+	index, err := findById(id, events)
 	if err != nil {
 		return events
 	}
@@ -71,7 +71,7 @@ func removeAtIndex(events []Event, index int) []Event {
 	events = events[:len(events)-1]
 	return events
 }
-func findByid(id string, events []Event) (int, error) {
+func findById(id string, events []Event) (int, error) {
 	for index, event := range events {
 		if event.Id == id {
 			return index, nil
