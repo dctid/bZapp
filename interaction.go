@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/dctid/bZapp/format"
+	"github.com/dctid/bZapp/model"
 	"github.com/dctid/bZapp/view"
 	"github.com/slack-go/slack"
 	"io/ioutil"
@@ -36,6 +37,13 @@ func Interaction(ctx context.Context, event events.APIGatewayProxyRequest) (even
 			Body:       "Bad payload",
 			StatusCode: 400,
 		}, err
+	}
+	var currentModel model.Model
+	err = json.Unmarshal([]byte(payload.View.PrivateMetadata), &currentModel)
+	if err != nil {
+		log.Printf("Couldn't parse metadata %s", err)
+	} else {
+		log.Printf("Metadata: %v", currentModel)
 	}
 	switch payload.Type {
 	case slack.InteractionTypeViewSubmission:
