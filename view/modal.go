@@ -98,9 +98,9 @@ func ConvertToEventsWithRemoveButton(todaysEvents []model.Event, tomorrowsEvents
 		convertToSectionBlocks(true, tomorrowsEvents)
 }
 
-func ConvertToEventsWithoutRemoveButton(todaysEvents []model.Event, tomorrowsEvents []model.Event) ([]slack.Block, []slack.Block) {
-	return convertToSectionBlocks(false, todaysEvents),
-		convertToSectionBlocks(false, tomorrowsEvents)
+func ConvertToEventsWithoutRemoveButton(events model.Events) ([]slack.Block, []slack.Block) {
+	return convertToSectionBlocks(false, events.TodaysEvents),
+		convertToSectionBlocks(false, events.TomorrowsEvents)
 }
 
 func ConvertToGoalsWithRemoveButton(category string, goals []model.Goal) []slack.Block {

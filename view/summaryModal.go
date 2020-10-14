@@ -1,22 +1,28 @@
 package view
 
 import (
+	"github.com/dctid/bZapp/model"
 	"github.com/slack-go/slack"
 )
 
-func NewSummaryModal(todayEvents []slack.Block, tomorrowEvents []slack.Block, goals []slack.Block) slack.ModalViewRequest {
+func NewSummaryModal(updatedModel model.Model) slack.ModalViewRequest {
 	return slack.ModalViewRequest{
 		Type:   slack.VTModal,
 		Title:  slack.NewTextBlockObject(slack.PlainTextType, "bZapp", true, false),
 		Close:  slack.NewTextBlockObject(slack.PlainTextType, "Cancel", true, false),
 		Submit: slack.NewTextBlockObject(slack.PlainTextType, "Submit", true, false),
 		Blocks: slack.Blocks{
-			BlockSet: buildEventBlocks(todayEvents, tomorrowEvents, goals),
+			BlockSet: buildEventBlocks(updatedModel),
 		},
+		PrivateMetadata: updatedModel.ConvertModelToJson(),
 	}
 }
 
-func buildEventBlocks(todayEvents []slack.Block, tomorrowEvents []slack.Block, goals []slack.Block) []slack.Block {
+func buildEventBlocks(updatedModel model.Model) []slack.Block {
+	goals := NoGoalsYetSection
+
+	todayEvents, tomorrowEvents := ConvertToEventsWithoutRemoveButton(updatedModel.Events)
+
 	blocks := buildEventsBlock(todayEvents, tomorrowEvents)
 	blocks = append(blocks, buildGoalsBlock(goals)...)
 
@@ -52,11 +58,6 @@ func actionBlock() []slack.Block {
 
 func SummaryModalWithEventsAddedInEditModal(payload InteractionPayload) slack.ModalViewRequest {
 	currentModel := ExtractModel(payload.View.Blocks.BlockSet)
-	todaysEvents := currentModel.Events.TodaysEvents
-	tomorrowsEvents := currentModel.Events.TomorrowsEvents
-	todaysSectionBlocks, tomorrowsSectionBlocks := ConvertToEventsWithoutRemoveButton(todaysEvents, tomorrowsEvents)
-
-
-	modalRequest := NewSummaryModal(todaysSectionBlocks, tomorrowsSectionBlocks, NoGoalsYetSection)
+	modalRequest := NewSummaryModal(currentModel)
 	return modalRequest
 }

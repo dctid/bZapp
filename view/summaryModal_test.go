@@ -3,8 +3,8 @@ package view
 import (
 	"encoding/json"
 	"github.com/dctid/bZapp/format"
+	"github.com/dctid/bZapp/model"
 
-	"github.com/slack-go/slack"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -15,6 +15,7 @@ var summaryModal = `{
 		"text": "bZapp",
 		"emoji": true
 	},
+	"private_metadata": "{\"Index\":0,\"Events\":{\"TodaysEvents\":[{\"Id\":\"\",\"Title\":\"Standup\",\"Day\":\"today\",\"Hour\":9,\"Min\":15,\"AmPm\":\"AM\"},{\"Id\":\"\",\"Title\":\"IPM\",\"Day\":\"today\",\"Hour\":11,\"Min\":30,\"AmPm\":\"AM\"},{\"Id\":\"\",\"Title\":\"Retro\",\"Day\":\"today\",\"Hour\":3,\"Min\":15,\"AmPm\":\"PM\"}],\"TomorrowsEvents\":[{\"Id\":\"\",\"Title\":\"Standup\",\"Day\":\"tomorrow\",\"Hour\":9,\"Min\":15,\"AmPm\":\"AM\"},{\"Id\":\"\",\"Title\":\"UserInterview\",\"Day\":\"tomorrow\",\"Hour\":1,\"Min\":30,\"AmPm\":\"PM\"},{\"Id\":\"\",\"Title\":\"Synthesis\",\"Day\":\"tomorrow\",\"Hour\":3,\"Min\":0,\"AmPm\":\"PM\"}]},\"Goals\":null}",
 	"submit": {
 		"type": "plain_text",
 		"text": "Submit",
@@ -169,31 +170,59 @@ var summaryModal = `{
 
 func TestNewSummaryModal(t *testing.T) {
 
-	todaysEvents := []slack.Block{
-		slack.NewSectionBlock(
-			slack.NewTextBlockObject(slack.MarkdownType, "9:15 Standup", false, false), nil, nil,
-		),
-		slack.NewSectionBlock(
-			slack.NewTextBlockObject(slack.MarkdownType, "11:30 IPM", false, false), nil, nil,
-		),
-		slack.NewSectionBlock(
-			slack.NewTextBlockObject(slack.MarkdownType, "3:15 Retro", false, false), nil, nil,
-		),
+	testModel := model.Model{
+		Events: model.Events{
+			TodaysEvents: []model.Event{
+				{
+					Title: "Standup",
+					Day:   TodayOptionValue,
+					Hour:  9,
+					Min:   15,
+					AmPm:  "AM",
+				},
+				{
+					Title: "IPM",
+					Day:   TodayOptionValue,
+					Hour:  11,
+					Min:   30,
+					AmPm:  "AM",
+				},
+				{
+					Title: "Retro",
+					Day:   TodayOptionValue,
+					Hour:  3,
+					Min:   15,
+					AmPm:  "PM",
+				},
+			},
+			TomorrowsEvents: []model.Event{
+				{
+					Title: "Standup",
+					Day:   TomorrowOptionValue,
+					Hour:  9,
+					Min:   15,
+					AmPm:  "AM",
+				},
+				{
+					Title: "User Interview",
+					Day:   TomorrowOptionValue,
+					Hour:  1,
+					Min:   30,
+					AmPm:  "PM",
+				},
+				{
+					Title: "Synthesis",
+					Day:   TomorrowOptionValue,
+					Hour:  3,
+					Min:   0,
+					AmPm:  "PM",
+				},
+			},
+		},
+		Goals: nil,
 	}
 
-	tomorrowsEvents := []slack.Block{
-		slack.NewSectionBlock(
-			slack.NewTextBlockObject(slack.MarkdownType, "9:15 Standup", false, false), nil, nil,
-		),
-		slack.NewSectionBlock(
-			slack.NewTextBlockObject(slack.MarkdownType, "1:30 User Interview", false, false), nil, nil,
-		),
-		slack.NewSectionBlock(
-			slack.NewTextBlockObject(slack.MarkdownType, "3:00 Synthesis", false, false), nil, nil,
-		),
-	}
-
-	result := NewSummaryModal(todaysEvents, tomorrowsEvents, NoGoalsYetSection)
+	result := NewSummaryModal(testModel)
 	actualJson, _ := json.Marshal(result)
 	expectedJsonString, _ := format.PrettyJson(summaryModal)
 	actualJsonString, _ := format.PrettyJson(string(actualJson))

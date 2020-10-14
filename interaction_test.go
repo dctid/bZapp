@@ -1175,6 +1175,7 @@ const summaryModal = `{
 			"text": "Cancel",
 			"type": "plain_text"
 		},
+		"private_metadata": "{\"Index\":0,\"Events\":{\"TodaysEvents\":[{\"Id\":\"qKG\",\"Title\":\"gsfd\",\"Day\":\"today\",\"Hour\":10,\"Min\":45,\"AmPm\":\"AM\"}],\"TomorrowsEvents\":[]},\"Goals\":{\"CustomerQuestions?\":[],\"Learnings\":[],\"Other\":[],\"Questions?\":[],\"TeamNeeds\":[]}}",
 		"submit": {
 			"emoji": true,
 			"text": "Submit",

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/dctid/bZapp/model"
 	"github.com/dctid/bZapp/view"
 	"github.com/slack-go/slack"
 	"log"
@@ -24,7 +25,7 @@ func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.API
 	}
 
 	triggerId := body["trigger_id"][0]
-	modalRequest := view.NewSummaryModal(view.NoEventYetSection, view.NoEventYetSection, view.NoGoalsYetSection)
+	modalRequest := view.NewSummaryModal(model.Model{})
 	requestAsJson, _ := json.MarshalIndent(modalRequest, "", "\t")
 	log.Printf("Body sent to slack to open modal: %v", string(requestAsJson))
 

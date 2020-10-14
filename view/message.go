@@ -10,7 +10,7 @@ func DailySummaryMessage(payload InteractionPayload) (string, slack.Message) {
 	log.Printf("Response Urls: %s", url)
 
 	currentModel := ExtractModel(payload.View.Blocks.BlockSet)
-	todaysSectionBlocks, tomorrowsSectionBlocks := ConvertToEventsWithoutRemoveButton(currentModel.Events.TodaysEvents, currentModel.Events.TomorrowsEvents)
+	todaysSectionBlocks, tomorrowsSectionBlocks := ConvertToEventsWithoutRemoveButton(currentModel.Events)
 	eventBlocks := buildEventsBlock(todaysSectionBlocks, tomorrowsSectionBlocks)
 
 	message := slack.NewBlockMessage(eventBlocks...)

@@ -48,12 +48,12 @@ func TestExtractModel(t *testing.T) {
 		blocks []slack.Block
 	}
 	tests := []struct {
-		name  string
-		args  args
+		name string
+		args args
 		want model.Model
 	}{
 		{name: "empty",
-			args: args{blocks: NewSummaryModal(NoEventYetSection, NoEventYetSection, NoGoalsYetSection).Blocks.BlockSet},
+			args: args{blocks: NewSummaryModal(model.Model{}).Blocks.BlockSet},
 			want: model.Model{
 				Events: model.Events{
 					TodaysEvents:    []model.Event{},
@@ -71,9 +71,30 @@ func TestExtractModel(t *testing.T) {
 		{name: "one each",
 			args: args{
 				blocks: NewSummaryModal(
-					[]slack.Block{eventSectionWithoutRemoveButton("fake event id 1", "Standup", "9 AM", "15")},
-					[]slack.Block{eventSectionWithoutRemoveButton("fake event id 2", "Standdown", "10 AM", "30")},
-					NoGoalsYetSection,
+					model.Model{
+						Index: 0,
+						Events: model.Events{
+							TodaysEvents: []model.Event{{
+								Id:    "fake event id 1",
+								Title: "Standup",
+								Day:   TodayOptionValue,
+								Hour:  9,
+								Min:   15,
+								AmPm:  "AM",
+							},
+							},
+							TomorrowsEvents: []model.Event{{
+								Id:    "fake event id 2",
+								Title: "Standdown",
+								Day:   TomorrowOptionValue,
+								Hour:  10,
+								Min:   30,
+								AmPm:  "AM",
+							},
+							},
+						},
+						Goals: nil,
+					},
 				).Blocks.BlockSet,
 			},
 			want: model.Model{
@@ -98,16 +119,16 @@ func TestExtractModel(t *testing.T) {
 						},
 					},
 				},
-					Goals: model.Goals{
-						"Customer Questions?": {},
-						"Learnings":           {},
-						"Other":               {},
-						"Questions?":          {},
-						"Team Needs":          {},
-					},
+				Goals: model.Goals{
+					"Customer Questions?": {},
+					"Learnings":           {},
+					"Other":               {},
+					"Questions?":          {},
+					"Team Needs":          {},
 				},
 			},
-		}
+		},
+	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := ExtractModel(tt.args.blocks)
@@ -180,8 +201,7 @@ func TestConvertToEventsWithRemoveButton(t *testing.T) {
 
 func TestConvertToEventsWithoutRemoveButton(t *testing.T) {
 	type args struct {
-		todayEvents    []model.Event
-		tomorrowEvents []model.Event
+		events model.Events
 	}
 	tests := []struct {
 		name  string
@@ -192,8 +212,7 @@ func TestConvertToEventsWithoutRemoveButton(t *testing.T) {
 		{
 			name: "empty",
 			args: args{
-				todayEvents:    []model.Event{},
-				tomorrowEvents: []model.Event{},
+				events: model.Events{},
 			},
 			want:  NoEventYetSection,
 			want1: NoEventYetSection,
@@ -201,8 +220,10 @@ func TestConvertToEventsWithoutRemoveButton(t *testing.T) {
 		{
 			name: "today has one",
 			args: args{
-				todayEvents:    []model.Event{{Id: "todays id", Title: "today event", Day: TodayOptionValue, Hour: 9, Min: 12, AmPm: "AM"}},
-				tomorrowEvents: []model.Event{},
+				events: model.Events{
+					TodaysEvents:    []model.Event{{Id: "todays id", Title: "today event", Day: TodayOptionValue, Hour: 9, Min: 12, AmPm: "AM"}},
+					TomorrowsEvents: []model.Event{},
+				},
 			},
 			want:  []slack.Block{EventSectionWithoutRemoveButton("todays id", "today event", "9 AM", "12")},
 			want1: NoEventYetSection,
@@ -210,10 +231,12 @@ func TestConvertToEventsWithoutRemoveButton(t *testing.T) {
 		{
 			name: "tomorrow has two",
 			args: args{
-				todayEvents: []model.Event{},
-				tomorrowEvents: []model.Event{
-					{Id: "tomorrows 1", Title: "tomorrow event", Day: TomorrowOptionValue, Hour: 9, Min: 12, AmPm: "AM"},
-					{Id: "tomorrows 2", Title: "tomorrow event 2", Day: TomorrowOptionValue, Hour: 11, Min: 1, AmPm: "AM"},
+				events: model.Events{
+					TodaysEvents: []model.Event{},
+					TomorrowsEvents: []model.Event{
+						{Id: "tomorrows 1", Title: "tomorrow event", Day: TomorrowOptionValue, Hour: 9, Min: 12, AmPm: "AM"},
+						{Id: "tomorrows 2", Title: "tomorrow event 2", Day: TomorrowOptionValue, Hour: 11, Min: 1, AmPm: "AM"},
+					},
 				},
 			},
 			want: NoEventYetSection,
@@ -225,7 +248,7 @@ func TestConvertToEventsWithoutRemoveButton(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := ConvertToEventsWithoutRemoveButton(tt.args.todayEvents, tt.args.tomorrowEvents)
+			got, got1 := ConvertToEventsWithoutRemoveButton(tt.args.events)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ConvertToEventsWithoutRemoveButton() got = %v\n, want %v\n", got, tt.want)
 
