@@ -10,8 +10,7 @@ func DailySummaryMessage(payload InteractionPayload) (string, slack.Message) {
 	log.Printf("Response Urls: %s", url)
 
 	currentModel := ExtractModel(payload.View.Blocks.BlockSet)
-	todaysSectionBlocks, tomorrowsSectionBlocks := ConvertToEventsWithoutRemoveButton(currentModel.Events)
-	eventBlocks := buildEventsBlock(todaysSectionBlocks, tomorrowsSectionBlocks)
+	eventBlocks := buildEventsBlock(false, currentModel.Events)
 
 	message := slack.NewBlockMessage(eventBlocks...)
 	message.Text = "bZapp - Today's Standup Summary"

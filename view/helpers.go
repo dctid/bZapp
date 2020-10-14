@@ -205,7 +205,8 @@ func sectionHeader(title string) []slack.Block {
 	}
 }
 
-func buildEventsBlock(todayEvents []slack.Block, tomorrowEvents []slack.Block) []slack.Block {
+func buildEventsBlock(editable bool, events model.Events) []slack.Block {
+	todayEvents, tomorrowEvents := ConvertToEventsWithoutRemoveButton(editable, events)
 	blocks := header(markupBold(TodaysEventsHeader))
 	blocks = append(blocks, todayEvents...)
 
@@ -215,9 +216,15 @@ func buildEventsBlock(todayEvents []slack.Block, tomorrowEvents []slack.Block) [
 	return blocks
 }
 
-func buildGoalsBlock(goals []slack.Block) []slack.Block {
+func buildGoalsBlock(goals model.Goals) []slack.Block {
+	var goalBlocks []slack.Block
+	for _, category := range GoalCategories {
+		goalBlocks = append(goalBlocks, header(fmt.Sprintf("*%s*", category))...)
+		goalBlocks = append(goalBlocks, ConvertToGoalsWithRemoveButton(category, goals[category])...)
+	}
+
 	blocks := sectionHeader(GoalsHeader)
-	blocks = append(blocks, goals...)
+	blocks = append(blocks, goalBlocks...)
 	return blocks
 }
 

@@ -142,8 +142,7 @@ func TestExtractModel(t *testing.T) {
 
 func TestConvertToEventsWithRemoveButton(t *testing.T) {
 	type args struct {
-		todayEvents    []model.Event
-		tomorrowEvents []model.Event
+		events model.Events
 	}
 	tests := []struct {
 		name  string
@@ -154,8 +153,7 @@ func TestConvertToEventsWithRemoveButton(t *testing.T) {
 		{
 			name: "empty",
 			args: args{
-				todayEvents:    []model.Event{},
-				tomorrowEvents: []model.Event{},
+				events: model.Events{},
 			},
 			want:  NoEventYetSection,
 			want1: NoEventYetSection,
@@ -163,8 +161,9 @@ func TestConvertToEventsWithRemoveButton(t *testing.T) {
 		{
 			name: "today has one",
 			args: args{
-				todayEvents:    []model.Event{{Id: "Today Event", Title: "today event", Day: TodayOptionValue, Hour: 9, Min: 12, AmPm: "AM"}},
-				tomorrowEvents: []model.Event{},
+				events: model.Events{
+					TodaysEvents: []model.Event{{Id: "Today Event", Title: "today event", Day: TodayOptionValue, Hour: 9, Min: 12, AmPm: "AM"}},
+				},
 			},
 			want:  []slack.Block{EventSectionWithRemoveButton(TodayOptionValue, 0, "Today Event", "today event", "9 AM", "12")},
 			want1: NoEventYetSection,
@@ -172,10 +171,11 @@ func TestConvertToEventsWithRemoveButton(t *testing.T) {
 		{
 			name: "tomorrow has two",
 			args: args{
-				todayEvents: []model.Event{},
-				tomorrowEvents: []model.Event{
-					{Id: "Event 1", Title: "tomorrow event", Day: TomorrowOptionValue, Hour: 9, Min: 12, AmPm: "AM"},
-					{Id: "Event 2", Title: "tomorrow event 2", Day: TomorrowOptionValue, Hour: 11, Min: 1, AmPm: "AM"},
+				events: model.Events{
+					TomorrowsEvents: []model.Event{
+						{Id: "Event 1", Title: "tomorrow event", Day: TomorrowOptionValue, Hour: 9, Min: 12, AmPm: "AM"},
+						{Id: "Event 2", Title: "tomorrow event 2", Day: TomorrowOptionValue, Hour: 11, Min: 1, AmPm: "AM"},
+					},
 				},
 			},
 			want: NoEventYetSection,
@@ -187,7 +187,7 @@ func TestConvertToEventsWithRemoveButton(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := ConvertToEventsWithRemoveButton(tt.args.todayEvents, tt.args.tomorrowEvents)
+			got, got1 := ConvertToEventsWithRemoveButton(tt.args.events)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ConvertToEventsWithRemoveButton() got = %v\n, want %v\n", got, tt.want)
 
@@ -248,7 +248,7 @@ func TestConvertToEventsWithoutRemoveButton(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := ConvertToEventsWithoutRemoveButton(tt.args.events)
+			got, got1 := ConvertToEventsWithoutRemoveButton(false, tt.args.events)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ConvertToEventsWithoutRemoveButton() got = %v\n, want %v\n", got, tt.want)
 

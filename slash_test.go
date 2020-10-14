@@ -17,137 +17,240 @@ import (
 )
 
 const expected = `{
-	"trigger_id": "1282571347205.260884079521.45166c59ef86cfcf9409d2ec2d4b4a58",
-    "view": {
-	  "type": "modal",
-	  "title": {
-		"type": "plain_text",
-		"text": "bZapp",
-		"emoji": true
-	  },
-      "private_metadata": "{\"Index\":0,\"Events\":{\"TodaysEvents\":null,\"TomorrowsEvents\":null},\"Goals\":null}",
-	  "submit": {
-		"type": "plain_text",
-		"text": "Submit",
-		"emoji": true
-	  },
-	  "close": {
-		"type": "plain_text",
-		"text": "Cancel",
-		"emoji": true
-	  },
-	  "blocks": [
-		{
-		  "type": "divider"
-		},
-		{
-		  "type": "context",
-		  "elements": [
-			{
-			  "type": "mrkdwn",
-			  "text": "*Today's Events*"
-			}
-		  ]
-		},
-		{
-		  "type": "divider"
-		},
-		{
-		  "type": "section",
-		  "text": {
-			"type": "mrkdwn",
-			"text": "_No events yet_"
-		  }
-		},
-		{
-		  "type": "divider"
-		},
-		{
-		  "type": "context",
-		  "elements": [
-			{
-			  "type": "mrkdwn",
-			  "text": "*Tomorrow's Events*"
-			}
-		  ]
-		},
-		{
-		  "type": "divider"
-		},
-		{
-		  "type": "section",
-		  "text": {
-			"type": "mrkdwn",
-			"text": "_No events yet_"
-		  }
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"elements": [
-           		{
-           			"text": "Goals",
-           			"type": "mrkdwn"
-           		}
-           	],
-           	"type": "context"
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"text": {
-				"text": "_Nogoalsyet_",
-				"type": "mrkdwn"
-			},
-			"type": "section"
-		},
-		{
-		  "type": "divider"
-		},
-		{
-		  "type": "actions",
-		  "block_id": "actions_block",
-		  "elements": [
-			{
-			  "type": "button",
-			  "action_id": "edit_events",
-			  "text": {
-				"type": "plain_text",
-				"text": "Edit Events",
-				"emoji": true
-			  },
-			  "value": "edit_events"
-			},
-			{
-				"action_id": "edit_goals",
-				"text": {
-					"emoji": true,
-					"text": "EditGoals",
-					"type": "plain_text"
-				},
-				"type": "button",
-				"value": "edit_goals"
-			}
-		  ]
-		},
-		{
-			"block_id": "convo_input_id",
-			"element": {
-				"action_id": "conversation_select_action_id",
-				"default_to_current_conversation": true,
-				"response_url_enabled": true,
-				"type": "conversations_select"
-			},
-			"label": {
-				"text": "Selectachanneltoposttheresulton",
-				"type": "plain_text"
-			},
-			"type": "input"
-		}
-	  ]
-	}
+  "trigger_id": "1282571347205.260884079521.45166c59ef86cfcf9409d2ec2d4b4a58",
+  "view": {
+    "type": "modal",
+    "title": {
+      "type": "plain_text",
+      "text": "bZapp",
+      "emoji": true
+    },
+    "private_metadata": "{\"Index\":0,\"Events\":{\"TodaysEvents\":null,\"TomorrowsEvents\":null},\"Goals\":null}",
+    "submit": {
+      "type": "plain_text",
+      "text": "Submit",
+      "emoji": true
+    },
+    "close": {
+      "type": "plain_text",
+      "text": "Cancel",
+      "emoji": true
+    },
+    "blocks": [
+      {
+        "type": "divider"
+      },
+      {
+        "type": "context",
+        "elements": [
+          {
+            "type": "mrkdwn",
+            "text": "*Today's Events*"
+          }
+        ]
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "_No events yet_"
+        }
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "context",
+        "elements": [
+          {
+            "type": "mrkdwn",
+            "text": "*Tomorrow's Events*"
+          }
+        ]
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "_No events yet_"
+        }
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "elements": [
+          {
+            "text": "Goals",
+            "type": "mrkdwn"
+          }
+        ],
+        "type": "context"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "elements": [
+          {
+            "text": "*CustomerQuestions?*",
+            "type": "mrkdwn"
+          }
+        ],
+        "type": "context"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "text": {
+          "text": "_Nogoalsyet_",
+          "type": "mrkdwn"
+        },
+        "type": "section"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "elements": [
+          {
+            "text": "*TeamNeeds*",
+            "type": "mrkdwn"
+          }
+        ],
+        "type": "context"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "text": {
+          "text": "_Nogoalsyet_",
+          "type": "mrkdwn"
+        },
+        "type": "section"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "elements": [
+          {
+            "text": "*Learnings*",
+            "type": "mrkdwn"
+          }
+        ],
+        "type": "context"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "text": {
+          "text": "_Nogoalsyet_",
+          "type": "mrkdwn"
+        },
+        "type": "section"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "elements": [
+          {
+            "text": "*Questions?*",
+            "type": "mrkdwn"
+          }
+        ],
+        "type": "context"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "text": {
+          "text": "_Nogoalsyet_",
+          "type": "mrkdwn"
+        },
+        "type": "section"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "elements": [
+          {
+            "text": "*Other*",
+            "type": "mrkdwn"
+          }
+        ],
+        "type": "context"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "text": {
+          "text": "_Nogoalsyet_",
+          "type": "mrkdwn"
+        },
+        "type": "section"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "actions",
+        "block_id": "actions_block",
+        "elements": [
+          {
+            "type": "button",
+            "action_id": "edit_events",
+            "text": {
+              "type": "plain_text",
+              "text": "Edit Events",
+              "emoji": true
+            },
+            "value": "edit_events"
+          },
+          {
+            "action_id": "edit_goals",
+            "text": {
+              "emoji": true,
+              "text": "EditGoals",
+              "type": "plain_text"
+            },
+            "type": "button",
+            "value": "edit_goals"
+          }
+        ]
+      },
+      {
+        "block_id": "convo_input_id",
+        "element": {
+          "action_id": "conversation_select_action_id",
+          "default_to_current_conversation": true,
+          "response_url_enabled": true,
+          "type": "conversations_select"
+        },
+        "label": {
+          "text": "Selectachanneltoposttheresulton",
+          "type": "plain_text"
+        },
+        "type": "input"
+      }
+    ]
+  }
 }`
 
 

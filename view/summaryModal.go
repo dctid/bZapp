@@ -19,12 +19,9 @@ func NewSummaryModal(updatedModel model.Model) slack.ModalViewRequest {
 }
 
 func buildEventBlocks(updatedModel model.Model) []slack.Block {
-	goals := NoGoalsYetSection
 
-	todayEvents, tomorrowEvents := ConvertToEventsWithoutRemoveButton(updatedModel.Events)
-
-	blocks := buildEventsBlock(todayEvents, tomorrowEvents)
-	blocks = append(blocks, buildGoalsBlock(goals)...)
+	blocks := buildEventsBlock(false, updatedModel.Events)
+	blocks = append(blocks, buildGoalsBlock(updatedModel.Goals)...)
 
 	blocks = append(blocks, actionBlock()...)
 

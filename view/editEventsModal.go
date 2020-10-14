@@ -7,23 +7,22 @@ import (
 )
 
 func NewEditEventsModal(updatedModel model.Model) slack.ModalViewRequest {
-	todaysSectionBlocks, tomorrowsSectionBlocks := ConvertToEventsWithRemoveButton(updatedModel.Events.TodaysEvents, updatedModel.Events.TomorrowsEvents)
 	return slack.ModalViewRequest{
 		Type:   slack.VTModal,
 		Title:  slack.NewTextBlockObject(slack.PlainTextType, "bZapp - Edit Events", true, false),
 		Close:  slack.NewTextBlockObject(slack.PlainTextType, "Back", true, false),
 		Submit: slack.NewTextBlockObject(slack.PlainTextType, "Add", true, false),
 		Blocks: slack.Blocks{
-			BlockSet: buildSummaryEventBlocks(updatedModel.Index, todaysSectionBlocks, tomorrowsSectionBlocks),
+			BlockSet: buildSummaryEventBlocks(updatedModel.Index, updatedModel.Events),
 		},
 		NotifyOnClose: true,
 		PrivateMetadata: updatedModel.ConvertModelToJson(),
 	}
 }
 
-func buildSummaryEventBlocks(index int, todayEvents []slack.Block, tomorrowEvents []slack.Block) []slack.Block {
+func buildSummaryEventBlocks(index int, events model.Events) []slack.Block {
 
-	blocks := buildEventsBlock(todayEvents, tomorrowEvents)
+	blocks := buildEventsBlock(true, events)
 	blocks = append(blocks, addEventsActions(index)...)
 
 	return blocks
