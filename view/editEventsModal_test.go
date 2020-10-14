@@ -3,7 +3,7 @@ package view
 import (
 	"encoding/json"
 	"github.com/dctid/bZapp/format"
-	"github.com/slack-go/slack"
+	"github.com/dctid/bZapp/model"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -49,16 +49,16 @@ var editEventsModal = `{
 				"text": "9:15 Standup"
 			},
 			"accessory": {
-				"action_id": "remove_today_1_action_id",
+				"action_id": "remove_event",
 				"type": "button",
 				"text": {
 					"type": "plain_text",
 					"text": "Remove",
 					"emoji": true
 				},
-				"value": "remove_today_1"
+				"value": "remove_today_FakeId1"
 			},
-			"block_id": "today_1"
+			"block_id": "FakeId1"
 		},
 		{
 			"type": "section",
@@ -67,16 +67,16 @@ var editEventsModal = `{
 				"text": "11:30 IPM"
 			},
 			"accessory": {
-				"action_id": "remove_today_2_action_id",
+				"action_id": "remove_event",
 				"type": "button",
 				"text": {
 					"type": "plain_text",
 					"text": "Remove",
 					"emoji": true
 				},
-				"value": "remove_today_2"
+				"value": "remove_today_FakeId2"
 			},
-			"block_id": "today_2"
+			"block_id": "FakeId2"
 		},
 		{
 			"type": "section",
@@ -86,16 +86,16 @@ var editEventsModal = `{
 				"text": "3:15 Retro"
 			},
 			"accessory": {
-				"action_id": "remove_today_3_action_id",
+				"action_id": "remove_event",
 				"type": "button",
 				"text": {
 					"type": "plain_text",
 					"text": "Remove",
 					"emoji": true
 				},
-				"value": "remove_today_3"
+				"value": "remove_today_FakeId3"
 			},
-			"block_id": "today_3"
+			"block_id": "FakeId3"
 		},
 		{
 			"type": "divider"
@@ -119,16 +119,16 @@ var editEventsModal = `{
 				"text": "9:15 Standup"
 			},
 			"accessory": {
-				"action_id": "remove_tomorrow_1_action_id",
+				"action_id": "remove_event",
 				"type": "button",
 				"text": {
 					"type": "plain_text",
 					"text": "Remove",
 					"emoji": true
 				},
-				"value": "remove_tomorrow_1"
+				"value": "remove_tomorrow_FakeId4"
 			},
-			"block_id": "tomorrow_1"
+			"block_id": "FakeId4"
 		},
 		{
 			"type": "section",
@@ -137,16 +137,16 @@ var editEventsModal = `{
 				"text": "1:30 User Interview"
 			},
 			"accessory": {
-				"action_id": "remove_tomorrow_2_action_id",
+				"action_id": "remove_event",
 				"type": "button",
 				"text": {
 					"type": "plain_text",
 					"text": "Remove",
 					"emoji": true
 				},
-				"value": "remove_tomorrow_2"
+				"value":"remove_tomorrow_FakeId5"
 			},
-			"block_id": "tomorrow_2"
+			"block_id": "FakeId5"
 		},
 		{
 			"type": "section",
@@ -155,16 +155,16 @@ var editEventsModal = `{
 				"text": "3:00 Synthesis"
 			},
 			"accessory": {
-				"action_id": "remove_tomorrow_3_action_id",
+				"action_id": "remove_event",
 				"type": "button",
 				"text": {
 					"type": "plain_text",
 					"text": "Remove",
 					"emoji": true
 				},
-				"value": "remove_tomorrow_3"
+				"value": "remove_tomorrow_FakeId6"
 			},
-			"block_id": "tomorrow_3"
+			"block_id": "FakeId6"
 		},
 		{
 			"type": "divider"
@@ -357,29 +357,59 @@ var editEventsModal = `{
 
 func TestNewEditEventsModal(t *testing.T) {
 
-	todaysEvents := []slack.Block{
-		slack.NewSectionBlock(
-			slack.NewTextBlockObject(slack.MarkdownType, "9:15 Standup", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_today_1_action_id", "remove_today_1", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("today_1"),
-		),
-		slack.NewSectionBlock(
-			slack.NewTextBlockObject(slack.MarkdownType, "11:30 IPM", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_today_2_action_id", "remove_today_2", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("today_2"),
-		),
-		slack.NewSectionBlock(
-			slack.NewTextBlockObject(slack.MarkdownType, "3:15 Retro", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_today_3_action_id", "remove_today_3", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("today_3"),
-		),
+
+	todaysEvents := []model.Event{
+		{
+			Id:    "FakeId1",
+			Title: "Standup",
+			Day:   TodayOptionValue,
+			Hour:  9,
+			Min:   15,
+			AmPm:  "AM",
+		},
+		{
+			Id:    "FakeId2",
+			Title: "IPM",
+			Day:   TodayOptionValue,
+			Hour:  11,
+			Min:   30,
+			AmPm:  "AM",
+		},
+		{
+			Id:    "FakeId3",
+			Title: "Retro",
+			Day:   TodayOptionValue,
+			Hour:  3,
+			Min:   15,
+			AmPm:  "PM",
+		},
 	}
 
-	tomorrowsEvents := []slack.Block{
-		slack.NewSectionBlock(
-			slack.NewTextBlockObject(slack.MarkdownType, "9:15 Standup", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_tomorrow_1_action_id", "remove_tomorrow_1", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("tomorrow_1"),
-		),
-		slack.NewSectionBlock(
-			slack.NewTextBlockObject(slack.MarkdownType, "1:30 User Interview", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_tomorrow_2_action_id", "remove_tomorrow_2", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("tomorrow_2"),
-		),
-		slack.NewSectionBlock(
-			slack.NewTextBlockObject(slack.MarkdownType, "3:00 Synthesis", false, false), nil, slack.NewAccessory(slack.NewButtonBlockElement("remove_tomorrow_3_action_id", "remove_tomorrow_3", slack.NewTextBlockObject(slack.PlainTextType, "Remove", true, false))), slack.SectionBlockOptionBlockID("tomorrow_3"),
-		),
-
+	tomorrowsEvents := []model.Event{
+		{
+			Id:    "FakeId4",
+			Title: "Standup",
+			Day:   TomorrowOptionValue,
+			Hour:  9,
+			Min:   15,
+			AmPm:  "AM",
+		},
+		{
+			Id:    "FakeId5",
+			Title: "User Interview",
+			Day:   TomorrowOptionValue,
+			Hour:  1,
+			Min:   30,
+			AmPm:  "PM",
+		},
+		{
+			Id:    "FakeId6",
+			Title: "Synthesis",
+			Day:   TomorrowOptionValue,
+			Hour:  3,
+			Min:   00,
+			AmPm:  "PM",
+		},
 	}
 
 	result := NewEditEventsModal(666, todaysEvents, tomorrowsEvents)

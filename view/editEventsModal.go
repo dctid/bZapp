@@ -6,14 +6,15 @@ import (
 	"github.com/slack-go/slack"
 )
 
-func NewEditEventsModal(index int, todayEvents []slack.Block, tomorrowEvents []slack.Block) slack.ModalViewRequest {
+func NewEditEventsModal(index int, todaysEvents []model.Event, tomorrowsEvents []model.Event) slack.ModalViewRequest {
+	todaysSectionBlocks, tomorrowsSectionBlocks := ConvertToEventsWithRemoveButton(todaysEvents, tomorrowsEvents)
 	return slack.ModalViewRequest{
 		Type:   slack.VTModal,
 		Title:  slack.NewTextBlockObject(slack.PlainTextType, "bZapp - Edit Events", true, false),
 		Close:  slack.NewTextBlockObject(slack.PlainTextType, "Back", true, false),
 		Submit: slack.NewTextBlockObject(slack.PlainTextType, "Add", true, false),
 		Blocks: slack.Blocks{
-			BlockSet: buildSummaryEventBlocks(index, todayEvents, tomorrowEvents),
+			BlockSet: buildSummaryEventBlocks(index, todaysSectionBlocks, tomorrowsSectionBlocks),
 		},
 		NotifyOnClose: true,
 	}
@@ -69,9 +70,8 @@ func AddEventToEditModal(payload InteractionPayload) *slack.ViewSubmissionRespon
 	case TomorrowOptionValue:
 		tomorrowsEvents = model.AddEventInOrder(newEvent, tomorrowsEvents)
 	}
-	todaysSectionBlocks, tomorrowsSectionBlocks := ConvertToEventsWithRemoveButton(todaysEvents, tomorrowsEvents)
 
-	modalRequest := NewEditEventsModal(index+1, todaysSectionBlocks, tomorrowsSectionBlocks)
+	modalRequest := NewEditEventsModal(index+1, todaysEvents, tomorrowsEvents)
 	return slack.NewUpdateViewSubmissionResponse(&modalRequest)
 }
 
@@ -80,10 +80,9 @@ func OpenEditEventModalFromSummaryModal(payload InteractionPayload) slack.ModalV
 	todaysEvents := model.Events.TodaysEvents
 	tomorrowsEvents := model.Events.TomorrowsEvents
 
-	todaysSectionBlocks, tomorrowsSectionEvents := ConvertToEventsWithRemoveButton(todaysEvents, tomorrowsEvents)
 	index := ExtractInputIndex(payload.View.Blocks.BlockSet)
 
-	modalRequest := NewEditEventsModal(index+1, todaysSectionBlocks, tomorrowsSectionEvents)
+	modalRequest := NewEditEventsModal(index+1, todaysEvents, tomorrowsEvents)
 	return modalRequest
 }
 
@@ -97,10 +96,9 @@ func RemoveEventFromEditModal(payload InteractionPayload) slack.ModalViewRequest
 
 	todaysEvents = model.RemoveEvent(blockIdToDelete, todaysEvents)
 	tomorrowsEvents = model.RemoveEvent(blockIdToDelete, tomorrowsEvents)
-	todaysSectionBlocks, tomorrowsSectionBlocks := ConvertToEventsWithRemoveButton(todaysEvents, tomorrowsEvents)
 
 	index := ExtractInputIndex(payload.View.Blocks.BlockSet)
 
-	modalRequest := NewEditEventsModal(index, todaysSectionBlocks, tomorrowsSectionBlocks)
+	modalRequest := NewEditEventsModal(index, todaysEvents, tomorrowsEvents)
 	return modalRequest
 }
