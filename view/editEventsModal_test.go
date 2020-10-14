@@ -412,7 +412,13 @@ func TestNewEditEventsModal(t *testing.T) {
 		},
 	}
 
-	result := NewEditEventsModal(666, todaysEvents, tomorrowsEvents)
+	result := NewEditEventsModal( model.Model{
+		Index:  666,
+		Events: model.Events{
+			TodaysEvents: todaysEvents,
+			TomorrowsEvents: tomorrowsEvents,
+		},
+	})
 	actualJson, _ := json.Marshal(result)
 	expectedJsonString, _ := format.PrettyJson(editEventsModal)
 	actualJsonString, _ := format.PrettyJson(string(actualJson))

@@ -52,7 +52,7 @@ type InteractionPayload struct {
 	ResponseUrls []ResponseUrl `json:"response_urls"`
 }
 
-func BuildNewEventSectionBlock(index int, values map[string]map[string]slack.BlockAction) model.Event {
+func BuildNewEvent(index int, values map[string]map[string]slack.BlockAction) model.Event {
 	eventTitle := values[fmt.Sprintf("%s-%d", AddEventTitleInputBlock, index)][AddEventTitleActionId].Value
 	eventDay := values[fmt.Sprintf("%s-%d", AddEventDayInputBlock, index)][AddEventDayActionId].SelectedOption.Value
 	eventHours, _ := strconv.Atoi(strings.Split(values[fmt.Sprintf("%s-%d", AddEventHoursInputBlock, index)][AddEventHoursActionId].SelectedOption.Text.Text, " ")[0])
