@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/dctid/bZapp/model"
 	"github.com/slack-go/slack"
-	"log"
 	"reflect"
 	"strings"
 	"testing"
@@ -51,20 +50,22 @@ func TestExtractModel(t *testing.T) {
 	tests := []struct {
 		name  string
 		args  args
-		want  []model.Event
-		want1 []model.Event
-		want2 map[string][]model.Goal
+		want model.Model
 	}{
 		{name: "empty",
-			args:  args{blocks: NewSummaryModal(NoEventYetSection, NoEventYetSection, NoGoalsYetSection).Blocks.BlockSet},
-			want:  []model.Event{},
-			want1: []model.Event{},
-			want2: map[string][]model.Goal{
-				"Customer Questions?": {},
-				"Learnings": {},
-				"Other": {},
-				"Questions?": {},
-				"Team Needs": {},
+			args: args{blocks: NewSummaryModal(NoEventYetSection, NoEventYetSection, NoGoalsYetSection).Blocks.BlockSet},
+			want: model.Model{
+				Events: model.Events{
+					TodaysEvents:    []model.Event{},
+					TomorrowsEvents: []model.Event{},
+				},
+				Goals: model.Goals{
+					"Customer Questions?": {},
+					"Learnings":           {},
+					"Other":               {},
+					"Questions?":          {},
+					"Team Needs":          {},
+				},
 			},
 		},
 		{name: "one each",
@@ -75,46 +76,44 @@ func TestExtractModel(t *testing.T) {
 					NoGoalsYetSection,
 				).Blocks.BlockSet,
 			},
-			want: []model.Event{
-				{
-					Id:    "fake event id 1",
-					Title: "Standup",
-					Day:   "today",
-					Hour:  9,
-					Min:   15,
-					AmPm:  "AM",
-				}},
-			want1: []model.Event{
-				{
-					Id:    "fake event id 2",
-					Title: "Standdown",
-					Day:   "tomorrow",
-					Hour:  10,
-					Min:   30,
-					AmPm:  "AM",
+			want: model.Model{
+				Events: model.Events{
+					TodaysEvents: []model.Event{
+						{
+							Id:    "fake event id 1",
+							Title: "Standup",
+							Day:   "today",
+							Hour:  9,
+							Min:   15,
+							AmPm:  "AM",
+						}},
+					TomorrowsEvents: []model.Event{
+						{
+							Id:    "fake event id 2",
+							Title: "Standdown",
+							Day:   "tomorrow",
+							Hour:  10,
+							Min:   30,
+							AmPm:  "AM",
+						},
+					},
+				},
+					Goals: model.Goals{
+						"Customer Questions?": {},
+						"Learnings":           {},
+						"Other":               {},
+						"Questions?":          {},
+						"Team Needs":          {},
+					},
 				},
 			},
-			want2: map[string][]model.Goal{
-				"Customer Questions?": {},
-				"Learnings": {},
-				"Other": {},
-				"Questions?": {},
-				"Team Needs": {},
-			},
-		},
-	}
+		}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1, got2 := ExtractModel(tt.args.blocks)
-			log.Printf("got: %v, got1: %v", len(got), len(got1))
+			got := ExtractModel(tt.args.blocks)
+
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ExtractModel() got = %v, want %v", got, tt.want)
-			}
-			if !reflect.DeepEqual(got1, tt.want1) {
-				t.Errorf("ExtractModel() got1 = %#v, want %#v", got1, tt.want1)
-			}
-			if !reflect.DeepEqual(got2, tt.want2) {
-				t.Errorf("ExtractModel() got2 = %v, want %v", got2, tt.want2)
 			}
 		})
 	}

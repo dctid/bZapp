@@ -5,6 +5,11 @@ import (
 	"fmt"
 )
 
+type Events struct {
+	TodaysEvents []Event
+	TomorrowsEvents []Event
+}
+
 type Event struct {
 	Id string
 	Title string

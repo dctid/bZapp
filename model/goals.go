@@ -2,6 +2,8 @@ package model
 
 import "errors"
 
+type Goals map[string][]Goal
+
 type Goal struct {
 	Id string
 	Value string

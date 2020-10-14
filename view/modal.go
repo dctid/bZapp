@@ -80,13 +80,17 @@ func BuildNewGoalSectionBlock(index int, values map[string]map[string]slack.Bloc
 	return strings.TrimPrefix(category, GoalCategoryDropdownPrefix), goal
 }
 
-func ExtractModel(blocks []slack.Block) ([]model.Event, []model.Event, map[string][]model.Goal) {
+func ExtractModel(blocks []slack.Block) model.Model {
 	log.Printf("New Events %+v\n", blocks)
 
 	contentBlockMap := groupSectionBlocks(blocks)
-	return mapToEvents(TodayOptionValue, contentBlockMap[TodaysEventsHeader]),
-		mapToEvents(TomorrowOptionValue, contentBlockMap[TomorrowsEventsHeader]),
-		mapToGoals(contentBlockMap)
+	return model.Model{
+		Events: model.Events{
+			TodaysEvents:    mapToEvents(TodayOptionValue, contentBlockMap[TodaysEventsHeader]),
+			TomorrowsEvents: mapToEvents(TomorrowOptionValue, contentBlockMap[TomorrowsEventsHeader]),
+		},
+		Goals:  mapToGoals(contentBlockMap),
+	}
 }
 
 func ConvertToEventsWithRemoveButton(todaysEvents []model.Event, tomorrowsEvents []model.Event) ([]slack.Block, []slack.Block) {

@@ -147,8 +147,8 @@ func mapToEvents(day string, blocks []slack.Block) []model.Event {
 	return events
 }
 
-func mapToGoals(contentBlockMap map[string][]slack.Block) map[string][]model.Goal {
-	var goals = make(map[string][]model.Goal)
+func mapToGoals(contentBlockMap map[string][]slack.Block) model.Goals {
+	var goals = make(model.Goals)
 	log.Printf("content map %+v", contentBlockMap[GoalCategories[0]])
 	for _, category := range GoalCategories {
 		blocks := contentBlockMap[category]

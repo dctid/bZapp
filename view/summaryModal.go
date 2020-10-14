@@ -51,7 +51,9 @@ func actionBlock() []slack.Block {
 }
 
 func SummaryModalWithEventsAddedInEditModal(payload InteractionPayload) slack.ModalViewRequest {
-	todaysEvents, tomorrowsEvents, _ := ExtractModel(payload.View.Blocks.BlockSet)
+	currentModel := ExtractModel(payload.View.Blocks.BlockSet)
+	todaysEvents := currentModel.Events.TodaysEvents
+	tomorrowsEvents := currentModel.Events.TomorrowsEvents
 	todaysSectionBlocks, tomorrowsSectionBlocks := ConvertToEventsWithoutRemoveButton(todaysEvents, tomorrowsEvents)
 
 
