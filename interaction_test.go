@@ -233,6 +233,7 @@ const editEventsModal = `{
 		"emoji": true
 	},
 	"notify_on_close": true,
+	"private_metadata": "{\"Index\":1,\"Events\":{\"TodaysEvents\":[],\"TomorrowsEvents\":[]},\"Goals\":{\"CustomerQuestions?\":[],\"Learnings\":[],\"Other\":[],\"Questions?\":[],\"TeamNeeds\":[]}}",
 	"submit": {
 		"type": "plain_text",
 		"text": "Add",
@@ -727,6 +728,7 @@ const removeEventsModal = `{
       "text": "Add",
       "emoji": true
     },
+	"private_metadata": "{\"Index\":9,\"Events\":{\"TodaysEvents\":[],\"TomorrowsEvents\":[]},\"Goals\":{\"CustomerQuestions?\":[],\"Learnings\":[],\"Other\":[],\"Questions?\":[],\"TeamNeeds\":[]}}",
     "notify_on_close": true
   }
 `
@@ -989,6 +991,7 @@ const addEventSubmissionResponse = `{
 			"emoji": true
 		},
 		"notify_on_close": true,
+		"private_metadata": "{\"Index\":2,\"Events\":{\"TodaysEvents\":[],\"TomorrowsEvents\":[{\"Id\":\"Fakehash\",\"Title\":\"retrob\",\"Day\":\"tomorrow\",\"Hour\":4,\"Min\":45,\"AmPm\":\"PM\"}]},\"Goals\":{\"CustomerQuestions?\":[],\"Learnings\":[],\"Other\":[],\"Questions?\":[],\"TeamNeeds\":[]}}",
 		"submit": {
 			"type": "plain_text",
 			"text": "Add",

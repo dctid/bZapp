@@ -18,7 +18,6 @@ var GoalCategories = []string{"Customer Questions?", "Team Needs", "Learnings", 
 
 func NewEditGoalsModal(updatedModel model.Model) slack.ModalViewRequest {
 
-	jsonBytes, _ := json.Marshal(updatedModel)
 	return slack.ModalViewRequest{
 		Type:   slack.VTModal,
 		Title:  slack.NewTextBlockObject(slack.PlainTextType, EditGoalsTitle, true, false),
@@ -28,7 +27,7 @@ func NewEditGoalsModal(updatedModel model.Model) slack.ModalViewRequest {
 			BlockSet: buildEditGoalsBlock(updatedModel.Index, updatedModel.Goals),
 		},
 		NotifyOnClose:   true,
-		PrivateMetadata: string(jsonBytes),
+		PrivateMetadata: updatedModel.ConvertModelToJson(),
 	}
 }
 

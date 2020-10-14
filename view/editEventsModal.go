@@ -17,6 +17,7 @@ func NewEditEventsModal(updatedModel model.Model) slack.ModalViewRequest {
 			BlockSet: buildSummaryEventBlocks(updatedModel.Index, todaysSectionBlocks, tomorrowsSectionBlocks),
 		},
 		NotifyOnClose: true,
+		PrivateMetadata: updatedModel.ConvertModelToJson(),
 	}
 }
 

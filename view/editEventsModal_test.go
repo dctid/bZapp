@@ -15,6 +15,7 @@ var editEventsModal = `{
 		"emoji": true
 	},
 	"notify_on_close": true,
+	"private_metadata": "{\"Index\":666,\"Events\":{\"TodaysEvents\":[{\"Id\":\"FakeId1\",\"Title\":\"Standup\",\"Day\":\"today\",\"Hour\":9,\"Min\":15,\"AmPm\":\"AM\"},{\"Id\":\"FakeId2\",\"Title\":\"IPM\",\"Day\":\"today\",\"Hour\":11,\"Min\":30,\"AmPm\":\"AM\"},{\"Id\":\"FakeId3\",\"Title\":\"Retro\",\"Day\":\"today\",\"Hour\":3,\"Min\":15,\"AmPm\":\"PM\"}],\"TomorrowsEvents\":[{\"Id\":\"FakeId4\",\"Title\":\"Standup\",\"Day\":\"tomorrow\",\"Hour\":9,\"Min\":15,\"AmPm\":\"AM\"},{\"Id\":\"FakeId5\",\"Title\":\"UserInterview\",\"Day\":\"tomorrow\",\"Hour\":1,\"Min\":30,\"AmPm\":\"PM\"},{\"Id\":\"FakeId6\",\"Title\":\"Synthesis\",\"Day\":\"tomorrow\",\"Hour\":3,\"Min\":0,\"AmPm\":\"PM\"}]},\"Goals\":null}",
 	"submit": {
 		"type": "plain_text",
 		"text": "Add",
