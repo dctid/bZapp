@@ -4,10 +4,6 @@ import (
 	"fmt"
 	"github.com/dctid/bZapp/model"
 	"github.com/slack-go/slack"
-	"log"
-	"regexp"
-	"strconv"
-	"strings"
 )
 
 func convertToSectionBlocks(includeRemoveButton bool, events []model.Event) []slack.Block {
@@ -29,24 +25,6 @@ func convertToSectionBlocks(includeRemoveButton bool, events []model.Event) []sl
 	return convertedBlocks
 }
 
-func convertGoalToSectionBlocks(includeRemoveButton bool, category string, goals []model.Goal) []slack.Block {
-
-	numEvents := len(goals)
-	if numEvents == 0 {
-		return NoGoalsYetSection
-	}
-	convertedBlocks := make([]slack.Block, numEvents)
-
-	for index, goal := range goals {
-		convertedBlocks[index] = slack.NewSectionBlock(
-			slack.NewTextBlockObject(slack.MarkdownType, goal.Value, false, false),
-			nil,
-			getGoalRemoveButton(includeRemoveButton, category, goal),
-			slack.SectionBlockOptionBlockID(goal.Id),
-		)
-	}
-	return convertedBlocks
-}
 
 func getRemoveButton(includeRemoveButton bool, event model.Event) *slack.Accessory {
 	if includeRemoveButton {
@@ -72,27 +50,6 @@ func getGoalRemoveButton(includeRemoveButton bool, category string, goal model.G
 	}
 	return nil
 }
-
-func groupSectionBlocks(blocks []slack.Block) map[string][]slack.Block {
-	result := map[string][]slack.Block{}
-	var key string
-	for _, block := range blocks {
-		if block.BlockType() == slack.MBTContext  {
-			key = strings.Trim(block.(*slack.ContextBlock).ContextElements.Elements[0].(*slack.TextBlockObject).Text, "*")
-			result[key] = []slack.Block{}
-		} else if  block.BlockType() == slack.MBTHeader {
-			key = block.(*slack.HeaderBlock).Text.Text
-			result[key] = []slack.Block{}
-		} else if block.BlockType() == slack.MBTSection {
-			if block.(*slack.SectionBlock).Text.Text != NoEventsText && block.(*slack.SectionBlock).Text.Text != NoGoalsYetText {
-				blockMap := append(result[key], block)
-				result[key] = blockMap
-			}
-		}
-	}
-	return result
-}
-
 
 func minOption(num int) *slack.OptionBlockObject {
 	return slack.NewOptionBlockObject(fmt.Sprintf("min-%d", num), slack.NewTextBlockObject(slack.PlainTextType, fmt.Sprintf(func() string {
@@ -136,57 +93,6 @@ func mapStringOptions(vs []string, f func(string) *slack.OptionBlockObject) []*s
 		vsm[i] = f(v)
 	}
 	return vsm
-}
-
-
-func mapToEvents(day string, blocks []slack.Block) []model.Event {
-	var events = make([]model.Event, len(blocks))
-	for index, block := range blocks {
-		events[index] = convertToEvent(day, block)
-	}
-	return events
-}
-
-func mapToGoals(contentBlockMap map[string][]slack.Block) model.Goals {
-	var goals = make(model.Goals)
-	log.Printf("content map %+v", contentBlockMap[GoalCategories[0]])
-	for _, category := range GoalCategories {
-		blocks := contentBlockMap[category]
-		goals[category] = mapBlocksToGoals(category, blocks)
-	}
-	log.Printf("mapped goals %+v", goals)
-
-	return goals
-}
-
-func mapBlocksToGoals(category string, blocks []slack.Block) []model.Goal {
-	log.Printf("goals blocks for %s %d", category, len(blocks))
-	var events = make([]model.Goal, len(blocks))
-	for index, block := range blocks {
-		events[index] = convertToGoal(category, block)
-	}
-	return events
-}
-
-func convertToGoal(category string, block slack.Block) model.Goal {
-	sectionBlock := block.(*slack.SectionBlock)
-	text := sectionBlock.Text.Text
-
-	return model.Goal{Id: sectionBlock.BlockID, Value: text}
-}
-
-func convertToEvent(day string, block slack.Block) model.Event {
-	spacesOrColon := regexp.MustCompile(`(?:\:|\s)+`)
-	sectionBlock := block.(*slack.SectionBlock)
-	text := sectionBlock.Text.Text
-	tokens := spacesOrColon.Split(text, -1)
-	log.Printf("text %s, %d", tokens, len(tokens))
-
-	hour, _ := strconv.Atoi(tokens[0])
-	mins, _ := strconv.Atoi(tokens[1])
-	amPm := amOrPm(hour)
-
-	return model.Event{Id: sectionBlock.BlockID, Title: tokens[2], Day: day, Hour: hour, Min: mins, AmPm: amPm}
 }
 
 func header(title string) []slack.Block {

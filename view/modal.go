@@ -80,41 +80,26 @@ func BuildNewGoalSectionBlock(index int, values map[string]map[string]slack.Bloc
 	return strings.TrimPrefix(category, GoalCategoryDropdownPrefix), goal
 }
 
-func ExtractModel(blocks []slack.Block) model.Model {
-	log.Printf("New Events %+v\n", blocks)
-
-	contentBlockMap := groupSectionBlocks(blocks)
-	return model.Model{
-		Events: model.Events{
-			TodaysEvents:    mapToEvents(TodayOptionValue, contentBlockMap[TodaysEventsHeader]),
-			TomorrowsEvents: mapToEvents(TomorrowOptionValue, contentBlockMap[TomorrowsEventsHeader]),
-		},
-		Goals:  mapToGoals(contentBlockMap),
-	}
-}
-
-
 func ConvertToEventsBlocks(editable bool, events model.Events) ([]slack.Block, []slack.Block) {
 	return convertToSectionBlocks(editable, events.TodaysEvents),
 		convertToSectionBlocks(editable, events.TomorrowsEvents)
 }
 
 func ConvertToGoalBlocks(editable bool, category string, goals []model.Goal) []slack.Block {
-	return convertGoalToSectionBlocks(editable, category, goals)
+	numEvents := len(goals)
+	if numEvents == 0 {
+		return NoGoalsYetSection
+	}
+	convertedBlocks := make([]slack.Block, numEvents)
+
+	for index, goal := range goals {
+		convertedBlocks[index] = slack.NewSectionBlock(
+			slack.NewTextBlockObject(slack.MarkdownType, goal.Value, false, false),
+			nil,
+			getGoalRemoveButton(editable, category, goal),
+			slack.SectionBlockOptionBlockID(goal.Id),
+		)
+	}
+	return convertedBlocks
 }
 
-func ExtractInputIndex(blocks []slack.Block) int {
-	for _, block := range blocks {
-		if block.BlockType() == slack.MBTInput {
-			inputBlock := block.(*slack.InputBlock)
-			tokens := strings.Split(inputBlock.BlockID, "-")
-			length := len(tokens)
-			if length > 1 {
-				index, _ := strconv.Atoi(tokens[length-1])
-				return index
-			}
-			return 0
-		}
-	}
-	return 0
-}
