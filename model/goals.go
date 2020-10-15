@@ -10,13 +10,24 @@ type Goal struct {
 	Value string
 }
 
-func RemoveGoal(id string, goals map[string][]Goal) map[string][]Goal {
+func (goals Goals) RemoveGoal(id string) Goals {
 	category, index, err := findInMapById(id, goals)
 	if err != nil {
 		return goals
 	}
 
 	return removeFromMap(goals, category, index)
+}
+
+func (goals Goals) AddGoal(category string, newGoal string) Goals {
+	if goals == nil{
+		goals = make(Goals)
+	}
+	goals[category] = append(goals[category],Goal{
+		Id:    Hash(),
+		Value: newGoal,
+	})
+	return goals
 }
 
 func removeFromMap(goals map[string][]Goal, category string, index int) map[string][]Goal{

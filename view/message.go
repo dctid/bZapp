@@ -1,20 +1,21 @@
 package view
 
 import (
+	"github.com/dctid/bZapp/model"
 	"github.com/slack-go/slack"
-	"log"
 )
 
-func DailySummaryMessage(payload InteractionPayload) (string, slack.Message) {
-	url := payload.ResponseUrls[0].ResponseUrl
-	log.Printf("Response Urls: %s", url)
-
-	currentModel := ExtractModel(payload.View.Blocks.BlockSet)
+func DailySummaryMessage(currentModel model.Model) slack.Message {
 	eventBlocks := buildEventsBlock(false, currentModel.Events)
+	eventBlocks = append(eventBlocks, buildGoalsBlock(currentModel.Goals)...)
 
-	message := slack.NewBlockMessage(eventBlocks...)
-	message.Text = "bZapp - Today's Standup Summary"
-	message.ResponseType = slack.ResponseTypeInChannel
-	return url, message
+	return slack.Message{
+		Msg: slack.Msg{
+			Blocks: slack.Blocks{
+				BlockSet: eventBlocks,
+			},
+			Text:         "bZapp - Today's Standup Summary",
+			ResponseType: slack.ResponseTypeInChannel,
+		},
+	}
 }
-

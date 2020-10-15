@@ -53,42 +53,21 @@ func addEventsActions(index int) []slack.Block {
 	}
 }
 
-func AddEventToEditModal(payload InteractionPayload) *slack.ViewSubmissionResponse {
-	//action := payload.View.State.Values[AddEventDayInputBlock][AddEventDayActionId]
-	//marshal, _ := json.Marshal(action)
-	//fmt.Printf("Add Event button pressed by user %s with value %v\n", payload.User.Name, string(marshal))
-
-	currentModel := ExtractModel(payload.View.Blocks.BlockSet)
-	index := ExtractInputIndex(payload.View.Blocks.BlockSet)
-	newEvent := BuildNewEvent(index, payload.View.State.Values)
-	switch newEvent.Day {
-	case TodayOptionValue:
-		currentModel.Events.TodaysEvents = model.AddEventInOrder(newEvent, currentModel.Events.TodaysEvents)
-	case TomorrowOptionValue:
-		currentModel.Events.TomorrowsEvents = model.AddEventInOrder(newEvent, currentModel.Events.TomorrowsEvents)
-	}
-	currentModel.Index = index + 1
+func AddEventToEditModal(values map[string]map[string]slack.BlockAction, currentModel model.Model) *slack.ViewSubmissionResponse {
+	newEvent := BuildNewEvent(currentModel.Index, values)
+	currentModel.Events = currentModel.Events.AddEvent(newEvent)
+	currentModel.Index++
 
 	modalRequest := NewEditEventsModal(currentModel)
 	return slack.NewUpdateViewSubmissionResponse(&modalRequest)
 }
 
-func OpenEditEventModalFromSummaryModal(payload InteractionPayload) slack.ModalViewRequest {
-	currentModel := ExtractModel(payload.View.Blocks.BlockSet)
-	currentModel.Index = ExtractInputIndex(payload.View.Blocks.BlockSet) + 1
-
-	modalRequest := NewEditEventsModal(currentModel)
-	return modalRequest
+func OpenEditEventModalFromSummaryModal(currentModel model.Model) slack.ModalViewRequest {
+	currentModel.Index++
+	return NewEditEventsModal(currentModel)
 }
 
-func RemoveEventFromEditModal(payload InteractionPayload) slack.ModalViewRequest {
-	blockIdToDelete := payload.ActionCallback.BlockActions[0].BlockID
-
-	currentModel := ExtractModel(payload.View.Blocks.BlockSet)
-	currentModel.Events.TodaysEvents = model.RemoveEvent(blockIdToDelete, currentModel.Events.TodaysEvents)
-	currentModel.Events.TomorrowsEvents = model.RemoveEvent(blockIdToDelete, currentModel.Events.TomorrowsEvents)
-	currentModel.Index = ExtractInputIndex(payload.View.Blocks.BlockSet)
-
-	modalRequest := NewEditEventsModal(currentModel)
-	return modalRequest
+func RemoveEventFromEditModal(blockIdToDelete string, currentModel model.Model) slack.ModalViewRequest {
+	currentModel.Events = currentModel.Events.RemoveEvent(blockIdToDelete)
+	return NewEditEventsModal(currentModel)
 }

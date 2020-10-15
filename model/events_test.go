@@ -423,8 +423,8 @@ func Test_RemoveEvent(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := RemoveEvent(tt.args.id, tt.args.events); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("RemoveEvent() = %v, want %v", got, tt.want)
+			if got := removeEvent(tt.args.id, tt.args.events); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("removeEvent() = %v, want %v", got, tt.want)
 			}
 		})
 	}

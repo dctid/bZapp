@@ -52,9 +52,3 @@ func actionBlock() []slack.Block {
 		},
 	}
 }
-
-func SummaryModalWithEventsAddedInEditModal(payload InteractionPayload) slack.ModalViewRequest {
-	currentModel := ExtractModel(payload.View.Blocks.BlockSet)
-	modalRequest := NewSummaryModal(currentModel)
-	return modalRequest
-}

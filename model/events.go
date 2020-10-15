@@ -6,12 +6,12 @@ import (
 )
 
 type Events struct {
-	TodaysEvents []Event
+	TodaysEvents    []Event
 	TomorrowsEvents []Event
 }
 
 type Event struct {
-	Id string
+	Id    string
 	Title string
 	Day   string
 	Hour  int
@@ -29,6 +29,22 @@ func (event Event) normalizeMins() string {
 	} else {
 		return fmt.Sprintf("%d", event.Min)
 	}
+}
+
+func (events Events) AddEvent(newEvent Event) Events {
+	switch newEvent.Day {
+	case "today":
+		return Events{
+			TodaysEvents:    AddEventInOrder(newEvent, events.TodaysEvents),
+			TomorrowsEvents: events.TomorrowsEvents,
+		}
+	case "tomorrow":
+		return Events{
+			TodaysEvents:    events.TodaysEvents,
+			TomorrowsEvents: AddEventInOrder(newEvent, events.TomorrowsEvents),
+		}
+	}
+	return events
 }
 
 func AddEventInOrder(event Event, events []Event) []Event {
@@ -61,7 +77,14 @@ func (event Event) calcEventValue() int {
 	return event.Hour*100 + event.Min
 }
 
-func RemoveEvent(id string, events []Event) []Event {
+func (events Events) RemoveEvent(id string) Events {
+	return Events{
+		TodaysEvents:    removeEvent(id, events.TodaysEvents),
+		TomorrowsEvents: removeEvent(id, events.TomorrowsEvents),
+	}
+}
+
+func removeEvent(id string, events []Event) []Event {
 	index, err := findById(id, events)
 	if err != nil {
 		return events

@@ -93,18 +93,14 @@ func ExtractModel(blocks []slack.Block) model.Model {
 	}
 }
 
-func ConvertToEventsWithRemoveButton(events model.Events) ([]slack.Block, []slack.Block) {
-	return convertToSectionBlocks(true, events.TodaysEvents),
-		convertToSectionBlocks(true, events.TomorrowsEvents)
-}
 
-func ConvertToEventsWithoutRemoveButton(editable bool, events model.Events) ([]slack.Block, []slack.Block) {
+func ConvertToEventsBlocks(editable bool, events model.Events) ([]slack.Block, []slack.Block) {
 	return convertToSectionBlocks(editable, events.TodaysEvents),
 		convertToSectionBlocks(editable, events.TomorrowsEvents)
 }
 
-func ConvertToGoalsWithRemoveButton(category string, goals []model.Goal) []slack.Block {
-	return convertGoalToSectionBlocks(true, category, goals)
+func ConvertToGoalBlocks(editable bool, category string, goals []model.Goal) []slack.Block {
+	return convertGoalToSectionBlocks(editable, category, goals)
 }
 
 func ExtractInputIndex(blocks []slack.Block) int {

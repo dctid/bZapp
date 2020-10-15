@@ -187,7 +187,7 @@ func TestConvertToEventsWithRemoveButton(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := ConvertToEventsWithRemoveButton(tt.args.events)
+			got, got1 := ConvertToEventsBlocks(true, tt.args.events)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ConvertToEventsWithRemoveButton() got = %v\n, want %v\n", got, tt.want)
 
@@ -248,13 +248,13 @@ func TestConvertToEventsWithoutRemoveButton(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := ConvertToEventsWithoutRemoveButton(false, tt.args.events)
+			got, got1 := ConvertToEventsBlocks(false, tt.args.events)
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ConvertToEventsWithoutRemoveButton() got = %v\n, want %v\n", got, tt.want)
+				t.Errorf("ConvertToEventsBlocks() got = %v\n, want %v\n", got, tt.want)
 
 			}
 			if !reflect.DeepEqual(got1, tt.want1) {
-				t.Errorf("ConvertToEventsWithoutRemoveButton() \ngot1 = %v\n, want1 %v\n", got1, tt.want1)
+				t.Errorf("ConvertToEventsBlocks() \ngot1 = %v\n, want1 %v\n", got1, tt.want1)
 			}
 		})
 	}
