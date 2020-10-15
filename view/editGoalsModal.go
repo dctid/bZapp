@@ -60,7 +60,7 @@ func actionsBlock(index int) []slack.Block {
 	return blocks
 }
 
-func OpenEditGoalsModalFromSummaryModal(payload InteractionPayload, currentModel model.Model) slack.ModalViewRequest {
+func OpenEditGoalsModalFromSummaryModal(currentModel model.Model) slack.ModalViewRequest {
 	currentModel.Index++
 	return NewEditGoalsModal(currentModel)
 }

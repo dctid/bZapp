@@ -159,7 +159,7 @@ func pushEditEventModal(payload view.InteractionPayload, currentModel model.Mode
 
 func pushEditGoalsModal(payload view.InteractionPayload, currentModel model.Model) (events.APIGatewayProxyResponse, error) {
 
-	modalRequest := view.OpenEditGoalsModalFromSummaryModal(payload, currentModel)
+	modalRequest := view.OpenEditGoalsModalFromSummaryModal(currentModel)
 
 	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true), slack.OptionHTTPClient(Client))
 	viewResponse, err := api.PushView(payload.TriggerID, modalRequest)
