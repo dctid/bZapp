@@ -15,7 +15,7 @@ const EditGoalsTitle = "bZapp - Edit Goals"
 
 var GoalCategories = []string{"Customer Questions?", "Team Needs", "Learnings", "Questions?", "Other"}
 
-func NewEditGoalsModal(updatedModel model.Model) slack.ModalViewRequest {
+func NewEditGoalsModal(updatedModel *model.Model) slack.ModalViewRequest {
 
 	return slack.ModalViewRequest{
 		Type:   slack.VTModal,
@@ -60,12 +60,12 @@ func actionsBlock(index int) []slack.Block {
 	return blocks
 }
 
-func OpenEditGoalsModalFromSummaryModal(currentModel model.Model) slack.ModalViewRequest {
+func OpenEditGoalsModalFromSummaryModal(currentModel *model.Model) slack.ModalViewRequest {
 	currentModel.Index++
 	return NewEditGoalsModal(currentModel)
 }
 
-func AddGoalToEditModal(values map[string]map[string]slack.BlockAction, currentModel model.Model) *slack.ViewSubmissionResponse {
+func AddGoalToEditModal(values map[string]map[string]slack.BlockAction, currentModel *model.Model) *slack.ViewSubmissionResponse {
 
 	category, goal := BuildNewGoalSectionBlock(currentModel.Index, values)
 	currentModel.Goals = currentModel.Goals.AddGoal(category, goal)
@@ -75,7 +75,7 @@ func AddGoalToEditModal(values map[string]map[string]slack.BlockAction, currentM
 	return slack.NewUpdateViewSubmissionResponse(&modalRequest)
 }
 
-func RemoveGoalFromEditModal(blockIdToDelete string, currentModel model.Model) slack.ModalViewRequest {
+func RemoveGoalFromEditModal(blockIdToDelete string, currentModel *model.Model) slack.ModalViewRequest {
 	currentModel.Goals = currentModel.Goals.RemoveGoal(blockIdToDelete)
 	return NewEditGoalsModal(currentModel)
 }

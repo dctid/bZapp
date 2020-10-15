@@ -413,7 +413,7 @@ func TestNewEditEventsModal(t *testing.T) {
 		},
 	}
 
-	result := NewEditEventsModal( model.Model{
+	result := NewEditEventsModal( &model.Model{
 		Index:  666,
 		Events: model.Events{
 			TodaysEvents: todaysEvents,

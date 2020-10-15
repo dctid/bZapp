@@ -12,7 +12,7 @@ import (
 func TestNewEditGoalsModal(t *testing.T) {
 
 	type args struct {
-		model model.Model
+		model *model.Model
 	}
 	tests := []struct {
 		name string
@@ -22,7 +22,7 @@ func TestNewEditGoalsModal(t *testing.T) {
 		{
 			name: "empty",
 			args: args{
-				model: model.Model{Index: 1},
+				model: &model.Model{Index: 1},
 			},
 			want: format.PrettyJsonNoError(expectModalJson),
 		},

@@ -5,7 +5,7 @@ import (
 	"github.com/slack-go/slack"
 )
 
-func NewSummaryModal(updatedModel model.Model) slack.ModalViewRequest {
+func NewSummaryModal(updatedModel *model.Model) slack.ModalViewRequest {
 	return slack.ModalViewRequest{
 		Type:   slack.VTModal,
 		Title:  slack.NewTextBlockObject(slack.PlainTextType, "bZapp", true, false),
@@ -18,7 +18,7 @@ func NewSummaryModal(updatedModel model.Model) slack.ModalViewRequest {
 	}
 }
 
-func buildEventBlocks(updatedModel model.Model) []slack.Block {
+func buildEventBlocks(updatedModel *model.Model) []slack.Block {
 
 	blocks := buildEventsBlock(false, updatedModel.Events)
 	blocks = append(blocks, buildGoalsBlock(updatedModel.Goals)...)

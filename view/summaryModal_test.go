@@ -273,7 +273,7 @@ var summaryModal = `{
 
 func TestNewSummaryModal(t *testing.T) {
 
-	testModel := model.Model{
+	testModel := &model.Model{
 		Events: model.Events{
 			TodaysEvents: []model.Event{
 				{

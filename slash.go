@@ -25,7 +25,7 @@ func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.API
 	}
 
 	triggerId := body["trigger_id"][0]
-	modalRequest := view.NewSummaryModal(model.Model{})
+	modalRequest := view.NewSummaryModal(&model.Model{})
 	requestAsJson, _ := json.MarshalIndent(modalRequest, "", "\t")
 	log.Printf("Body sent to slack to open modal: %v", string(requestAsJson))
 
