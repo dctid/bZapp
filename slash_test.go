@@ -41,6 +41,19 @@ const expected = `{
         "type": "divider"
       },
       {
+		"text": {
+			"text": "Events",
+			"type": "plain_text"
+		},
+		"type": "header"
+	},
+	{
+		"type": "divider"
+	},
+	{
+		"type": "divider"
+	},
+	{
         "type": "context",
         "elements": [
           {
@@ -85,13 +98,11 @@ const expected = `{
         "type": "divider"
       },
       {
-        "elements": [
-          {
-            "text": "Goals",
-            "type": "mrkdwn"
-          }
-        ],
-        "type": "context"
+		"text": {
+			"text": "Goals",
+			"type": "plain_text"
+		},
+		"type": "header"
       },
       {
         "type": "divider"

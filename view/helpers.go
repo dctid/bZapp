@@ -106,14 +106,16 @@ func header(title string) []slack.Block {
 func sectionHeader(title string) []slack.Block {
 	return []slack.Block{
 		slack.NewDividerBlock(),
-		slack.NewContextBlock("", slack.NewTextBlockObject(slack.MarkdownType,  title, false, false)),
+		slack.NewHeaderBlock( slack.NewTextBlockObject(slack.PlainTextType,  title, false, false)),
 		slack.NewDividerBlock(),
 	}
 }
 
+
 func buildEventsBlock(editable bool, events model.Events) []slack.Block {
 	todayEvents, tomorrowEvents := ConvertToEventsBlocks(editable, events)
-	blocks := header(markupBold(TodaysEventsHeader))
+	blocks := sectionHeader(EventsHeader)
+	blocks = append(blocks, header(markupBold(TodaysEventsHeader))...)
 	blocks = append(blocks, todayEvents...)
 
 	blocks = append(blocks, header(markupBold(TomorrowsEventsHeader))...)

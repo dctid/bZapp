@@ -9,6 +9,19 @@ const SummaryModal = `{
 				"type": "divider"
 			},
 			{
+				"text": {
+					"text": "Events",
+					"type": "plain_text"
+				},
+				"type": "header"
+			},
+			{
+				"type": "divider"
+			},
+			{
+				"type": "divider"
+			},
+			{
 				"elements": [
 					{
 						"text": "*Today'sEvents*",
@@ -55,13 +68,11 @@ const SummaryModal = `{
 				"type": "divider"
 			},
 			{
-				"elements": [
-					{
-						"text": "Goals",
-						"type": "mrkdwn"
-					}
-				],
-				"type": "context"
+				"text": {
+					"text": "Goals",
+					"type": "plain_text"
+				},
+				"type": "header"
 			},
 			{
 				"type": "divider"

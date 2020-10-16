@@ -29,9 +29,22 @@ var summaryModal = `{
   },
   "blocks": [
     {
-      "type": "divider"
-    },
-    {
+		"type": "divider"
+		},
+		{
+		"text": {
+			"text": "Events",
+			"type": "plain_text"
+		},
+		"type": "header"
+	},
+	{
+		"type": "divider"
+	},
+	{
+		"type": "divider"
+	},
+	{
       "type": "context",
       "elements": [
         {
@@ -104,13 +117,12 @@ var summaryModal = `{
       "type": "divider"
     },
     {
-      "elements": [
-        {
-          "text": "Goals",
-          "type": "mrkdwn"
-        }
-      ],
-      "type": "context"
+		"text": {
+			"text": "Goals",
+			"type": "plain_text"
+		},
+		"type": "header"
+
     },
     {
       "type": "divider"

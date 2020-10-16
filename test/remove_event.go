@@ -14,6 +14,19 @@ const RemoveEventsModal = `{
 			"type": "divider"
 		},
 		{
+			"text": {
+				"text": "Events",
+				"type": "plain_text"
+			},
+			"type": "header"
+		},
+		{
+			"type": "divider"
+		},
+		{
+			"type": "divider"
+		},
+		{
 			"type": "context",
 			"elements": [
 				{

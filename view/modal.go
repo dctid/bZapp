@@ -19,6 +19,7 @@ const AddEventDayActionId = "add_event_day"
 const AddEventHoursActionId = "add_event_hour"
 const AddEventMinsActionId = "add_event_mins"
 
+const EventsHeader = "Events"
 const TodayOptionValue = "today"
 const TomorrowOptionValue = "tomorrow"
 
