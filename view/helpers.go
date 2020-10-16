@@ -8,11 +8,7 @@ import (
 
 func convertEventsToSectionBlocks(includeRemoveButton bool, events []model.Event) []slack.Block {
 
-	numEvents := len(events)
-	if numEvents == 0 {
-		return NoEventYetSection
-	}
-	convertedBlocks := make([]slack.Block, numEvents)
+	convertedBlocks := make([]slack.Block, len(events))
 
 	for index, event := range events {
 		convertedBlocks[index] = slack.NewSectionBlock(
@@ -24,6 +20,22 @@ func convertEventsToSectionBlocks(includeRemoveButton bool, events []model.Event
 	}
 	return convertedBlocks
 }
+
+func convertToGoalBlocks(editable bool, category string, goals []model.Goal) []slack.Block {
+	convertedBlocks := make([]slack.Block, len(goals))
+
+	for index, goal := range goals {
+		convertedBlocks[index] = slack.NewSectionBlock(
+			slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf(":small_blue_diamond: %s", goal.Value), false, false),
+			nil,
+			getRemoveButton(RemoveGoalActionId, editable, category, goal.Id),
+			slack.SectionBlockOptionBlockID(goal.Id),
+		)
+	}
+	return convertedBlocks
+}
+
+
 
 func getRemoveButton(actionId string, includeRemoveButton bool, typeOfButton string, id string) *slack.Accessory {
 	if includeRemoveButton {
@@ -104,8 +116,8 @@ func buildEventsBlock(editable bool, events model.Events) []slack.Block {
 	if events.IsEmpty() {
 		blocks = append(blocks, NoEventYetSection...)
 	} else {
-		blocks = addEvents(editable, blocks, TodaysEventsHeader, events.TodaysEvents)
-		blocks = addEvents(editable, blocks, TomorrowsEventsHeader, events.TomorrowsEvents)
+		blocks = addEvents(editable, blocks, TodayEventsHeader, events.TodaysEvents)
+		blocks = addEvents(editable, blocks, TomorrowEventsHeader, events.TomorrowsEvents)
 	}
 
 	return blocks
@@ -144,8 +156,4 @@ func convertGoalsToBlocks(editable bool, goals model.Goals) []slack.Block {
 
 func markupBold(value string) string {
 	return fmt.Sprintf("*%s*", value)
-}
-
-func markupItalics(value string) string {
-	return fmt.Sprintf("_%s_", value)
 }

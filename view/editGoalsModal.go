@@ -6,14 +6,6 @@ import (
 	"github.com/slack-go/slack"
 )
 
-const AddGoalCategoryInputBlock = "add_goal_category_input_block"
-const AddGoalInputBlock = "add_goal_input_block"
-
-const AddGoalCategoryActionId = "add_goal_category"
-const AddGoalActionId = "add_goal"
-const EditGoalsTitle = "bZapp - Edit Goals"
-
-var GoalCategories = []string{"Customer Questions?", "Team Needs", "Learnings", "Questions?", "Other"}
 
 func NewEditGoalsModal(updatedModel *model.Model) *slack.ModalViewRequest {
 

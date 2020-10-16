@@ -9,7 +9,7 @@ import (
 func NewEditEventsModal(updatedModel *model.Model) *slack.ModalViewRequest {
 	return &slack.ModalViewRequest{
 		Type:   slack.VTModal,
-		Title:  slack.NewTextBlockObject(slack.PlainTextType, "bZapp - Edit Events", true, false),
+		Title:  slack.NewTextBlockObject(slack.PlainTextType, EditEventsTitle, true, false),
 		Close:  slack.NewTextBlockObject(slack.PlainTextType, "Back", true, false),
 		Submit: slack.NewTextBlockObject(slack.PlainTextType, "Add", true, false),
 		Blocks: slack.Blocks{

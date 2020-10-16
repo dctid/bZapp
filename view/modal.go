@@ -8,28 +8,36 @@ import (
 	"strings"
 )
 
+const EditEventsTitle = "bZapp - Edit Events"
+const EventsHeader = "Events"
+const TodayEventsHeader = "Today"
+const TomorrowEventsHeader = "Tomorrow"
+
+const TodayOptionValue = "today"
+const TomorrowOptionValue = "tomorrow"
+
+const EditEventsActionId = "edit_events"
+const RemoveEventActionId = "remove_event"
+const AddEventTitleActionId = "add_event_title"
+const AddEventDayActionId = "add_event_day"
+const AddEventHoursActionId = "add_event_hour"
+const AddEventMinsActionId = "add_event_mins"
 const AddEventTitleInputBlock = "add_event_title_input_block"
 const AddEventDayInputBlock = "add_event_day_input_block"
 const AddEventHoursInputBlock = "add_event_hours_input_block"
 const AddEventMinsInputBlock = "add_event_mins_input_block"
 
-const AddEventTitleActionId = "add_event_title"
-const AddEventDayActionId = "add_event_day"
-const AddEventHoursActionId = "add_event_hour"
-const AddEventMinsActionId = "add_event_mins"
-
-const EventsHeader = "Events"
-const TodayOptionValue = "today"
-const TomorrowOptionValue = "tomorrow"
-
-const EditEventsActionId = "edit_events"
-const EditGoalsActionId = "edit_goals"
-const RemoveEventActionId = "remove_event"
-
-const TodaysEventsHeader = "Today"
-const TomorrowsEventsHeader = "Tomorrow"
+const EditGoalsTitle = "bZapp - Edit Goals"
 const GoalsHeader = "Goals"
+
+const EditGoalsActionId = "edit_goals"
 const RemoveGoalActionId = "remove_goal"
+const AddGoalActionId = "add_goal"
+const AddGoalCategoryInputBlock = "add_goal_category_input_block"
+const AddGoalInputBlock = "add_goal_input_block"
+const AddGoalCategoryActionId = "add_goal_category"
+
+var GoalCategories = []string{"Customer Questions?", "Team Needs", "Learnings", "Questions?", "Other"}
 
 
 var NoEventYetSection = []slack.Block{slack.NewSectionBlock(slack.NewTextBlockObject(slack.MarkdownType, "_No events yet_", false, false), nil, nil)}
@@ -75,21 +83,4 @@ func BuildNewGoalSectionBlock(index int, values map[string]map[string]slack.Bloc
 	return category, goal
 }
 
-func convertToGoalBlocks(editable bool, category string, goals []model.Goal) []slack.Block {
-	numEvents := len(goals)
-	if numEvents == 0 {
-		return NoGoalsYetSection
-	}
-	convertedBlocks := make([]slack.Block, numEvents)
-
-	for index, goal := range goals {
-		convertedBlocks[index] = slack.NewSectionBlock(
-			slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf(":small_blue_diamond: %s", goal.Value), false, false),
-			nil,
-			getRemoveButton(RemoveGoalActionId, editable, category, goal.Id),
-			slack.SectionBlockOptionBlockID(goal.Id),
-		)
-	}
-	return convertedBlocks
-}
 

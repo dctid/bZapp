@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/dctid/bZapp/format"
 	"github.com/dctid/bZapp/model"
-	"github.com/slack-go/slack"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -39,12 +38,6 @@ func TestNewEditGoalsModal(t *testing.T) {
 func marshalNoError(thing interface{}) string {
 	marshal, _ := json.Marshal(thing)
 	return string(marshal)
-}
-
-func parse(jsonStr string) slack.ModalViewRequest {
-	var result slack.ModalViewRequest
-	json.Unmarshal([]byte(jsonStr), &result)
-	return result
 }
 
 const expectModalJson = `{

@@ -244,7 +244,7 @@ func removeGoal(payload *view.InteractionPayload, currentModel *model.Model) (ev
 }
 
 func viewClosed(payload *view.InteractionPayload, currentModel *model.Model) (events.APIGatewayProxyResponse, error) {
-	if (payload.View.Title.Text == "bZapp - Edit Events" || payload.View.Title.Text == view.EditGoalsTitle) && !payload.IsCleared {
+	if (payload.View.Title.Text == view.EditEventsTitle || payload.View.Title.Text == view.EditGoalsTitle) && !payload.IsCleared {
 		return returnToSummaryModal(payload, currentModel)
 	}
 	return events.APIGatewayProxyResponse{

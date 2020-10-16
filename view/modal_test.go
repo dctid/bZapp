@@ -26,7 +26,8 @@ func TestBuildNewEventSectionBlock(t *testing.T) {
 		want *model.Event
 	}{
 		{
-			name: "default", args: args{index: 1, values: values},
+			name: "New Event",
+			args: args{index: 1, values: values},
 			want: &model.Event{Id: "FakeHash", Title: "title", Day: TodayOptionValue, Hour: 10, Min: 15, AmPm: "AM"},
 		},
 	}
@@ -43,3 +44,37 @@ func TestBuildNewEventSectionBlock(t *testing.T) {
 	}
 }
 
+func TestBuildNewGoalSectionBlock(t *testing.T) {
+	type args struct {
+		index  int
+		values map[string]map[string]slack.BlockAction
+	}
+	values := map[string]map[string]slack.BlockAction{
+		fmt.Sprintf("%s-%d", AddGoalCategoryInputBlock, 1): {AddGoalCategoryActionId: slack.BlockAction{SelectedOption: slack.OptionBlockObject{Value: GoalCategories[1]}}},
+		fmt.Sprintf("%s-%d", AddGoalInputBlock, 1):   {AddGoalActionId: slack.BlockAction{Value: "Drink More"}},
+	}
+	tests := []struct {
+		name  string
+		args  args
+		want  string
+		want1 string
+	}{
+		{
+			name: "New Goal",
+			args: args{index: 1, values: values},
+			want: GoalCategories[1],
+			want1: "Drink More",
+		},
+	}
+		for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, got1 := BuildNewGoalSectionBlock(tt.args.index, tt.args.values)
+			if got != tt.want {
+				t.Errorf("BuildNewGoalSectionBlock() got = %v, want %v", got, tt.want)
+			}
+			if got1 != tt.want1 {
+				t.Errorf("BuildNewGoalSectionBlock() got1 = %v, want %v", got1, tt.want1)
+			}
+		})
+	}
+}
