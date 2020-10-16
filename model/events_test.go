@@ -7,7 +7,7 @@ import (
 
 func Test_addEventInOrder(t *testing.T) {
 	type args struct {
-		event  Event
+		event  *Event
 		events []Event
 	}
 	tests := []struct {
@@ -18,7 +18,7 @@ func Test_addEventInOrder(t *testing.T) {
 		{
 			name: "empty",
 			args: args{
-				event: Event{
+				event: &Event{
 					Title: "title",
 					Day:   "day",
 					Hour:  9,
@@ -40,7 +40,7 @@ func Test_addEventInOrder(t *testing.T) {
 		{
 			name: "after",
 			args: args{
-				event: Event{
+				event: &Event{
 					Title: "title",
 					Day:   "day",
 					Hour:  12,
@@ -77,7 +77,7 @@ func Test_addEventInOrder(t *testing.T) {
 		{
 			name: "before",
 			args: args{
-				event: Event{
+				event: &Event{
 					Title: "title",
 					Day:   "day",
 					Hour:  9,
@@ -114,7 +114,7 @@ func Test_addEventInOrder(t *testing.T) {
 		{
 			name: "middle",
 			args: args{
-				event: Event{
+				event: &Event{
 					Title: "title",
 					Day:   "day",
 					Hour:  10,
@@ -165,7 +165,7 @@ func Test_addEventInOrder(t *testing.T) {
 		{
 			name: "complex",
 			args: args{
-				event: Event{
+				event: &Event{
 					Title: "title",
 					Day:   "day",
 					Hour:  10,
@@ -230,8 +230,8 @@ func Test_addEventInOrder(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := AddEventInOrder(tt.args.event, tt.args.events); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("AddEventInOrder() = %v, want %v", got, tt.want)
+			if got := addEventInOrder(tt.args.event, tt.args.events); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("addEventInOrder() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -324,7 +324,7 @@ func TestEvent_greaterThan(t *testing.T) {
 
 func Test_findIndexToInsertAt(t *testing.T) {
 	type args struct {
-		event  Event
+		event  *Event
 		events []Event
 	}
 	tests := []struct {
@@ -335,7 +335,7 @@ func Test_findIndexToInsertAt(t *testing.T) {
 		{
 			name: "something",
 			args: args{
-				event: Event{
+				event: &Event{
 					Title: "title",
 					Day:   "day",
 					Hour:  10,

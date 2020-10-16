@@ -31,34 +31,34 @@ func (event Event) normalizeMins() string {
 	}
 }
 
-func (events Events) AddEvent(newEvent Event) Events {
+func (events Events) AddEvent(newEvent *Event) Events {
 	switch newEvent.Day {
 	case "today":
 		return Events{
-			TodaysEvents:    AddEventInOrder(newEvent, events.TodaysEvents),
+			TodaysEvents:    addEventInOrder(newEvent, events.TodaysEvents),
 			TomorrowsEvents: events.TomorrowsEvents,
 		}
 	case "tomorrow":
 		return Events{
 			TodaysEvents:    events.TodaysEvents,
-			TomorrowsEvents: AddEventInOrder(newEvent, events.TomorrowsEvents),
+			TomorrowsEvents: addEventInOrder(newEvent, events.TomorrowsEvents),
 		}
 	}
 	return events
 }
 
-func AddEventInOrder(event Event, events []Event) []Event {
+func addEventInOrder(event *Event, events []Event) []Event {
 
 	indexToInsertAt := findIndexToInsertAt(event, events)
 
-	result := append(events, event)
+	result := append(events, *event)
 	copy(result[indexToInsertAt+1:], result[indexToInsertAt:])
-	result[indexToInsertAt] = event
+	result[indexToInsertAt] = *event
 
 	return result
 }
 
-func findIndexToInsertAt(event Event, events []Event) int {
+func findIndexToInsertAt(event *Event, events []Event) int {
 	for index, e := range events {
 		if event.greaterThan(e) {
 			return index

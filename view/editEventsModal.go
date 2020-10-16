@@ -6,8 +6,8 @@ import (
 	"github.com/slack-go/slack"
 )
 
-func NewEditEventsModal(updatedModel *model.Model) slack.ModalViewRequest {
-	return slack.ModalViewRequest{
+func NewEditEventsModal(updatedModel *model.Model) *slack.ModalViewRequest {
+	return &slack.ModalViewRequest{
 		Type:   slack.VTModal,
 		Title:  slack.NewTextBlockObject(slack.PlainTextType, "bZapp - Edit Events", true, false),
 		Close:  slack.NewTextBlockObject(slack.PlainTextType, "Back", true, false),
@@ -59,15 +59,15 @@ func AddEventToEditModal(values map[string]map[string]slack.BlockAction, current
 	currentModel.Index++
 
 	modalRequest := NewEditEventsModal(currentModel)
-	return slack.NewUpdateViewSubmissionResponse(&modalRequest)
+	return slack.NewUpdateViewSubmissionResponse(modalRequest)
 }
 
-func OpenEditEventModalFromSummaryModal(currentModel *model.Model) slack.ModalViewRequest {
+func OpenEditEventModalFromSummaryModal(currentModel *model.Model) *slack.ModalViewRequest {
 	currentModel.Index++
 	return NewEditEventsModal(currentModel)
 }
 
-func RemoveEventFromEditModal(blockIdToDelete string, currentModel *model.Model) slack.ModalViewRequest {
+func RemoveEventFromEditModal(blockIdToDelete string, currentModel *model.Model) *slack.ModalViewRequest {
 	currentModel.Events = currentModel.Events.RemoveEvent(blockIdToDelete)
 	return NewEditEventsModal(currentModel)
 }

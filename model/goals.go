@@ -30,7 +30,7 @@ func (goals Goals) AddGoal(category string, newGoal string) Goals {
 	return goals
 }
 
-func removeFromMap(goals map[string][]Goal, category string, index int) map[string][]Goal{
+func removeFromMap(goals Goals, category string, index int) Goals{
 	listToRemoveFrom := goals[category]
 	copy(listToRemoveFrom[index:], listToRemoveFrom[index+1:])
 	listToRemoveFrom[len(listToRemoveFrom)-1] = Goal{}
@@ -39,7 +39,7 @@ func removeFromMap(goals map[string][]Goal, category string, index int) map[stri
 	return goals
 }
 
-func findInMapById(id string, goals map[string][]Goal) (string, int, error) {
+func findInMapById(id string, goals Goals) (string, int, error) {
 	for category, goalsForCategory := range goals {
 		for index, goal := range goalsForCategory {
 			if goal.Id == id {

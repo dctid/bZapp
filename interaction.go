@@ -133,14 +133,14 @@ func pushEditEventModal(payload *view.InteractionPayload, currentModel *model.Mo
 	modalRequest := view.OpenEditEventModalFromSummaryModal(currentModel)
 
 	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true), slack.OptionHTTPClient(Client))
-	viewResponse, err := api.PushView(payload.TriggerID, modalRequest)
+	viewResponse, err := api.PushView(payload.TriggerID, *modalRequest)
 	if err != nil {
 		log.Printf("Err opening modalss: %v\n", err)
 	} else {
 		responseFromSlack, _ := json.MarshalIndent(viewResponse, "", "\t")
 		log.Printf("Success pushing edit modal: %v", string(responseFromSlack))
 	}
-	update := slack.NewUpdateViewSubmissionResponse(&modalRequest)
+	update := slack.NewUpdateViewSubmissionResponse(modalRequest)
 	jsonBytes, err := json.Marshal(update)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
@@ -162,14 +162,14 @@ func pushEditGoalsModal(payload *view.InteractionPayload, currentModel *model.Mo
 	modalRequest := view.OpenEditGoalsModalFromSummaryModal(currentModel)
 
 	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true), slack.OptionHTTPClient(Client))
-	viewResponse, err := api.PushView(payload.TriggerID, modalRequest)
+	viewResponse, err := api.PushView(payload.TriggerID, *modalRequest)
 	if err != nil {
 		log.Printf("Err opening modalss: %v\n", err)
 	} else {
 		responseFromSlack, _ := json.MarshalIndent(viewResponse, "", "\t")
 		log.Printf("Success pushing edit modal: %v", string(responseFromSlack))
 	}
-	update := slack.NewUpdateViewSubmissionResponse(&modalRequest)
+	update := slack.NewUpdateViewSubmissionResponse(modalRequest)
 	jsonBytes, err := json.Marshal(update)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
@@ -211,7 +211,7 @@ func removeEvent(payload *view.InteractionPayload, currentModel *model.Model) (e
 	log.Printf("Body sent to slack after removing event: %v", string(requestAsJson))
 
 	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true), slack.OptionHTTPClient(Client))
-	viewResponse, err := api.UpdateView(modalRequest, payload.View.ExternalID, payload.Hash, payload.View.ID)
+	viewResponse, err := api.UpdateView(*modalRequest, payload.View.ExternalID, payload.Hash, payload.View.ID)
 	if err != nil {
 		log.Printf("Err removing event from modal: %v\n", err)
 	} else {
@@ -230,7 +230,7 @@ func removeGoal(payload *view.InteractionPayload, currentModel *model.Model) (ev
 	log.Printf("Body sent to slack after removing goal: %v", string(requestAsJson))
 
 	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true), slack.OptionHTTPClient(Client))
-	viewResponse, err := api.UpdateView(modalRequest, payload.View.ExternalID, payload.Hash, payload.View.ID)
+	viewResponse, err := api.UpdateView(*modalRequest, payload.View.ExternalID, payload.Hash, payload.View.ID)
 	if err != nil {
 		log.Printf("Err removing event from modal: %v\n", err)
 	} else {

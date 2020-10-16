@@ -24,10 +24,11 @@ func TestBuildNewEventSectionBlock(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want model.Event
+		want *model.Event
 	}{
-		{name: "default", args: args{index: 1, values: values},
-			want: model.Event{Id: "FakeHash", Title: "title", Day: TodayOptionValue, Hour: 10, Min: 15, AmPm: "AM"},
+		{
+			name: "default", args: args{index: 1, values: values},
+			want: &model.Event{Id: "FakeHash", Title: "title", Day: TodayOptionValue, Hour: 10, Min: 15, AmPm: "AM"},
 		},
 	}
 	for _, tt := range tests {
@@ -36,13 +37,12 @@ func TestBuildNewEventSectionBlock(t *testing.T) {
 		}
 		t.Run(tt.name, func(t *testing.T) {
 			got := BuildNewEvent(tt.args.index, tt.args.values)
-			if got != tt.want {
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("BuildNewEvent() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
-
 
 func TestConvertToEventsWithRemoveButton(t *testing.T) {
 	type args struct {
