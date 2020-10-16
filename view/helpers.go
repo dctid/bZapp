@@ -107,7 +107,6 @@ func sectionHeader(title string) []slack.Block {
 	return []slack.Block{
 		slack.NewDividerBlock(),
 		slack.NewHeaderBlock( slack.NewTextBlockObject(slack.PlainTextType,  title, false, false)),
-		slack.NewDividerBlock(),
 	}
 }
 

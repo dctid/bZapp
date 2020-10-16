@@ -33,9 +33,6 @@ const EditEventsModal = `{
 			"type": "header"
 		},
 		{
-			"type": "divider"
-		},
-		{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",

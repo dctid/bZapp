@@ -19,12 +19,9 @@ const SummaryModal = `{
 				"type": "divider"
 			},
 			{
-				"type": "divider"
-			},
-			{
 				"elements": [
 					{
-						"text": "*Today'sEvents*",
+						"text": "*Today*",
 						"type": "mrkdwn"
 					}
 				],
@@ -47,7 +44,7 @@ const SummaryModal = `{
 			{
 				"elements": [
 					{
-						"text": "*Tomorrow'sEvents*",
+						"text": "*Tomorrow*",
 						"type": "mrkdwn"
 					}
 				],
@@ -73,9 +70,6 @@ const SummaryModal = `{
 					"type": "plain_text"
 				},
 				"type": "header"
-			},
-			{
-				"type": "divider"
 			},
 			{
 				"text": {

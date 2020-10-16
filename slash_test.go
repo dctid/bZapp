@@ -48,9 +48,6 @@ const expected = `{
 		"type": "header"
       },
       {
-        "type": "divider"
-      },
-      {
         "type": "section",
         "text": {
           "type": "mrkdwn",
@@ -66,9 +63,6 @@ const expected = `{
 			"type": "plain_text"
 		},
 		"type": "header"
-      },
-      {
-        "type": "divider"
       },
       {
         "text": {

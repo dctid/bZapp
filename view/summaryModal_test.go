@@ -42,14 +42,11 @@ var summaryModal = `{
 		"type": "divider"
 	},
 	{
-		"type": "divider"
-	},
-	{
       "type": "context",
       "elements": [
         {
           "type": "mrkdwn",
-          "text": "*Today's Events*"
+          "text": "*Today*"
         }
       ]
     },
@@ -85,7 +82,7 @@ var summaryModal = `{
       "elements": [
         {
           "type": "mrkdwn",
-          "text": "*Tomorrow's Events*"
+          "text": "*Tomorrow*"
         }
       ]
     },
@@ -122,9 +119,6 @@ var summaryModal = `{
 			"type": "plain_text"
 		},
 		"type": "header"
-    },
-    {
-      "type": "divider"
     },
     {
       "text": {

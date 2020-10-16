@@ -42,14 +42,11 @@ var editEventsModal = `{
       "type": "divider"
     },
     {
-      "type": "divider"
-    },
-    {
       "type": "context",
       "elements": [
         {
           "type": "mrkdwn",
-          "text": "*Today's Events*"
+          "text": "*Today*"
         }
       ]
     },
@@ -119,7 +116,7 @@ var editEventsModal = `{
       "elements": [
         {
           "type": "mrkdwn",
-          "text": "*Tomorrow's Events*"
+          "text": "*Tomorrow*"
         }
       ]
     },

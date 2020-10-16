@@ -18,12 +18,9 @@ const SubmissionJson = `{
 			"type": "divider"
 		},
 		{
-			"type": "divider"
-		},
-		{
 			"elements": [
 				{
-					"text": "*Today'sEvents*",
+					"text": "*Today*",
 					"type": "mrkdwn"
 				}
 			],
@@ -46,7 +43,7 @@ const SubmissionJson = `{
 		{
 			"elements": [
 				{
-					"text": "*Tomorrow'sEvents*",
+					"text": "*Tomorrow*",
 					"type": "mrkdwn"
 				}
 			],
@@ -73,9 +70,6 @@ const SubmissionJson = `{
 			},
 			"type": "header"
 
-		},
-		{
-			"type": "divider"
 		},
 		{
 			"type": "divider"

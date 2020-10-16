@@ -26,14 +26,11 @@ const AddEventSubmissionResponse = `{
 			"type": "divider"
 		},
       {
-        "type": "divider"
-      },
-      {
         "type": "context",
         "elements": [
           {
             "type": "mrkdwn",
-            "text": "*Today's Events*"
+            "text": "*Today*"
           }
         ]
       },
@@ -84,7 +81,7 @@ const AddEventSubmissionResponse = `{
         "elements": [
           {
             "type": "mrkdwn",
-            "text": "*Tomorrow's Events*"
+            "text": "*Tomorrow*"
           }
         ]
       },
