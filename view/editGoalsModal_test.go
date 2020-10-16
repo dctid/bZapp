@@ -95,7 +95,7 @@ const expectModalJson = `{
 							"text": "Customer Questions?",
 							"emoji": true
 						},
-						"value": "goal-Customer Questions?"
+						"value": "Customer Questions?"
 					},
 					{
 						"text": {
@@ -103,7 +103,7 @@ const expectModalJson = `{
 							"text": "Team Needs",
 							"emoji": true
 						},
-						"value": "goal-Team Needs"
+						"value": "Team Needs"
 					},
 					{
 						"text": {
@@ -111,7 +111,7 @@ const expectModalJson = `{
 							"text": "Learnings",
 							"emoji": true
 						},
-						"value": "goal-Learnings"
+						"value": "Learnings"
 					},
 					{
 						"text": {
@@ -119,7 +119,7 @@ const expectModalJson = `{
 							"text": "Questions?",
 							"emoji": true
 						},
-						"value": "goal-Questions?"
+						"value": "Questions?"
 					},
 					{
 						"text": {
@@ -127,7 +127,7 @@ const expectModalJson = `{
 							"text": "Other",
 							"emoji": true
 						},
-						"value": "goal-Other"
+						"value": "Other"
 					}
 				]
 			},

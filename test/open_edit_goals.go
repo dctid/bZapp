@@ -25,7 +25,7 @@ const EditGoalsModal = `{
 								"text": "CustomerQuestions?",
 								"type": "plain_text"
 							},
-							"value": "goal-CustomerQuestions?"
+							"value": "CustomerQuestions?"
 						},
 						{
 							"text": {
@@ -33,7 +33,7 @@ const EditGoalsModal = `{
 								"text": "TeamNeeds",
 								"type": "plain_text"
 							},
-							"value": "goal-TeamNeeds"
+							"value": "TeamNeeds"
 						},
 						{
 							"text": {
@@ -41,7 +41,7 @@ const EditGoalsModal = `{
 								"text": "Learnings",
 								"type": "plain_text"
 							},
-							"value": "goal-Learnings"
+							"value": "Learnings"
 						},
 						{
 							"text": {
@@ -49,7 +49,7 @@ const EditGoalsModal = `{
 								"text": "Questions?",
 								"type": "plain_text"
 							},
-							"value": "goal-Questions?"
+							"value": "Questions?"
 						},
 						{
 							"text": {
@@ -57,7 +57,7 @@ const EditGoalsModal = `{
 								"text": "Other",
 								"type": "plain_text"
 							},
-							"value": "goal-Other"
+							"value": "Other"
 						}
 					],
 					"placeholder": {

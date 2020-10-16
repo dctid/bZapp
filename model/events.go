@@ -23,6 +23,10 @@ func (event Event) ToString() string {
 	return fmt.Sprintf("%d:%s %s", event.Hour, event.normalizeMins(), event.Title)
 }
 
+func (events Events) IsEmpty() bool {
+	return len(events.TodaysEvents) == 0 && len(events.TomorrowsEvents) == 0
+}
+
 func (event Event) normalizeMins() string {
 	if event.Min < 10 {
 		return fmt.Sprintf("0%d", event.Min)
