@@ -12,29 +12,7 @@ const Add2ndGoalSubmissionResponse = `{
       "emoji": true
     },
     "blocks": [
-      {
-        "type": "divider"
-      },
-      {
-        "type": "context",
-        "elements": [
-          {
-            "type": "mrkdwn",
-            "text": "*Customer Questions?*"
-          }
-        ]
-      },
-      {
-        "type": "divider"
-      },
-      {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": "_No goals yet_"
-        }
-      },
-      {
+	  {
         "type": "divider"
       },
       {
@@ -53,7 +31,7 @@ const Add2ndGoalSubmissionResponse = `{
         "type": "section",
         "text": {
           "type": "mrkdwn",
-          "text": "lskfd"
+          "text": ":small_blue_diamond: lskfd"
         },
         "block_id": "YbiWhf",
         "accessory": {
@@ -75,28 +53,6 @@ const Add2ndGoalSubmissionResponse = `{
         "elements": [
           {
             "type": "mrkdwn",
-            "text": "*Learnings*"
-          }
-        ]
-      },
-      {
-        "type": "divider"
-      },
-      {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": "_No goals yet_"
-        }
-      },
-      {
-        "type": "divider"
-      },
-      {
-        "type": "context",
-        "elements": [
-          {
-            "type": "mrkdwn",
             "text": "*Questions?*"
           }
         ]
@@ -108,7 +64,7 @@ const Add2ndGoalSubmissionResponse = `{
         "type": "section",
         "text": {
           "type": "mrkdwn",
-          "text": "adsf"
+          "text": ":small_blue_diamond: adsf"
         },
         "block_id": "Fakehash",
         "accessory": {
@@ -125,28 +81,7 @@ const Add2ndGoalSubmissionResponse = `{
       {
         "type": "divider"
       },
-      {
-        "type": "context",
-        "elements": [
-          {
-            "type": "mrkdwn",
-            "text": "*Other*"
-          }
-        ]
-      },
-      {
-        "type": "divider"
-      },
-      {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": "_No goals yet_"
-        }
-      },
-      {
-        "type": "divider"
-      },
+
       {
         "type": "input",
         "block_id": "add_goal_category_input_block-8",

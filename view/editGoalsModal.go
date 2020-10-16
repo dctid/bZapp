@@ -32,13 +32,7 @@ func NewEditGoalsModal(updatedModel *model.Model) *slack.ModalViewRequest {
 
 func buildEditGoalsBlock(index int, goals model.Goals) []slack.Block {
 
-	var blocks []slack.Block
-
-	for _, category := range GoalCategories {
-		blocks = append(blocks, header(fmt.Sprintf("*%s*", category))...)
-		blocks = append(blocks, ConvertToGoalBlocks(true, category, goals[category])...)
-	}
-
+	blocks := convertGoalsToBlocks(true, goals)
 	blocks = append(blocks, actionsBlock(index)...)
 
 	return blocks

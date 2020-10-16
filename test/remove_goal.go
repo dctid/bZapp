@@ -18,28 +18,6 @@ const RemoveGoalsModal = `{
 			"elements": [
 				{
 					"type": "mrkdwn",
-					"text": "*Customer Questions?*"
-				}
-			]
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "_No goals yet_"
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "context",
-			"elements": [
-				{
-					"type": "mrkdwn",
 					"text": "*Team Needs*"
 				}
 			]
@@ -51,7 +29,7 @@ const RemoveGoalsModal = `{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "lskfd"
+				"text": ":small_blue_diamond: lskfd"
 			},
 			"block_id": "YbiWhf",
 			"accessory": {
@@ -84,7 +62,7 @@ const RemoveGoalsModal = `{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "sdfg"
+				"text": ":small_blue_diamond: sdfg"
 			},
 			"block_id": "mopNVQ",
 			"accessory": {
@@ -96,50 +74,6 @@ const RemoveGoalsModal = `{
 				},
 				"action_id": "remove_goal",
 				"value": "remove_Learnings_mopNVQ"
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "context",
-			"elements": [
-				{
-					"type": "mrkdwn",
-					"text": "*Questions?*"
-				}
-			]
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "_No goals yet_"
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "context",
-			"elements": [
-				{
-					"type": "mrkdwn",
-					"text": "*Other*"
-				}
-			]
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "_No goals yet_"
 			}
 		},
 		{

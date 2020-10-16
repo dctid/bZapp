@@ -16,7 +16,7 @@ func convertToSectionBlocks(includeRemoveButton bool, events []model.Event) []sl
 
 	for index, event := range events {
 		convertedBlocks[index] = slack.NewSectionBlock(
-			slack.NewTextBlockObject(slack.MarkdownType, event.ToString(), false, false),
+			slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf(":small_orange_diamond: %s", event.ToString()), false, false),
 			nil,
 			getRemoveButton(includeRemoveButton, event),
 			slack.SectionBlockOptionBlockID(event.Id),
@@ -115,25 +115,40 @@ func sectionHeader(title string) []slack.Block {
 func buildEventsBlock(editable bool, events model.Events) []slack.Block {
 	todayEvents, tomorrowEvents := ConvertToEventsBlocks(editable, events)
 	blocks := sectionHeader(EventsHeader)
-	blocks = append(blocks, header(markupBold(TodaysEventsHeader))...)
-	blocks = append(blocks, todayEvents...)
+	if len(events.TodaysEvents) > 0 {
+		blocks = append(blocks, header(markupBold(TodaysEventsHeader))...)
+		blocks = append(blocks, todayEvents...)
 
-	blocks = append(blocks, header(markupBold(TomorrowsEventsHeader))...)
-	blocks = append(blocks, tomorrowEvents...)
-
+	}
+	if len(events.TomorrowsEvents) >  0 {
+		blocks = append(blocks, header(markupBold(TomorrowsEventsHeader))...)
+		blocks = append(blocks, tomorrowEvents...)
+	}
+	if len(events.TodaysEvents) == 0 && len(events.TomorrowsEvents) == 0 {
+		blocks = append(blocks, NoEventYetSection...)
+	}
 	return blocks
 }
 
-func buildGoalsBlock(goals model.Goals) []slack.Block {
+func buildGoalsBlock(editable bool, goals model.Goals) []slack.Block {
+	blocks := sectionHeader(GoalsHeader)
+	blocks = append(blocks, convertGoalsToBlocks(editable, goals)...)
+	return blocks
+}
+
+func convertGoalsToBlocks(editable bool, goals model.Goals) []slack.Block {
 	var goalBlocks []slack.Block
 	for _, category := range GoalCategories {
-		goalBlocks = append(goalBlocks, header(fmt.Sprintf("*%s*", category))...)
-		goalBlocks = append(goalBlocks, ConvertToGoalBlocks(false, category, goals[category])...)
+		if len(goals[category]) > 0 {
+			goalBlocks = append(goalBlocks, header(fmt.Sprintf("*%s*", category))...)
+			goalBlocks = append(goalBlocks, ConvertToGoalBlocks(editable, category, goals[category])...)
+		}
 	}
 
-	blocks := sectionHeader(GoalsHeader)
-	blocks = append(blocks, goalBlocks...)
-	return blocks
+	if len(goalBlocks) == 0 {
+		goalBlocks = NoGoalsYetSection
+	}
+	return goalBlocks
 }
 
 

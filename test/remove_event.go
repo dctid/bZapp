@@ -42,7 +42,7 @@ const RemoveEventsModal = `{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "10:00 ads"
+				"text": ":small_orange_diamond: 10:00 ads"
 			},
 			"block_id": "WyKVYV",
 			"accessory": {
@@ -75,7 +75,7 @@ const RemoveEventsModal = `{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "11:15 dfs"
+				"text": ":small_orange_diamond: 11:15 dfs"
 			},
 			"block_id": "PTjSgI",
 			"accessory": {

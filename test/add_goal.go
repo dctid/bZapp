@@ -20,28 +20,6 @@ const AddGoalSubmissionResponse = `{
         "elements": [
           {
             "type": "mrkdwn",
-            "text": "*Customer Questions?*"
-          }
-        ]
-      },
-      {
-        "type": "divider"
-      },
-      {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": "_No goals yet_"
-        }
-      },
-      {
-        "type": "divider"
-      },
-      {
-        "type": "context",
-        "elements": [
-          {
-            "type": "mrkdwn",
             "text": "*Team Needs*"
           }
         ]
@@ -53,7 +31,7 @@ const AddGoalSubmissionResponse = `{
         "type": "section",
         "text": {
           "type": "mrkdwn",
-          "text": "lskfd"
+          "text": ":small_blue_diamond: lskfd"
         },
         "block_id": "Fakehash",
         "accessory": {
@@ -65,72 +43,6 @@ const AddGoalSubmissionResponse = `{
           },
           "action_id": "remove_goal",
           "value": "remove_Team Needs_Fakehash"
-        }
-      },
-      {
-        "type": "divider"
-      },
-      {
-        "type": "context",
-        "elements": [
-          {
-            "type": "mrkdwn",
-            "text": "*Learnings*"
-          }
-        ]
-      },
-      {
-        "type": "divider"
-      },
-      {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": "_No goals yet_"
-        }
-      },
-      {
-        "type": "divider"
-      },
-      {
-        "type": "context",
-        "elements": [
-          {
-            "type": "mrkdwn",
-            "text": "*Questions?*"
-          }
-        ]
-      },
-      {
-        "type": "divider"
-      },
-      {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": "_No goals yet_"
-        }
-      },
-      {
-        "type": "divider"
-      },
-      {
-        "type": "context",
-        "elements": [
-          {
-            "type": "mrkdwn",
-            "text": "*Other*"
-          }
-        ]
-      },
-      {
-        "type": "divider"
-      },
-      {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": "_No goals yet_"
         }
       },
       {

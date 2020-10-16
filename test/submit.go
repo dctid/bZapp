@@ -35,7 +35,7 @@ const SubmissionJson = `{
 		{
 			"block_id": "coEbHc",
 			"text": {
-				"text": "9:00asdf",
+				"text": ":small_orange_diamond: 9:00asdf",
 				"type": "mrkdwn"
 			},
 			"type": "section"
@@ -58,7 +58,7 @@ const SubmissionJson = `{
 		{
 			"block_id": "DZosTr",
 			"text": {
-				"text": "1:15qewr",
+				"text": ":small_orange_diamond: 1:15qewr",
 				"type": "mrkdwn"
 			},
 			"type": "section"
@@ -83,28 +83,6 @@ const SubmissionJson = `{
 		{
 			"elements": [
 				{
-					"text": "*CustomerQuestions?*",
-					"type": "mrkdwn"
-				}
-			],
-			"type": "context"
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"text": {
-				"text": "_Nogoalsyet_",
-				"type": "mrkdwn"
-			},
-			"type": "section"
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"elements": [
-				{
 					"text": "*TeamNeeds*",
 					"type": "mrkdwn"
 				}
@@ -117,29 +95,7 @@ const SubmissionJson = `{
 		{
 			"block_id": "bSAnHN",
 			"text": {
-				"text": "sfd",
-				"type": "mrkdwn"
-			},
-			"type": "section"
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"elements": [
-				{
-					"text": "*Learnings*",
-					"type": "mrkdwn"
-				}
-			],
-			"type": "context"
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"text": {
-				"text": "_Nogoalsyet_",
+				"text": ":small_blue_diamond: sfd",
 				"type": "mrkdwn"
 			},
 			"type": "section"
@@ -162,29 +118,7 @@ const SubmissionJson = `{
 		{
 			"block_id": "RrMdIA",
 			"text": {
-				"text": "afsasdf",
-				"type": "mrkdwn"
-			},
-			"type": "section"
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"elements": [
-				{
-					"text": "*Other*",
-					"type": "mrkdwn"
-				}
-			],
-			"type": "context"
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"text": {
-				"text": "_Nogoalsyet_",
+				"text": ":small_blue_diamond: afsasdf",
 				"type": "mrkdwn"
 			},
 			"type": "section"

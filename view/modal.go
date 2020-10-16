@@ -95,7 +95,7 @@ func ConvertToGoalBlocks(editable bool, category string, goals []model.Goal) []s
 
 	for index, goal := range goals {
 		convertedBlocks[index] = slack.NewSectionBlock(
-			slack.NewTextBlockObject(slack.MarkdownType, goal.Value, false, false),
+			slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf(":small_blue_diamond: %s", goal.Value), false, false),
 			nil,
 			getGoalRemoveButton(editable, category, goal),
 			slack.SectionBlockOptionBlockID(goal.Id),

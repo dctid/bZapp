@@ -12,16 +12,16 @@ func NewSummaryModal(updatedModel *model.Model) slack.ModalViewRequest {
 		Close:  slack.NewTextBlockObject(slack.PlainTextType, "Cancel", true, false),
 		Submit: slack.NewTextBlockObject(slack.PlainTextType, "Submit", true, false),
 		Blocks: slack.Blocks{
-			BlockSet: buildEventBlocks(updatedModel),
+			BlockSet: buildEventBlocks(false, updatedModel),
 		},
 		PrivateMetadata: updatedModel.ConvertModelToJson(),
 	}
 }
 
-func buildEventBlocks(updatedModel *model.Model) []slack.Block {
+func buildEventBlocks(editable bool, updatedModel *model.Model) []slack.Block {
 
 	blocks := buildEventsBlock(false, updatedModel.Events)
-	blocks = append(blocks, buildGoalsBlock(updatedModel.Goals)...)
+	blocks = append(blocks, buildGoalsBlock(editable, updatedModel.Goals)...)
 
 	blocks = append(blocks, actionBlock()...)
 

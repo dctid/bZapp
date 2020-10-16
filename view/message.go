@@ -7,7 +7,7 @@ import (
 
 func DailySummaryMessage(currentModel *model.Model) *slack.Message {
 	eventBlocks := buildEventsBlock(false, currentModel.Events)
-	eventBlocks = append(eventBlocks, buildGoalsBlock(currentModel.Goals)...)
+	eventBlocks = append(eventBlocks, buildGoalsBlock(false, currentModel.Goals)...)
 
 	return &slack.Message{
 		Msg: slack.Msg{

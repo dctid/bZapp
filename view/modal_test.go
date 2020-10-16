@@ -93,11 +93,11 @@ func TestConvertToEventsWithRemoveButton(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, got1 := ConvertToEventsBlocks(true, tt.args.events)
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ConvertToEventsWithRemoveButton() got = %v\n, want %v\n", got, tt.want)
+				t.Errorf("ConvertToEventsBlocks() got = %#v\n, want %#v\n", got, tt.want)
 
 			}
 			if !reflect.DeepEqual(got1, tt.want1) {
-				t.Errorf("ConvertToEventsWithRemoveButton() \ngot1 = %v\n, want1 %v\n", got1, tt.want1)
+				t.Errorf("ConvertToEventsBlocks() \ngot1 = %v\n, want1 %v\n", got1, tt.want1)
 			}
 		})
 	}
@@ -166,7 +166,7 @@ func TestConvertToEventsWithoutRemoveButton(t *testing.T) {
 
 func EventSectionWithRemoveButton(day string, index int, id string, title string, hour string, mins string) *slack.SectionBlock {
 	return slack.NewSectionBlock(
-		slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf("%s:%s %s", strings.Fields(hour)[0], mins, title), false, false),
+		slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf(":small_orange_diamond: %s:%s %s", strings.Fields(hour)[0], mins, title), false, false),
 		nil,
 		slack.NewAccessory(
 			slack.NewButtonBlockElement(
@@ -181,7 +181,7 @@ func EventSectionWithRemoveButton(day string, index int, id string, title string
 
 func EventSectionWithoutRemoveButton(id string, title string, hour string, mins string) *slack.SectionBlock {
 	return slack.NewSectionBlock(
-		slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf("%s:%s %s", strings.Fields(hour)[0], mins, title), false, false),
+		slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf(":small_orange_diamond: %s:%s %s", strings.Fields(hour)[0], mins, title), false, false),
 		nil,
 		nil,
 		slack.SectionBlockOptionBlockID(id),

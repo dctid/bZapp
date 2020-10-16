@@ -36,7 +36,7 @@ const SummaryModal = `{
 			{
 				"block_id": "WyKVYV",
 				"text": {
-					"text": "10:00ads",
+					"text": ":small_orange_diamond: 10:00ads",
 					"type": "mrkdwn"
 				},
 				"type": "section"
@@ -59,7 +59,7 @@ const SummaryModal = `{
 			{
 				"block_id": "PTjSgI",
 				"text": {
-					"text": "11:15dfs",
+					"text": ":small_orange_diamond: 11:15dfs",
 					"type": "mrkdwn"
 				},
 				"type": "section"
@@ -73,109 +73,6 @@ const SummaryModal = `{
 					"type": "plain_text"
 				},
 				"type": "header"
-			},
-			{
-				"type": "divider"
-			},
-			{
-				"type": "divider"
-			},
-			{
-				"elements": [
-					{
-						"text": "*CustomerQuestions?*",
-						"type": "mrkdwn"
-					}
-				],
-				"type": "context"
-			},
-			{
-				"type": "divider"
-			},
-			{
-				"text": {
-					"text": "_Nogoalsyet_",
-					"type": "mrkdwn"
-				},
-				"type": "section"
-			},
-			{
-				"type": "divider"
-			},
-			{
-				"elements": [
-					{
-						"text": "*TeamNeeds*",
-						"type": "mrkdwn"
-					}
-				],
-				"type": "context"
-			},
-			{
-				"type": "divider"
-			},
-			{
-				"text": {
-					"text": "_Nogoalsyet_",
-					"type": "mrkdwn"
-				},
-				"type": "section"
-			},
-			{
-				"type": "divider"
-			},
-			{
-				"elements": [
-					{
-						"text": "*Learnings*",
-						"type": "mrkdwn"
-					}
-				],
-				"type": "context"
-			},
-			{
-				"type": "divider"
-			},
-			{
-				"text": {
-					"text": "_Nogoalsyet_",
-					"type": "mrkdwn"
-				},
-				"type": "section"
-			},
-			{
-				"type": "divider"
-			},
-			{
-				"elements": [
-					{
-						"text": "*Questions?*",
-						"type": "mrkdwn"
-					}
-				],
-				"type": "context"
-			},
-			{
-				"type": "divider"
-			},
-			{
-				"text": {
-					"text": "_Nogoalsyet_",
-					"type": "mrkdwn"
-				},
-				"type": "section"
-			},
-			{
-				"type": "divider"
-			},
-			{
-				"elements": [
-					{
-						"text": "*Other*",
-						"type": "mrkdwn"
-					}
-				],
-				"type": "context"
 			},
 			{
 				"type": "divider"
