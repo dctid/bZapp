@@ -106,20 +106,6 @@ const SummaryModal = `{
 					}
 				],
 				"type": "actions"
-			},
-			{
-				"block_id": "convo_input_id",
-				"element": {
-					"action_id": "conversation_select_action_id",
-					"default_to_current_conversation": true,
-					"response_url_enabled": true,
-					"type": "conversations_select"
-				},
-				"label": {
-					"text": "Selectachanneltoposttheresulton",
-					"type": "plain_text"
-				},
-				"type": "input"
 			}
 		],
 		"close": {

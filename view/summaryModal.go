@@ -29,7 +29,6 @@ func buildEventBlocks(editable bool, updatedModel *model.Model) []slack.Block {
 }
 
 
-
 func actionBlock() []slack.Block {
 	return []slack.Block{
 		slack.NewDividerBlock(),
@@ -38,17 +37,5 @@ func actionBlock() []slack.Block {
 			slack.NewButtonBlockElement("edit_events", "edit_events", slack.NewTextBlockObject(slack.PlainTextType, "Edit Events", true, false)),
 			slack.NewButtonBlockElement("edit_goals", "edit_goals", slack.NewTextBlockObject(slack.PlainTextType, "Edit Goals", true, false)),
 		),
-		slack.InputBlock{
-			Type:    "input",
-			BlockID: "convo_input_id",
-			Label:   slack.NewTextBlockObject(slack.PlainTextType, "Select a channel to post the result on", false, false),
-			Element: slack.SelectBlockElement{
-				Type:                         slack.OptTypeConversations,
-				ActionID:                     "conversation_select_action_id",
-				DefaultToCurrentConversation: true,
-				ResponseURLEnabled:           true,
-			},
-			Optional: false,
-		},
 	}
 }
