@@ -14,12 +14,15 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"reflect"
 	"testing"
 )
 
 func TestInteraction(t *testing.T) {
 	Client = &mocks.MockClient{}
+
+	os.Setenv("SLACK_TOKEN", "token_token")
 
 	type args struct {
 		ctx   context.Context
@@ -28,6 +31,7 @@ func TestInteraction(t *testing.T) {
 	type do struct {
 		url  *url.URL
 		body string
+		headers http.Header
 	}
 	var gotDo do
 
@@ -48,6 +52,7 @@ func TestInteraction(t *testing.T) {
 			wantErr: false,
 			wantDo: do{
 				url: getUrl("https://slack.com/api/views.push"),
+				headers: http.Header{"Authorization":[]string{"Bearer token_token"}, "Content-Type":[]string{"application/json"}},
 				body: format.PrettyJsonNoError(fmt.Sprintf(
 					`{
 								"trigger_id": "1288231154914.260884079521.ba1595ee20fab577e5ac042a518713fd",
@@ -65,6 +70,7 @@ func TestInteraction(t *testing.T) {
 			wantErr: false,
 			wantDo: do{
 				url: getUrl("https://slack.com/api/views.update"),
+				headers: http.Header{"Authorization":[]string{"Bearer token_token"}, "Content-Type":[]string{"application/json"}},
 				body: format.PrettyJsonNoError(fmt.Sprintf(
 					`{
 								"view_id": "V01CMKMUWUS",
@@ -91,8 +97,9 @@ func TestInteraction(t *testing.T) {
 			},
 			wantErr: false,
 			wantDo: do{
-				url:  getUrl("https://hooks.slack.com/app/T7NS02BFB/1422986473414/G33REsfxvjW86raJ1X7wuiJC"),
+				url:  getUrl("https://slack.com/api/chat.postMessage"),
 				body: format.PrettyJsonNoError(test.SubmissionJson),
+				headers: http.Header{"Authorization":[]string{"Bearer token_token"}, "Content-type":[]string{"application/json"}},
 			},
 		},
 		{
@@ -106,6 +113,8 @@ func TestInteraction(t *testing.T) {
 			wantDo: do{
 				url:  getUrl("https://slack.com/api/views.update"),
 				body: format.PrettyJsonNoError(test.SummaryModal),
+				headers: http.Header{"Authorization":[]string{"Bearer token_token"}, "Content-Type":[]string{"application/json"}},
+
 			},
 		},
 		{
@@ -118,6 +127,7 @@ func TestInteraction(t *testing.T) {
 			wantErr: false,
 			wantDo: do{
 				url: getUrl("https://slack.com/api/views.push"),
+				headers: http.Header{"Authorization":[]string{"Bearer token_token"}, "Content-Type":[]string{"application/json"}},
 				body: format.PrettyJsonNoError(fmt.Sprintf(
 					`{
 								"trigger_id": "1411346195543.260884079521.14fdd4f0ec90fe20a07ea8dc9429d891",
@@ -157,6 +167,7 @@ func TestInteraction(t *testing.T) {
 			wantErr: false,
 			wantDo: do{
 				url: getUrl("https://slack.com/api/views.update"),
+				headers: http.Header{"Authorization":[]string{"Bearer token_token"}, "Content-Type":[]string{"application/json"}},
 				body: format.PrettyJsonNoError(fmt.Sprintf(
 					`{
 								"view_id": "V01DBFTR588",
@@ -174,6 +185,7 @@ func TestInteraction(t *testing.T) {
 			wantErr: false,
 			wantDo: do{
 				url:  getUrl("https://slack.com/api/views.update"),
+				headers: http.Header{"Authorization":[]string{"Bearer token_token"}, "Content-Type":[]string{"application/json"}},
 				body: format.PrettyJsonNoError(test.SummaryModalWithGoals),
 			},
 		},
@@ -189,6 +201,7 @@ func TestInteraction(t *testing.T) {
 			gotDo = do{
 				url:  req.URL,
 				body: format.PrettyJsonNoError(string(body)),
+				headers: req.Header,
 			}
 
 			return &http.Response{
@@ -207,9 +220,10 @@ func TestInteraction(t *testing.T) {
 					t.Errorf("Interaction() got = %v, want %v", got, tt.want)
 				}
 			}
-			if tt.wantDo != (do{}) {
+			if !reflect.DeepEqual(tt.wantDo, do{}) {
 				assert.EqualValues(t, tt.wantDo.url, gotDo.url)
 				assert.EqualValues(t, tt.wantDo.body, gotDo.body)
+				assert.EqualValues(t, tt.wantDo.headers, gotDo.headers)
 			} else {
 				assert.EqualValues(t, do{}, gotDo)
 			}

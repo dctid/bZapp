@@ -63,21 +63,32 @@ func Interaction(ctx context.Context, event events.APIGatewayProxyRequest) (even
 }
 
 func viewSubmission(payload *view.InteractionPayload, currentModel *model.Model) (events.APIGatewayProxyResponse, error) {
-	if len(payload.View.State.Values) == 1 && payload.View.State.Values["convo_input_id"]["conversation_select_action_id"].Type == "conversations_select" {
-		return publishbZapp(payload, currentModel)
-	} else if payload.View.Title.Text == view.EditGoalsTitle {
+	if payload.View.Title.Text == view.EditGoalsTitle {
 		return pushModalWithAddedGoal(payload, currentModel)
-	} else {
+	} else if payload.View.Title.Text == view.EditEventsTitle {
 		return pushModalWithAddedEvent(payload, currentModel)
+	} else {
+		return publishbZapp(payload, currentModel)
 	}
 }
 
 func publishbZapp(payload *view.InteractionPayload, currentModel *model.Model) (events.APIGatewayProxyResponse, error) {
+
+	message := view.DailySummaryMessage(currentModel)
+	log.Printf("Channel id: %s", currentModel.ChannelId)
+	message.Channel = currentModel.ChannelId
+
+	log.Printf("Msg Channel id: %s", message.Channel)
+
 	post, err := Post(
-		payload.ResponseUrls[0].ResponseUrl,
-		http.Header{"Content-type": []string{"application/json"}},
-		view.DailySummaryMessage(currentModel),
+		"https://slack.com/api/chat.postMessage",
+		http.Header{
+			"Content-type":  []string{"application/json"},
+			"Authorization": []string{fmt.Sprintf("Bearer %s", os.Getenv("SLACK_TOKEN"))},
+		},
+		message,
 	)
+
 	if err != nil {
 		log.Printf("Error: %s", err)
 	} else {

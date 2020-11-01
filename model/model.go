@@ -6,6 +6,7 @@ type Model struct {
 	Index int
 	Events Events
 	Goals Goals
+	ChannelId string `json:"channel_id,omitempty"`
 }
 
 func (modelToConvert *Model) ConvertModelToJson() string {

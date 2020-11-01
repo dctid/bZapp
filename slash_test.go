@@ -25,7 +25,7 @@ const expected = `{
       "text": "bZapp",
       "emoji": true
     },
-    "private_metadata": "{\"Index\":0,\"Events\":{\"TodaysEvents\":null,\"TomorrowsEvents\":null},\"Goals\":null}",
+    "private_metadata": "{\"Index\":0,\"Events\":{\"TodaysEvents\":null,\"TomorrowsEvents\":null},\"Goals\":null,\"channel_id\":\"D7P4LC5G9\"}",
     "submit": {
       "type": "plain_text",
       "text": "Submit",

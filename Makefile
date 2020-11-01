@@ -5,7 +5,6 @@ app: clean dev
 
 clean:
 	rm -f $(wildcard handlers/*/main)
-	rm -rf $(wildcard web/handlers/*/node_modules)
 
 deploy: BUCKET = pkgs-$(shell aws sts get-caller-identity --output text --query 'Account')-$(AWS_DEFAULT_REGION)
 deploy: handlers
@@ -23,7 +22,7 @@ dev-debug:
 dev:
 	make -j dev-watch dev-sam
 dev-sam:
-	sam local start-api -p 3001 --parameter-overrides SlackToken=$(SLACK_TOKEN) SlackSigningSecret=$(SLACK_SIGNING_SECRET)
+	sam local start-api -p 3001
 dev-watch:
 	watchexec -f '*.go' 'make -j handlers'
 
