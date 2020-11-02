@@ -99,34 +99,42 @@ func publishbZapp(payload *view.InteractionPayload, currentModel *model.Model) (
 		if err != nil {
 			log.Printf("Error!!!!: %s", err)
 		} else {
-			if !response.Ok && response.Error == "channel_not_found" {
-				modalUpdatedWithNewEvent := view.NewErrorModal("It looks like bZapp is not in your private channel :Shrug:. A simple @bzapp mention is you need to do!")
-
-				response := slack.NewUpdateViewSubmissionResponse(modalUpdatedWithNewEvent)
-				jsonBytes, err := json.Marshal(response)
-				if err != nil {
-					return events.APIGatewayProxyResponse{
-						Headers:    JsonHeaders(),
-						Body:       "Error processing request",
-						StatusCode: 500,
-					}, err
-				}
-				log.Printf("body sent to slack: %v", string(jsonBytes))
-
-				return events.APIGatewayProxyResponse{
-					Headers:    JsonHeaders(),
-					Body:       string(jsonBytes),
-					StatusCode: 200,
-				}, nil
-
+			if !response.Ok {
+				log.Printf("Slack Msg Error: %s", response.Error)
+				return handlePostMessageError(response)
 			}
-			log.Printf("Error: %s", response.Error)
 		}
 	}
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
 	}, nil
+}
+
+func handlePostMessageError(response slack.SlackResponse) (events.APIGatewayProxyResponse, error) {
+
+	errorMsg := fmt.Sprintf("Unknown error: %s", response.Error)
+	if response.Error == "channel_not_found" || response.Error == "not_in_channel" {
+		errorMsg = "It looks like bZapp is not in your private channel :Shrug:. A simple @bzapp mention is you need to do!"
+	}
+	modalUpdatedWithNewEvent := view.NewErrorModal(errorMsg)
+
+	jsonBytes, err := json.Marshal(slack.NewUpdateViewSubmissionResponse(modalUpdatedWithNewEvent))
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			Headers:    JsonHeaders(),
+			Body:       "Error processing request",
+			StatusCode: 500,
+		}, err
+	}
+	log.Printf("body sent to slack: %v", string(jsonBytes))
+
+	return events.APIGatewayProxyResponse{
+		Headers:    JsonHeaders(),
+		Body:       string(jsonBytes),
+		StatusCode: 200,
+	}, nil
+
 }
 
 func pushModalWithAddedEvent(payload *view.InteractionPayload, currentModel *model.Model) (events.APIGatewayProxyResponse, error) {
