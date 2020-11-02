@@ -94,6 +94,34 @@ func publishbZapp(payload *view.InteractionPayload, currentModel *model.Model) (
 	} else {
 		bytes, _ := ioutil.ReadAll(post.Body)
 		log.Printf("Success: %s", string(bytes))
+		var response slack.SlackResponse
+		err = json.Unmarshal(bytes, &response)
+		if err != nil {
+			log.Printf("Error!!!!: %s", err)
+		} else {
+			if !response.Ok && response.Error == "channel_not_found" {
+				modalUpdatedWithNewEvent := view.NewErrorModal("It looks like bZapp is not in your private channel :Shrug:. A simple @bzapp mention is you need to do!")
+
+				response := slack.NewUpdateViewSubmissionResponse(modalUpdatedWithNewEvent)
+				jsonBytes, err := json.Marshal(response)
+				if err != nil {
+					return events.APIGatewayProxyResponse{
+						Headers:    JsonHeaders(),
+						Body:       "Error processing request",
+						StatusCode: 500,
+					}, err
+				}
+				log.Printf("body sent to slack: %v", string(jsonBytes))
+
+				return events.APIGatewayProxyResponse{
+					Headers:    JsonHeaders(),
+					Body:       string(jsonBytes),
+					StatusCode: 200,
+				}, nil
+
+			}
+			log.Printf("Error: %s", response.Error)
+		}
 	}
 
 	return events.APIGatewayProxyResponse{
