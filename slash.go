@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/dctid/bZapp/model"
 	"github.com/dctid/bZapp/view"
 	"github.com/slack-go/slack"
@@ -29,6 +31,43 @@ func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.API
 
 	triggerId := command.TriggerID
 	log.Printf("Channel id: %s", command.ChannelID)
+	table := os.Getenv("DYNAMODB_TABLE_NAME")
+
+	withContext, err := DynamoDB.PutItemWithContext(ctx, &dynamodb.PutItemInput{
+		Item: map[string]*dynamodb.AttributeValue{
+			"Id": &dynamodb.AttributeValue{
+				S: aws.String(command.ChannelID),
+			},
+			"token": &dynamodb.AttributeValue{
+				S: aws.String("bs toekn"),
+			},
+			"username": &dynamodb.AttributeValue{
+				S: aws.String("user"),
+			},
+		},
+		TableName:                   aws.String("bZappTable"),
+	})
+	if err != nil {
+		log.Printf("Couldn't save model %s", err)
+	}
+	log.Printf("Put resutl: %v", withContext)
+
+	log.Printf("Table: %s", table)
+	input := &dynamodb.GetItemInput{
+		Key: map[string]*dynamodb.AttributeValue{
+			"Id": &dynamodb.AttributeValue{
+				S: aws.String(command.ChannelID),
+			},
+		},
+		TableName: aws.String("bZappTable"),
+	}
+
+	currentModel, err := DynamoDB.GetItemWithContext(ctx, input)
+	if err != nil {
+		log.Printf("Couldn't get model %s", err)
+	}
+	log.Printf("model %+v", currentModel)
+
 	modalRequest := view.NewSummaryModal(&model.Model{ChannelId: command.ChannelID})
 	requestAsJson, _ := json.MarshalIndent(modalRequest, "", "\t")
 	log.Printf("Body sent to slack to open modal: %v", string(requestAsJson))

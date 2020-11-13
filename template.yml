@@ -179,6 +179,8 @@ Resources:
         Variables:
           SLACK_TOKEN: !Ref SlackToken
           SLACK_SIGNING_SECRET: !Ref SlackSigningSecret
+          DYNAMODB_ENDPOINT: ""
+          DYNAMODB_TABLE_NAME: !Ref UserDynamoDBTable
       Events:
         Request:
           Properties:
@@ -188,6 +190,8 @@ Resources:
       FunctionName: !Sub ${AWS::StackName}-SlashFunction
       Handler: main
       Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BZappTable
         - Statement:
             - Action:
                 - kms:Encrypt
@@ -213,6 +217,8 @@ Resources:
       FunctionName: !Sub ${AWS::StackName}-InteractionFunction
       Handler: main
       Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BZappTable
         - Statement:
             - Action:
                 - kms:Encrypt
@@ -221,6 +227,13 @@ Resources:
           Version: 2012-10-17
       Runtime: go1.x
     Type: AWS::Serverless::Function
+
+  bZappTable:
+    Properties:
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+    Type: AWS::Serverless::SimpleTable
 
   WebBucket:
     Properties:

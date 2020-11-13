@@ -1,7 +1,7 @@
 export AWS_DEFAULT_REGION ?= us-east-1
 export APP ?= bzapp
 
-app: clean dev
+app: clean dynamo-start dev
 
 clean:
 	rm -f $(wildcard handlers/*/main)
@@ -22,7 +22,7 @@ dev-debug:
 dev:
 	make -j dev-watch dev-sam
 dev-sam:
-	sam local start-api -p 3001
+	sam local start-api -p 3001 --env-vars json/env.json
 dev-watch:
 	watchexec -f '*.go' 'make -j handlers'
 
@@ -35,3 +35,9 @@ handlers-go: $(HANDLERS)
 
 test:
 	go test -v ./...
+
+dynamo-start:
+	docker-compose up -d --no-recreate
+
+dynamo-stop:
+	docker-compose down

@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/sns"
 	"github.com/aws/aws-xray-sdk-go/xray"
+	"os"
 )
 
 // AWS Clients that can be mocked for testing
@@ -29,6 +30,14 @@ func init() {
 	xray.Configure(xray.Config{
 		LogLevel: "info",
 	})
+	endpoint, isSet := os.LookupEnv("DYNAMODB_ENDPOINT")
+	if isSet {
+		config := aws.Config{
+			Endpoint: &endpoint,
+		}
+		sess = session.Must(session.NewSession(&config))
+	}
+	DynamoDB = NewDynamoDB()
 }
 
 // DynamoDBAPI is a subset of dynamodbiface.DynamoDBAPI
