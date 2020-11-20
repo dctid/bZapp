@@ -37,7 +37,13 @@ test:
 	go test -v ./...
 
 dynamo-start:
+	make docker-up create-table
+
+docker-up:
 	docker-compose up -d --no-recreate
+
+create-table:
+	-aws dynamodb create-table --cli-input-json file://create-table.json --endpoint-url http://localhost:8000 > /dev/null
 
 dynamo-stop:
 	docker-compose down

@@ -3,7 +3,12 @@ package bZapp
 import (
 	"bytes"
 	"context"
+	"encoding/json"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/dctid/bZapp/format"
+	"github.com/dctid/bZapp/model"
+	"github.com/dctid/bZapp/view"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -16,7 +21,7 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
-const expected = `{
+const initExpected = `{
   "trigger_id": "1282571347205.260884079521.45166c59ef86cfcf9409d2ec2d4b4a58",
   "view": {
     "type": "modal",
@@ -102,6 +107,133 @@ const expected = `{
       }
     ]
   }
+}`
+
+const existingExpected = `{
+  "trigger_id": "1282571347205.260884079521.45166c59ef86cfcf9409d2ec2d4b4a58",
+  "view": {
+	"type": "modal",
+	"title": {
+		"type": "plain_text",
+		"text": "bZapp",
+		"emoji": true
+	},
+	"blocks": [
+		{
+			"type": "divider"
+		},
+		{
+			"type": "header",
+			"text": {
+				"type": "plain_text",
+				"text": "Events"
+			}
+		},
+		{
+			"type": "divider"
+		},
+		{
+			"type": "context",
+			"elements": [
+				{
+					"type": "mrkdwn",
+					"text": "*Today*"
+				}
+			]
+		},
+		{
+			"type": "divider"
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": ":small_orange_diamond: 9:15 Let's do something"
+			},
+			"block_id": "today_event"
+		},
+		{
+			"type": "divider"
+		},
+		{
+			"type": "context",
+			"elements": [
+				{
+					"type": "mrkdwn",
+					"text": "*Tomorrow*"
+				}
+			]
+		},
+		{
+			"type": "divider"
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": ":small_orange_diamond: 3:30 Let's do something else"
+			},
+			"block_id": "tomorrow_event"
+		},
+		{
+			"type": "divider"
+		},
+		{
+			"type": "header",
+			"text": {
+				"type": "plain_text",
+				"text": "Goals"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "_No goals yet_"
+			}
+		},
+		{
+			"type": "divider"
+		},
+		{
+			"type": "actions",
+			"block_id": "actions_block",
+			"elements": [
+				{
+					"type": "button",
+					"text": {
+						"type": "plain_text",
+						"text": "Edit Events",
+						"emoji": true
+					},
+					"action_id": "edit_events",
+					"value": "edit_events"
+				},
+				{
+					"type": "button",
+					"text": {
+						"type": "plain_text",
+						"text": "Edit Goals",
+						"emoji": true
+					},
+					"action_id": "edit_goals",
+					"value": "edit_goals"
+				}
+			]
+		}
+	],
+	"close": {
+		"type": "plain_text",
+		"text": "Cancel",
+		"emoji": true
+	},
+	"submit": {
+		"type": "plain_text",
+		"text": "Submit",
+		"emoji": true
+	},
+	"private_metadata": "{\"Index\":0,\"Events\":{\"TodaysEvents\":[{\"Id\":\"today_event\",\"Title\":\"Let's do something\",\"Day\":\"today\",\"Hour\":9,\"Min\":15,\"AmPm\":\"AM\"}],\"TomorrowsEvents\":[{\"Id\":\"tomorrow_event\",\"Title\":\"Let's do something else\",\"Day\":\"tomorrow\",\"Hour\":3,\"Min\":30,\"AmPm\":\"PM\"}]},\"Goals\":{\"someGoal\":[{\"Id\":\"goal_id\",\"Value\":\"the goal\"}]},\"channel_id\":\"D7P4LC5G9\"}"
+}
 }`
 
 
@@ -364,14 +496,23 @@ const expected = `{
 	}
 }`
 
-func TestSlash(t *testing.T) {
 
+func TestSlash_initialRequestInChannel(t *testing.T) {
+	defer mocks.ResetMockCalls()
 	var urlCalled *url.URL = nil
 	var bodyCalled string
 	expectUrl, _ := url.Parse("https://slack.com/api/views.open")
 	Client = &mocks.MockClient{}
 
-	prettyJsonExpected, err := format.PrettyJson(expected)
+	DynamoDB = &mocks.MockDynamoDB{
+		GetItemOutput: &dynamodb.GetItemOutput{
+			Item: map[string]*dynamodb.AttributeValue{
+			},
+		},
+		PutItemOutput: &dynamodb.PutItemOutput{},
+	}
+
+	prettyJsonExpected, err := format.PrettyJson(initExpected)
 	assert.NoError(t, err)
 
 	mocks.GetDoFunc = func(req *http.Request) (*http.Response, error) {
@@ -395,6 +536,120 @@ func TestSlash(t *testing.T) {
 	assert.NoError(t, err)
 	assert.EqualValues(t, prettyJsonExpected, prettyJsonActual)
 	assert.EqualValues(t, events.APIGatewayProxyResponse{StatusCode: 200}, result)
+	actualPutCall := mocks.MockDynamoDbCalls["PutItemWithContext"][0]
+	currentModel := model.Model{ChannelId: "D7P4LC5G9"}
+	modelBytes, err := json.Marshal(currentModel)
+	expectedPutCall := &dynamodb.PutItemInput{
+		Item: map[string]*dynamodb.AttributeValue{
+			"id": {
+				S: aws.String("D7P4LC5G9"),
+			},
+			"model": {
+				B: modelBytes,
+			},
+		},
+		TableName: aws.String("bZappTable"),
+	}
+	assert.EqualValues(t, expectedPutCall, actualPutCall)
+	expectedGetItemInput := &dynamodb.GetItemInput{
+		Key: map[string]*dynamodb.AttributeValue{
+			"id": {
+				S: aws.String("D7P4LC5G9"),
+			},
+		},
+		TableName: aws.String("bZappTable"),
+	}
+	actualGetItemInput := mocks.MockDynamoDbCalls["GetItemWithContext"][0]
+	assert.EqualValues(t, expectedGetItemInput, actualGetItemInput)
+	assert.EqualValues(t, 1, len(mocks.MockDynamoDbCalls["GetItemWithContext"]))
+	assert.EqualValues(t, 1, len(mocks.MockDynamoDbCalls["PutItemWithContext"]))
+}
+
+
+func TestSlash_appExistsInChannel(t *testing.T) {
+	defer mocks.ResetMockCalls()
+	var urlCalled *url.URL = nil
+	var bodyCalled string
+	expectUrl, _ := url.Parse("https://slack.com/api/views.open")
+	Client = &mocks.MockClient{}
+	currentModel := model.Model{
+		ChannelId: "D7P4LC5G9",
+		Events: model.Events{
+			TodaysEvents:    []model.Event{{
+				Id:    "today_event",
+				Title: "Let's do something",
+				Day:   view.TodayOptionValue,
+				Hour:  9,
+				Min:   15,
+				AmPm:  "AM",
+			}},
+			TomorrowsEvents: []model.Event{{
+				Id:    "tomorrow_event",
+				Title: "Let's do something else",
+				Day:   view.TomorrowOptionValue,
+				Hour:  3,
+				Min:   30,
+				AmPm:  "PM",
+			}},
+		},
+		Goals: model.Goals{
+			"someGoal": []model.Goal{
+				{Id: "goal_id", Value: "the goal"},
+			},
+		},
+	}
+	modelBytes, err := json.Marshal(currentModel)
+
+	DynamoDB = &mocks.MockDynamoDB{
+		GetItemOutput: &dynamodb.GetItemOutput{
+			Item: map[string]*dynamodb.AttributeValue{
+				"id": {
+					S: aws.String("D7P4LC5G9"),
+				},
+				"model" : {
+					B: modelBytes,
+				},
+			},
+		},
+	}
+
+	prettyJsonExpected, err := format.PrettyJson(existingExpected)
+	assert.NoError(t, err)
+
+	mocks.GetDoFunc = func(req *http.Request) (*http.Response, error) {
+		log.Printf("url %s ", req.URL)
+		urlCalled = req.URL
+		body, _ := ioutil.ReadAll(req.Body)
+		bodyCalled = string(body)
+		return &http.Response{
+			Body: ioutil.NopCloser(bytes.NewReader([]byte(response))),
+			StatusCode: 200,
+		}, nil
+	}
+
+
+
+	result, err := Slash(context.Background(), events.APIGatewayProxyRequest{
+		Body: encodedBody,
+	})
+	assert.NoError(t, err)
+	assert.EqualValues(t, expectUrl, urlCalled)
+
+	prettyJsonActual, err := format.PrettyJson(bodyCalled)
+	assert.NoError(t, err)
+	assert.EqualValues(t, prettyJsonExpected, prettyJsonActual)
+	assert.EqualValues(t, events.APIGatewayProxyResponse{StatusCode: 200}, result)
+	expectedGetItemInput := &dynamodb.GetItemInput{
+		Key: map[string]*dynamodb.AttributeValue{
+			"id": {
+				S: aws.String("D7P4LC5G9"),
+			},
+		},
+		TableName: aws.String("bZappTable"),
+	}
+	actualGetItemInput := mocks.MockDynamoDbCalls["GetItemWithContext"][0]
+	assert.EqualValues(t, expectedGetItemInput, actualGetItemInput)
+	assert.EqualValues(t, 1, len(mocks.MockDynamoDbCalls["GetItemWithContext"]))
 }
 
 var encodedBody = `token=8KTh0sVRkeZozlTxrBRqk1NO&team_id=T7NS02BFB&team_domain=ford-community&channel_id=D7P4LC5G9&channel_name=directmessage&user_id=U7QNBA36K&user_name=cdorman1&command=%2Fbzapp&text=&response_url=https%3A%2F%2Fhooks.slack.com%2Fcommands%2FT7NS02BFB%2F1307783467168%2FGvz9lFVBwn9xo8TweP2vJHsP&trigger_id=1282571347205.260884079521.45166c59ef86cfcf9409d2ec2d4b4a58`

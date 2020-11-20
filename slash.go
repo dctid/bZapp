@@ -33,42 +33,59 @@ func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.API
 	log.Printf("Channel id: %s", command.ChannelID)
 	table := os.Getenv("DYNAMODB_TABLE_NAME")
 
-	withContext, err := DynamoDB.PutItemWithContext(ctx, &dynamodb.PutItemInput{
-		Item: map[string]*dynamodb.AttributeValue{
-			"Id": &dynamodb.AttributeValue{
-				S: aws.String(command.ChannelID),
-			},
-			"token": &dynamodb.AttributeValue{
-				S: aws.String("bs toekn"),
-			},
-			"username": &dynamodb.AttributeValue{
-				S: aws.String("user"),
-			},
-		},
-		TableName:                   aws.String("bZappTable"),
-	})
-	if err != nil {
-		log.Printf("Couldn't save model %s", err)
-	}
-	log.Printf("Put resutl: %v", withContext)
+	endpoint, isSet := os.LookupEnv("DYNAMODB_ENDPOINT")
+	log.Printf("env: %s, %v", endpoint, isSet)
 
 	log.Printf("Table: %s", table)
 	input := &dynamodb.GetItemInput{
 		Key: map[string]*dynamodb.AttributeValue{
-			"Id": &dynamodb.AttributeValue{
+			"id": {
 				S: aws.String(command.ChannelID),
 			},
 		},
 		TableName: aws.String("bZappTable"),
 	}
 
-	currentModel, err := DynamoDB.GetItemWithContext(ctx, input)
+	dbModel, err := DynamoDB.GetItemWithContext(ctx, input)
 	if err != nil {
 		log.Printf("Couldn't get model %s", err)
 	}
-	log.Printf("model %+v", currentModel)
+	log.Printf("model %+v", dbModel)
+	var currentModel model.Model
 
-	modalRequest := view.NewSummaryModal(&model.Model{ChannelId: command.ChannelID})
+	if len(dbModel.Item) == 0 {
+		currentModel = model.Model{ChannelId: command.ChannelID}
+		modelBytes, err := json.Marshal(currentModel)
+		if err != nil {
+			log.Printf("Couldn't convert model %s", err)
+		} else {
+			withContext, err := DynamoDB.PutItemWithContext(ctx, &dynamodb.PutItemInput{
+				Item: map[string]*dynamodb.AttributeValue{
+					"id": {
+						S: aws.String(command.ChannelID),
+					},
+					"model": {
+						B: modelBytes,
+					},
+				},
+				TableName: aws.String("bZappTable"),
+			},
+			)
+			if err != nil {
+				log.Printf("Couldn't save model %s", err)
+			}
+			log.Printf("Put resutl: %v", withContext)
+		}
+	} else {
+		err = json.Unmarshal(dbModel.Item["model"].B, &currentModel)
+		if err != nil {
+			log.Printf("Couldn't parse metadata %s", err)
+		} else {
+			log.Printf("Metadata: %v", currentModel)
+		}
+
+	}
+	modalRequest := view.NewSummaryModal(&currentModel)
 	requestAsJson, _ := json.MarshalIndent(modalRequest, "", "\t")
 	log.Printf("Body sent to slack to open modal: %v", string(requestAsJson))
 
