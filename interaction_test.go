@@ -25,6 +25,7 @@ var successResponse = &http.Response{
 }
 
 func TestInteraction(t *testing.T) {
+	defer mocks.ResetMockDynamoDbCalls()
 	Client = &mocks.MockClient{}
 
 	os.Setenv("SLACK_TOKEN", "token_token")
@@ -47,6 +48,8 @@ func TestInteraction(t *testing.T) {
 		want     events.APIGatewayProxyResponse
 		wantErr  bool
 		wantDo   do
+		dynamoResponses mocks.MockDynamoDB
+		wantDynamoCalls mocks.MockDynamoDbInputs
 	}{
 		{
 			name: "open edit events",

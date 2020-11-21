@@ -498,7 +498,7 @@ const existingExpected = `{
 
 
 func TestSlash_initialRequestInChannel(t *testing.T) {
-	defer mocks.ResetMockCalls()
+	defer mocks.ResetMockDynamoDbCalls()
 	var urlCalled *url.URL = nil
 	var bodyCalled string
 	expectUrl, _ := url.Parse("https://slack.com/api/views.open")
@@ -536,7 +536,7 @@ func TestSlash_initialRequestInChannel(t *testing.T) {
 	assert.NoError(t, err)
 	assert.EqualValues(t, prettyJsonExpected, prettyJsonActual)
 	assert.EqualValues(t, events.APIGatewayProxyResponse{StatusCode: 200}, result)
-	actualPutCall := mocks.MockDynamoDbCalls["PutItemWithContext"][0]
+	actualPutCall := mocks.MockDynamoDbCalls.PutItemWithContext
 	currentModel := model.Model{ChannelId: "D7P4LC5G9"}
 	modelBytes, err := json.Marshal(currentModel)
 	expectedPutCall := &dynamodb.PutItemInput{
@@ -559,15 +559,13 @@ func TestSlash_initialRequestInChannel(t *testing.T) {
 		},
 		TableName: aws.String("bZappTable"),
 	}
-	actualGetItemInput := mocks.MockDynamoDbCalls["GetItemWithContext"][0]
+	actualGetItemInput := mocks.MockDynamoDbCalls.GetItemWithContext
 	assert.EqualValues(t, expectedGetItemInput, actualGetItemInput)
-	assert.EqualValues(t, 1, len(mocks.MockDynamoDbCalls["GetItemWithContext"]))
-	assert.EqualValues(t, 1, len(mocks.MockDynamoDbCalls["PutItemWithContext"]))
 }
 
 
 func TestSlash_appExistsInChannel(t *testing.T) {
-	defer mocks.ResetMockCalls()
+	defer mocks.ResetMockDynamoDbCalls()
 	var urlCalled *url.URL = nil
 	var bodyCalled string
 	expectUrl, _ := url.Parse("https://slack.com/api/views.open")
@@ -647,9 +645,8 @@ func TestSlash_appExistsInChannel(t *testing.T) {
 		},
 		TableName: aws.String("bZappTable"),
 	}
-	actualGetItemInput := mocks.MockDynamoDbCalls["GetItemWithContext"][0]
+	actualGetItemInput := mocks.MockDynamoDbCalls.GetItemWithContext
 	assert.EqualValues(t, expectedGetItemInput, actualGetItemInput)
-	assert.EqualValues(t, 1, len(mocks.MockDynamoDbCalls["GetItemWithContext"]))
 }
 
 var encodedBody = `token=8KTh0sVRkeZozlTxrBRqk1NO&team_id=T7NS02BFB&team_domain=ford-community&channel_id=D7P4LC5G9&channel_name=directmessage&user_id=U7QNBA36K&user_name=cdorman1&command=%2Fbzapp&text=&response_url=https%3A%2F%2Fhooks.slack.com%2Fcommands%2FT7NS02BFB%2F1307783467168%2FGvz9lFVBwn9xo8TweP2vJHsP&trigger_id=1282571347205.260884079521.45166c59ef86cfcf9409d2ec2d4b4a58`

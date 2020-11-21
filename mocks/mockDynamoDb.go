@@ -12,33 +12,29 @@ type MockDynamoDB struct {
 	PutItemOutput    *dynamodb.PutItemOutput
 }
 
-var MockDynamoDbCalls = map[string][]interface{}{
-	"DeleteItemWithContext" : {},
-	"GetItemWithContext" : {},
-	"PutItemWithContext" : {},
-
+type MockDynamoDbInputs struct {
+	DeleteItemWithContext *dynamodb.DeleteItemInput
+	GetItemWithContext  *dynamodb.GetItemInput
+	PutItemWithContext  *dynamodb.PutItemInput
 }
 
+var MockDynamoDbCalls = MockDynamoDbInputs{}
+
 func (m *MockDynamoDB) DeleteItemWithContext(ctx aws.Context, input *dynamodb.DeleteItemInput, opts ...request.Option) (*dynamodb.DeleteItemOutput, error) {
-	MockDynamoDbCalls["DeleteItemWithContext"] = append(MockDynamoDbCalls["DeleteItemWithContext"], input)
+	MockDynamoDbCalls.DeleteItemWithContext = input
 	return m.DeleteItemOutput, nil
 }
 
 func (m *MockDynamoDB) GetItemWithContext(ctx aws.Context, input *dynamodb.GetItemInput, opts ...request.Option) (*dynamodb.GetItemOutput, error) {
-	MockDynamoDbCalls["GetItemWithContext"] = append(MockDynamoDbCalls["GetItemWithContext"], input)
+	MockDynamoDbCalls.GetItemWithContext = input
 	return m.GetItemOutput, nil
 }
 
 func (m *MockDynamoDB) PutItemWithContext(ctx aws.Context, input *dynamodb.PutItemInput, opts ...request.Option) (*dynamodb.PutItemOutput, error) {
-	MockDynamoDbCalls["PutItemWithContext"] = append(MockDynamoDbCalls["PutItemWithContext"], input)
+	MockDynamoDbCalls.PutItemWithContext = input
 	return m.PutItemOutput, nil
 }
 
-
-func ResetMockCalls()  {
-	MockDynamoDbCalls = map[string][]interface{}{
-		"DeleteItemWithContext" : {},
-		"GetItemWithContext" : {},
-		"PutItemWithContext" : {},
-	}
+func ResetMockDynamoDbCalls()  {
+	MockDynamoDbCalls = MockDynamoDbInputs{}
 }
