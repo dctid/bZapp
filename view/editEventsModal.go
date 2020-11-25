@@ -16,7 +16,7 @@ func NewEditEventsModal(updatedModel *model.Model) *slack.ModalViewRequest {
 			BlockSet: buildSummaryEventBlocks(updatedModel.Index, updatedModel.Events),
 		},
 		NotifyOnClose: true,
-		PrivateMetadata: updatedModel.ConvertModelToJson(),
+		PrivateMetadata: updatedModel.ConvertMetadataToJson(),
 	}
 }
 
@@ -53,21 +53,4 @@ func addEventsActions(index int) []slack.Block {
 	}
 }
 
-func AddEventToEditModal(values map[string]map[string]slack.BlockAction, currentModel *model.Model) *slack.ViewSubmissionResponse {
-	newEvent := BuildNewEvent(currentModel.Index, values)
-	currentModel.Events = currentModel.Events.AddEvent(newEvent)
-	currentModel.Index++
 
-	modalRequest := NewEditEventsModal(currentModel)
-	return slack.NewUpdateViewSubmissionResponse(modalRequest)
-}
-
-func OpenEditEventModalFromSummaryModal(currentModel *model.Model) *slack.ModalViewRequest {
-	currentModel.Index++
-	return NewEditEventsModal(currentModel)
-}
-
-func RemoveEventFromEditModal(blockIdToDelete string, currentModel *model.Model) *slack.ModalViewRequest {
-	currentModel.Events = currentModel.Events.RemoveEvent(blockIdToDelete)
-	return NewEditEventsModal(currentModel)
-}

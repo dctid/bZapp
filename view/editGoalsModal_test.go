@@ -21,7 +21,7 @@ func TestNewEditGoalsModal(t *testing.T) {
 		{
 			name: "empty",
 			args: args{
-				model: &model.Model{Index: 1},
+				model: &model.Model{Index: 1, ChannelId: "fake id"},
 			},
 			want: format.PrettyJsonNoError(expectModalJson),
 		},
@@ -47,7 +47,7 @@ const expectModalJson = `{
 		"emoji": true
 	},
 	"notify_on_close": true,
-	"private_metadata": "{\"Index\":1,\"Events\":{\"TodaysEvents\":null,\"TomorrowsEvents\":null},\"Goals\":null}",
+	"private_metadata": "{\"channel_id\":\"fakeid\"}",
 	"submit": {
 		"type": "plain_text",
 		"text": "Add",

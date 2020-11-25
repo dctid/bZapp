@@ -18,7 +18,7 @@ func NewEditGoalsModal(updatedModel *model.Model) *slack.ModalViewRequest {
 			BlockSet: buildEditGoalsBlock(updatedModel.Index, updatedModel.Goals),
 		},
 		NotifyOnClose:   true,
-		PrivateMetadata: updatedModel.ConvertModelToJson(),
+		PrivateMetadata: updatedModel.ConvertMetadataToJson(),
 	}
 }
 
@@ -44,24 +44,4 @@ func actionsBlock(index int) []slack.Block {
 	}
 
 	return blocks
-}
-
-func OpenEditGoalsModalFromSummaryModal(currentModel *model.Model) *slack.ModalViewRequest {
-	currentModel.Index++
-	return NewEditGoalsModal(currentModel)
-}
-
-func AddGoalToEditModal(values map[string]map[string]slack.BlockAction, currentModel *model.Model) *slack.ViewSubmissionResponse {
-
-	category, goal := BuildNewGoalSectionBlock(currentModel.Index, values)
-	currentModel.Goals = currentModel.Goals.AddGoal(category, goal)
-	currentModel.Index++
-
-	modalRequest := NewEditGoalsModal(currentModel)
-	return slack.NewUpdateViewSubmissionResponse(modalRequest)
-}
-
-func RemoveGoalFromEditModal(blockIdToDelete string, currentModel *model.Model) *slack.ModalViewRequest {
-	currentModel.Goals = currentModel.Goals.RemoveGoal(blockIdToDelete)
-	return NewEditGoalsModal(currentModel)
 }

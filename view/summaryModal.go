@@ -14,7 +14,7 @@ func NewSummaryModal(updatedModel *model.Model) slack.ModalViewRequest {
 		Blocks: slack.Blocks{
 			BlockSet: buildEventBlocks(false, updatedModel),
 		},
-		PrivateMetadata: updatedModel.ConvertModelToJson(),
+		PrivateMetadata: updatedModel.ConvertMetadataToJson(),
 	}
 }
 

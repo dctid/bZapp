@@ -30,7 +30,7 @@ const initExpected = `{
       "text": "bZapp",
       "emoji": true
     },
-    "private_metadata": "{\"Index\":0,\"Events\":{\"TodaysEvents\":null,\"TomorrowsEvents\":null},\"Goals\":null,\"channel_id\":\"D7P4LC5G9\"}",
+    "private_metadata": "{\"channel_id\":\"D7P4LC5G9\"}",
     "submit": {
       "type": "plain_text",
       "text": "Submit",
@@ -232,7 +232,7 @@ const existingExpected = `{
 		"text": "Submit",
 		"emoji": true
 	},
-	"private_metadata": "{\"Index\":0,\"Events\":{\"TodaysEvents\":[{\"Id\":\"today_event\",\"Title\":\"Let's do something\",\"Day\":\"today\",\"Hour\":9,\"Min\":15,\"AmPm\":\"AM\"}],\"TomorrowsEvents\":[{\"Id\":\"tomorrow_event\",\"Title\":\"Let's do something else\",\"Day\":\"tomorrow\",\"Hour\":3,\"Min\":30,\"AmPm\":\"PM\"}]},\"Goals\":{\"someGoal\":[{\"Id\":\"goal_id\",\"Value\":\"the goal\"}]},\"channel_id\":\"D7P4LC5G9\"}"
+	"private_metadata": "{\"channel_id\":\"D7P4LC5G9\"}"
 }
 }`
 
@@ -624,8 +624,6 @@ func TestSlash_appExistsInChannel(t *testing.T) {
 			StatusCode: 200,
 		}, nil
 	}
-
-
 
 	result, err := Slash(context.Background(), events.APIGatewayProxyRequest{
 		Body: encodedBody,

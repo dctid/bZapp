@@ -15,7 +15,7 @@ var summaryModal = `{
     "text": "bZapp",
     "emoji": true
   },
-  "private_metadata": "{\"Index\":0,\"Events\":{\"TodaysEvents\":[{\"Id\":\"\",\"Title\":\"Standup\",\"Day\":\"today\",\"Hour\":9,\"Min\":15,\"AmPm\":\"AM\"},{\"Id\":\"\",\"Title\":\"IPM\",\"Day\":\"today\",\"Hour\":11,\"Min\":30,\"AmPm\":\"AM\"},{\"Id\":\"\",\"Title\":\"Retro\",\"Day\":\"today\",\"Hour\":3,\"Min\":15,\"AmPm\":\"PM\"}],\"TomorrowsEvents\":[{\"Id\":\"\",\"Title\":\"Standup\",\"Day\":\"tomorrow\",\"Hour\":9,\"Min\":15,\"AmPm\":\"AM\"},{\"Id\":\"\",\"Title\":\"UserInterview\",\"Day\":\"tomorrow\",\"Hour\":1,\"Min\":30,\"AmPm\":\"PM\"},{\"Id\":\"\",\"Title\":\"Synthesis\",\"Day\":\"tomorrow\",\"Hour\":3,\"Min\":0,\"AmPm\":\"PM\"}]},\"Goals\":null}",
+  "private_metadata": "{\"channel_id\":\"Fakkkee\"}",
   "submit": {
     "type": "plain_text",
     "text": "Submit",
@@ -211,6 +211,7 @@ func TestNewSummaryModal(t *testing.T) {
 			},
 		},
 		Goals: nil,
+		ChannelId: "Fakkkee",
 	}
 
 	result := NewSummaryModal(testModel)
