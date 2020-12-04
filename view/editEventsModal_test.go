@@ -426,8 +426,8 @@ func TestNewEditEventsModal(t *testing.T) {
 	result := NewEditEventsModal( &model.Model{
 		Index:  666,
 		Events: model.Events{
-			TodaysEvents: todaysEvents,
-			TomorrowsEvents: tomorrowsEvents,
+			model.TodaysEvents: todaysEvents,
+			model.TomorrowsEvents: tomorrowsEvents,
 		},
 		ChannelId: "D7P4LC5G9",
 	})

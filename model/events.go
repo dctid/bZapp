@@ -5,10 +5,12 @@ import (
 	"fmt"
 )
 
-type Events struct {
-	TodaysEvents    []Event
-	TomorrowsEvents []Event
-}
+type Events map[string][]Event
+
+const (
+	TodaysEvents = "today"
+	TomorrowsEvents = "tomorrow"
+)
 
 type Event struct {
 	Id    string
@@ -24,7 +26,7 @@ func (event Event) ToString() string {
 }
 
 func (events Events) IsEmpty() bool {
-	return len(events.TodaysEvents) == 0 && len(events.TomorrowsEvents) == 0
+	return len(events[TodaysEvents]) == 0 && len(events[TomorrowsEvents]) == 0
 }
 
 func (event Event) normalizeMins() string {
@@ -37,15 +39,15 @@ func (event Event) normalizeMins() string {
 
 func (events Events) AddEvent(newEvent *Event) Events {
 	switch newEvent.Day {
-	case "today":
+	case TodaysEvents:
 		return Events{
-			TodaysEvents:    addEventInOrder(newEvent, events.TodaysEvents),
-			TomorrowsEvents: events.TomorrowsEvents,
+			TodaysEvents:    addEventInOrder(newEvent, events[TodaysEvents]),
+			TomorrowsEvents: events[TomorrowsEvents],
 		}
-	case "tomorrow":
+	case TomorrowsEvents:
 		return Events{
-			TodaysEvents:    events.TodaysEvents,
-			TomorrowsEvents: addEventInOrder(newEvent, events.TomorrowsEvents),
+			TodaysEvents:    events[TodaysEvents],
+			TomorrowsEvents: addEventInOrder(newEvent, events[TomorrowsEvents]),
 		}
 	}
 	return events
@@ -83,8 +85,8 @@ func (event Event) calcEventValue() int {
 
 func (events Events) RemoveEvent(id string) Events {
 	return Events{
-		TodaysEvents:    removeEvent(id, events.TodaysEvents),
-		TomorrowsEvents: removeEvent(id, events.TomorrowsEvents),
+		TodaysEvents:    removeEvent(id, events[TodaysEvents]),
+		TomorrowsEvents: removeEvent(id, events[TomorrowsEvents]),
 	}
 }
 

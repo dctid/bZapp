@@ -116,8 +116,8 @@ func buildEventsBlock(editable bool, events model.Events) []slack.Block {
 	if events.IsEmpty() {
 		blocks = append(blocks, NoEventYetSection...)
 	} else {
-		blocks = addEvents(editable, blocks, TodayEventsHeader, events.TodaysEvents)
-		blocks = addEvents(editable, blocks, TomorrowEventsHeader, events.TomorrowsEvents)
+		blocks = addEvents(editable, blocks, TodayEventsHeader, events[model.TodaysEvents])
+		blocks = addEvents(editable, blocks, TomorrowEventsHeader, events[model.TomorrowsEvents])
 	}
 
 	return blocks

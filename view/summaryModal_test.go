@@ -163,7 +163,7 @@ func TestNewSummaryModal(t *testing.T) {
 
 	testModel := &model.Model{
 		Events: model.Events{
-			TodaysEvents: []model.Event{
+			model.TodaysEvents: []model.Event{
 				{
 					Title: "Standup",
 					Day:   TodayOptionValue,
@@ -186,7 +186,7 @@ func TestNewSummaryModal(t *testing.T) {
 					AmPm:  "PM",
 				},
 			},
-			TomorrowsEvents: []model.Event{
+			model.TomorrowsEvents: []model.Event{
 				{
 					Title: "Standup",
 					Day:   TomorrowOptionValue,

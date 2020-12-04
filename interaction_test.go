@@ -144,7 +144,7 @@ func TestInteraction(t *testing.T) {
 					Index: 4,
 					ChannelId: "D7P4LC5G9",
 					Events: model.Events{
-						TodaysEvents: []model.Event{{
+						model.TodaysEvents: []model.Event{{
 							Id:    "WyKVYV",
 							Title: "ads",
 							Day:   view.TodayOptionValue,
@@ -160,7 +160,7 @@ func TestInteraction(t *testing.T) {
 							AmPm:  "AM",
 						},
 						},
-						TomorrowsEvents: []model.Event{{
+						model.TomorrowsEvents: []model.Event{{
 							Id:    "PTjSgI",
 							Title: "dfs",
 							Day:   view.TomorrowOptionValue,
@@ -186,7 +186,7 @@ func TestInteraction(t *testing.T) {
 					Index: 4,
 					ChannelId: "D7P4LC5G9",
 					Events: model.Events{
-						TodaysEvents: []model.Event{{
+						model.TodaysEvents: []model.Event{{
 							Id:    "WyKVYV",
 							Title: "ads",
 							Day:   view.TodayOptionValue,
@@ -195,7 +195,7 @@ func TestInteraction(t *testing.T) {
 							AmPm:  "AM",
 						},
 						},
-						TomorrowsEvents: []model.Event{{
+						model.TomorrowsEvents: []model.Event{{
 							Id:    "PTjSgI",
 							Title: "dfs",
 							Day:   view.TomorrowOptionValue,
@@ -223,7 +223,7 @@ func TestInteraction(t *testing.T) {
 					Index: 4,
 					ChannelId: "D7P4LC5G9",
 					Events: model.Events{
-						TodaysEvents: []model.Event{{
+						model.TodaysEvents: []model.Event{{
 							Id:    "WyKVYV",
 							Title: "ads",
 							Day:   view.TodayOptionValue,
@@ -231,7 +231,7 @@ func TestInteraction(t *testing.T) {
 							Min:   0,
 							AmPm:  "AM",
 						}},
-						TomorrowsEvents: []model.Event{{
+						model.TomorrowsEvents: []model.Event{{
 							Id:    "PTjSgI",
 							Title: "dfs",
 							Day:   view.TomorrowOptionValue,
@@ -249,7 +249,7 @@ func TestInteraction(t *testing.T) {
 					Index: 5,
 					ChannelId: "D7P4LC5G9",
 					Events: model.Events{
-						TodaysEvents: []model.Event{{
+						model.TodaysEvents: []model.Event{{
 							Id:    "WyKVYV",
 							Title: "ads",
 							Day:   view.TodayOptionValue,
@@ -265,7 +265,7 @@ func TestInteraction(t *testing.T) {
 							AmPm:  "PM",
 						},
 						},
-						TomorrowsEvents: []model.Event{{
+						model.TomorrowsEvents: []model.Event{{
 							Id:    "PTjSgI",
 							Title: "dfs",
 							Day:   view.TomorrowOptionValue,
@@ -296,7 +296,7 @@ func TestInteraction(t *testing.T) {
 					Index:     6,
 					ChannelId: "D7P4LC5G9",
 					Events: model.Events{
-						TodaysEvents: []model.Event{{
+						model.TodaysEvents: []model.Event{{
 							Id:    "coEbHc",
 							Title: "asdf",
 							Day:   view.TodayOptionValue,
@@ -304,7 +304,7 @@ func TestInteraction(t *testing.T) {
 							Min:   0,
 							AmPm:  "AM",
 						}},
-						TomorrowsEvents: []model.Event{{
+						model.TomorrowsEvents: []model.Event{{
 							Id:    "DZosTr",
 							Title: "qewr",
 							Day:   view.TomorrowOptionValue,
@@ -385,7 +385,7 @@ func TestInteraction(t *testing.T) {
 					Index:     6,
 					ChannelId: "D7P4LC5G9",
 					Events: model.Events{
-						TodaysEvents: []model.Event{{
+						model.TodaysEvents: []model.Event{{
 							Id:    "coEbHc",
 							Title: "asdf",
 							Day:   view.TodayOptionValue,
@@ -393,7 +393,7 @@ func TestInteraction(t *testing.T) {
 							Min:   0,
 							AmPm:  "AM",
 						}},
-						TomorrowsEvents: []model.Event{{
+						model.TomorrowsEvents: []model.Event{{
 							Id:    "DZosTr",
 							Title: "qewr",
 							Day:   view.TomorrowOptionValue,
@@ -436,7 +436,7 @@ func TestInteraction(t *testing.T) {
 					Index:     5,
 					ChannelId: "D7P4LC5G9",
 					Events: model.Events{
-						TodaysEvents: []model.Event{{
+						model.TodaysEvents: []model.Event{{
 							Id:    "WyKVYV",
 							Title: "ads",
 							Day:   view.TodayOptionValue,
@@ -444,7 +444,7 @@ func TestInteraction(t *testing.T) {
 							Min:   0,
 							AmPm:  "AM",
 						}},
-						TomorrowsEvents: []model.Event{{
+						model.TomorrowsEvents: []model.Event{{
 							Id:    "PTjSgI",
 							Title: "dfs",
 							Day:   view.TomorrowOptionValue,
@@ -508,7 +508,7 @@ func TestInteraction(t *testing.T) {
 					Index:     6,
 					ChannelId: "D7P4LC5G9",
 					Events: model.Events{
-						TodaysEvents: []model.Event{{
+						model.TodaysEvents: []model.Event{{
 							Id:    "WyKVYV",
 							Title: "ads",
 							Day:   view.TodayOptionValue,
@@ -516,7 +516,7 @@ func TestInteraction(t *testing.T) {
 							Min:   0,
 							AmPm:  "AM",
 						}},
-						TomorrowsEvents: []model.Event{{
+						model.TomorrowsEvents: []model.Event{{
 							Id:    "PTjSgI",
 							Title: "dfs",
 							Day:   view.TomorrowOptionValue,
@@ -533,7 +533,7 @@ func TestInteraction(t *testing.T) {
 					Index:     7,
 					ChannelId: "D7P4LC5G9",
 					Events: model.Events{
-						TodaysEvents: []model.Event{{
+						model.TodaysEvents: []model.Event{{
 							Id:    "WyKVYV",
 							Title: "ads",
 							Day:   view.TodayOptionValue,
@@ -542,7 +542,7 @@ func TestInteraction(t *testing.T) {
 							AmPm:  "AM",
 						},
 						},
-						TomorrowsEvents: []model.Event{{
+						model.TomorrowsEvents: []model.Event{{
 							Id:    "PTjSgI",
 							Title: "dfs",
 							Day:   view.TomorrowOptionValue,
@@ -575,7 +575,7 @@ func TestInteraction(t *testing.T) {
 					Index:     7,
 					ChannelId: "D7P4LC5G9",
 					Events: model.Events{
-						TodaysEvents: []model.Event{{
+						model.TodaysEvents: []model.Event{{
 							Id:    "WyKVYV",
 							Title: "ads",
 							Day:   view.TodayOptionValue,
@@ -583,7 +583,7 @@ func TestInteraction(t *testing.T) {
 							Min:   0,
 							AmPm:  "AM",
 						}},
-						TomorrowsEvents: []model.Event{{
+						model.TomorrowsEvents: []model.Event{{
 							Id:    "PTjSgI",
 							Title: "dfs",
 							Day:   view.TomorrowOptionValue,
@@ -605,7 +605,7 @@ func TestInteraction(t *testing.T) {
 					Index:     8,
 					ChannelId: "D7P4LC5G9",
 					Events: model.Events{
-						TodaysEvents: []model.Event{{
+						model.TodaysEvents: []model.Event{{
 							Id:    "WyKVYV",
 							Title: "ads",
 							Day:   view.TodayOptionValue,
@@ -614,7 +614,7 @@ func TestInteraction(t *testing.T) {
 							AmPm:  "AM",
 						},
 						},
-						TomorrowsEvents: []model.Event{{
+						model.TomorrowsEvents: []model.Event{{
 							Id:    "PTjSgI",
 							Title: "dfs",
 							Day:   view.TomorrowOptionValue,
@@ -658,7 +658,7 @@ func TestInteraction(t *testing.T) {
 					Index:     9,
 					ChannelId: "D7P4LC5G9",
 					Events: model.Events{
-						TodaysEvents: []model.Event{{
+						model.TodaysEvents: []model.Event{{
 							Id:    "WyKVYV",
 							Title: "ads",
 							Day:   view.TodayOptionValue,
@@ -666,7 +666,7 @@ func TestInteraction(t *testing.T) {
 							Min:   0,
 							AmPm:  "AM",
 						}},
-						TomorrowsEvents: []model.Event{{
+						model.TomorrowsEvents: []model.Event{{
 							Id:    "PTjSgI",
 							Title: "dfs",
 							Day:   view.TomorrowOptionValue,
@@ -694,7 +694,7 @@ func TestInteraction(t *testing.T) {
 					Index:     9,
 					ChannelId: "D7P4LC5G9",
 					Events: model.Events{
-						TodaysEvents: []model.Event{{
+						model.TodaysEvents: []model.Event{{
 							Id:    "WyKVYV",
 							Title: "ads",
 							Day:   view.TodayOptionValue,
@@ -703,7 +703,7 @@ func TestInteraction(t *testing.T) {
 							AmPm:  "AM",
 						},
 						},
-						TomorrowsEvents: []model.Event{{
+						model.TomorrowsEvents: []model.Event{{
 							Id:    "PTjSgI",
 							Title: "dfs",
 							Day:   view.TomorrowOptionValue,
@@ -745,7 +745,7 @@ func TestInteraction(t *testing.T) {
 					Index:     9,
 					ChannelId: "D7P4LC5G9",
 					Events: model.Events{
-						TodaysEvents: []model.Event{{
+						model.TodaysEvents: []model.Event{{
 							Id:    "WyKVYV",
 							Title: "ads",
 							Day:   view.TodayOptionValue,
@@ -753,7 +753,7 @@ func TestInteraction(t *testing.T) {
 							Min:   0,
 							AmPm:  "AM",
 						}},
-						TomorrowsEvents: []model.Event{{
+						model.TomorrowsEvents: []model.Event{{
 							Id:    "PTjSgI",
 							Title: "dfs",
 							Day:   view.TomorrowOptionValue,
