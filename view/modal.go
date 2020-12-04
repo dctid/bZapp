@@ -51,10 +51,6 @@ type ResponseUrl struct {
 	ResponseUrl string `json:"response_url"`
 }
 
-type InteractionPayload struct {
-	slack.InteractionCallback
-	ResponseUrls []ResponseUrl `json:"response_urls"`
-}
 
 func BuildNewEvent(index int, values map[string]map[string]slack.BlockAction) *model.Event {
 	eventTitle := values[fmt.Sprintf("%s-%d", AddEventTitleInputBlock, index)][AddEventTitleActionId].Value
