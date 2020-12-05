@@ -8,7 +8,7 @@ import (
 type Events map[string][]Event
 
 const (
-	TodaysEvents = "today"
+	TodaysEvents    = "today"
 	TomorrowsEvents = "tomorrow"
 )
 
@@ -38,19 +38,36 @@ func (event Event) normalizeMins() string {
 }
 
 func (events Events) AddEvent(newEvent *Event) Events {
-	switch newEvent.Day {
-	case TodaysEvents:
+	events[newEvent.Day] = addEventInOrder(newEvent, events[newEvent.Day])
+	return events
+}
+
+func (events Events) ConvertToDate() Events {
+	if events != nil {
+		days := Days()
 		return Events{
-			TodaysEvents:    addEventInOrder(newEvent, events[TodaysEvents]),
-			TomorrowsEvents: events[TomorrowsEvents],
-		}
-	case TomorrowsEvents:
-		return Events{
-			TodaysEvents:    events[TodaysEvents],
-			TomorrowsEvents: addEventInOrder(newEvent, events[TomorrowsEvents]),
+			days.Today:      events[TodaysEvents],
+			days.NextBizDay: events[TomorrowsEvents],
 		}
 	}
-	return events
+	return nil
+}
+
+func (events Events) ConvertFromDates() Events {
+	if events != nil {
+		result := Events{}
+		days := Days()
+		today := events[days.Today]
+		if len(today) > 0 {
+			result[TodaysEvents] = today
+		}
+		nextBizDayEvents := events[days.NextBizDay]
+		if len(nextBizDayEvents) > 0 {
+			result[TomorrowsEvents] = nextBizDayEvents
+		}
+		return result
+	}
+	return nil
 }
 
 func addEventInOrder(event *Event, events []Event) []Event {

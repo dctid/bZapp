@@ -50,11 +50,11 @@ func GetModelFromDb(ctx aws.Context, channel string) (*model.Model, error) {
 
 	}
 
-	return &currentModel, nil
+	return currentModel.ConvertFromDbModel(), nil
 }
 
 func SaveModel(ctx aws.Context, channel string, currentModel *model.Model) error {
-	modelBytes, err := json.Marshal(currentModel)
+	modelBytes, err := json.Marshal(currentModel.ConvertToDbModel())
 	if err != nil {
 		log.Printf("Couldn't convert model %s", err)
 		return err

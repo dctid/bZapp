@@ -1,4 +1,4 @@
-package bZapp
+package model
 
 import (
 	"github.com/dctid/bZapp/mocks"

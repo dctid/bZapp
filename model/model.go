@@ -25,3 +25,16 @@ func (modelToConvert *Model) ConvertMetadataToJson() string {
 	return string(jsonBytes)
 }
 
+func (modelToConvert *Model) ConvertToDbModel() *Model {
+	return &Model{
+		Index:     modelToConvert.Index,
+		Events:    modelToConvert.Events.ConvertToDate(),
+		Goals:     modelToConvert.Goals,
+		ChannelId: modelToConvert.ChannelId,
+	}
+}
+func (modelToConvert *Model) ConvertFromDbModel() *Model {
+	modelToConvert.Events = modelToConvert.Events.ConvertFromDates()
+	return modelToConvert
+}
+

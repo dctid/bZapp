@@ -573,7 +573,7 @@ func TestSlash_appExistsInChannel(t *testing.T) {
 	currentModel := model.Model{
 		ChannelId: "D7P4LC5G9",
 		Events: model.Events{
-			model.TodaysEvents:    []model.Event{{
+			"2020-12-02":    []model.Event{{
 				Id:    "today_event",
 				Title: "Let's do something",
 				Day:   view.TodayOptionValue,
@@ -581,7 +581,7 @@ func TestSlash_appExistsInChannel(t *testing.T) {
 				Min:   15,
 				AmPm:  "AM",
 			}},
-			model.TomorrowsEvents: []model.Event{{
+			"2020-12-03": []model.Event{{
 				Id:    "tomorrow_event",
 				Title: "Let's do something else",
 				Day:   view.TomorrowOptionValue,
