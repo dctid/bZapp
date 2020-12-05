@@ -36,7 +36,7 @@ func getItemOutput(modelToReturn *model.Model) *dynamodb.GetItemOutput {
 				S: aws.String("D7P4LC5G9"),
 			},
 			"model": {
-				B: modelBytes,
+				S: aws.String(string(modelBytes)),
 			},
 		},
 	}
@@ -50,7 +50,7 @@ func putItemInput(modelToSave *model.Model) *dynamodb.PutItemInput {
 				S: aws.String("D7P4LC5G9"),
 			},
 			"model": {
-				B: modelBytes,
+				S: aws.String(string(modelBytes)),
 			},
 		},
 		TableName: aws.String("bZappTable"),
@@ -91,6 +91,7 @@ func TestInteraction(t *testing.T) {
 		wantDo          do
 		dynamoResponses *mocks.MockDynamoDB
 		wantDynamoCalls *mocks.MockDynamoDbInputs
+		date  			string
 	}{
 		{
 			name:     "open edit events",
@@ -120,6 +121,7 @@ func TestInteraction(t *testing.T) {
 					ChannelId: "D7P4LC5G9",
 				}),
 			},
+			date: "2020-12-02 08:48:21",
 		},
 		{
 			name:     "remove event",
@@ -223,6 +225,7 @@ func TestInteraction(t *testing.T) {
 					},
 				}),
 			},
+			date: "2020-12-02 08:48:21",
 		},
 		{
 			name: "add event submission",
@@ -293,6 +296,7 @@ func TestInteraction(t *testing.T) {
 					},
 				}),
 			},
+			date: "2020-12-02 08:48:21",
 		},
 		{
 			name:     "submit and send message to channel",
@@ -343,6 +347,7 @@ func TestInteraction(t *testing.T) {
 			wantDynamoCalls: &mocks.MockDynamoDbInputs{
 				GetItemWithContext: getItemInput,
 			},
+			date: "2020-12-02 08:48:21",
 		},
 		{
 			name: "submit and send message to private channel bzapp is not a member",
@@ -432,6 +437,7 @@ func TestInteraction(t *testing.T) {
 			wantDynamoCalls: &mocks.MockDynamoDbInputs{
 				GetItemWithContext: getItemInput,
 			},
+			date: "2020-12-02 08:48:21",
 		},
 		{
 			name:     "close edit events",
@@ -475,6 +481,7 @@ func TestInteraction(t *testing.T) {
 			wantDynamoCalls: &mocks.MockDynamoDbInputs{
 				GetItemWithContext: getItemInput,
 			},
+			date: "2020-12-02 08:48:21",
 		},
 		{
 			name:     "open edit goals actions",
@@ -508,6 +515,7 @@ func TestInteraction(t *testing.T) {
 					ChannelId: "D7P4LC5G9",
 				}),
 			},
+			date: "2020-12-02 08:48:21",
 		},
 		{
 			name: "add goal submission",
@@ -575,6 +583,7 @@ func TestInteraction(t *testing.T) {
 					},
 				}),
 			},
+			date: "2020-12-02 08:48:21",
 		},
 		{
 			name: "add goal 2nd submission",
@@ -650,6 +659,7 @@ func TestInteraction(t *testing.T) {
 					},
 				}),
 			},
+			date: "2020-12-02 08:48:21",
 		},
 		{
 			name:     "remove goal actions",
@@ -741,6 +751,7 @@ func TestInteraction(t *testing.T) {
 					},
 				}),
 			},
+			date: "2020-12-02 08:48:21",
 		},
 		{
 			name:     "close edit goals",
@@ -793,10 +804,11 @@ func TestInteraction(t *testing.T) {
 			wantDynamoCalls: &mocks.MockDynamoDbInputs{
 				GetItemWithContext: getItemInput,
 			},
+			date: "2020-12-02 08:48:21",
 		},
 	}
 	for _, tt := range tests {
-		model.Clock = mocks.NewMockClock("2020-12-02 08:48:21")
+		model.Clock = mocks.NewMockClock(tt.date)
 		model.Hash = func() string {
 			return "Fake hash"
 		}

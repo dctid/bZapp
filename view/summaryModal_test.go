@@ -3,6 +3,7 @@ package view
 import (
 	"encoding/json"
 	"github.com/dctid/bZapp/format"
+	"github.com/dctid/bZapp/mocks"
 	"github.com/dctid/bZapp/model"
 
 	"github.com/stretchr/testify/assert"
@@ -160,6 +161,7 @@ var summaryModal = `{
 }`
 
 func TestNewSummaryModal(t *testing.T) {
+	model.Clock = mocks.NewMockClock("2020-12-02 08:48:21")
 
 	testModel := &model.Model{
 		Events: model.Events{

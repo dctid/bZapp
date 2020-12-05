@@ -8,8 +8,9 @@ import (
 type Events map[string][]Event
 
 const (
-	TodaysEvents    = "today"
-	TomorrowsEvents = "tomorrow"
+	TodaysEvents     = "today"
+	TomorrowsEvents  = "tomorrow"
+	NextBizDayEvents = "nextBizDayEvents"
 )
 
 type Event struct {
@@ -44,11 +45,15 @@ func (events Events) AddEvent(newEvent *Event) Events {
 
 func (events Events) ConvertToDate() Events {
 	if events != nil {
+		result := Events{}
 		days := Days()
-		return Events{
-			days.Today:      events[TodaysEvents],
-			days.NextBizDay: events[TomorrowsEvents],
+		if len(events[TodaysEvents]) > 0 {
+			result[days.Today] = events[TodaysEvents]
 		}
+		if len(events[TomorrowsEvents]) > 0 {
+			result[days.NextBizDay] = events[TomorrowsEvents]
+		}
+		return result
 	}
 	return nil
 }
@@ -57,12 +62,22 @@ func (events Events) ConvertFromDates() Events {
 	if events != nil {
 		result := Events{}
 		days := Days()
-		today := events[days.Today]
-		if len(today) > 0 {
-			result[TodaysEvents] = today
+		todaysEvents := events[days.Today]
+		if len(todaysEvents) > 0 {
+			for _, event := range todaysEvents {
+				event.Day = TodaysEvents
+			}
+			result[TodaysEvents] = todaysEvents
 		}
 		nextBizDayEvents := events[days.NextBizDay]
 		if len(nextBizDayEvents) > 0 {
+			day := TomorrowsEvents
+			//if days.IsFriday {
+			//	day = NextBizDayEvents
+			//}
+			for _, event := range nextBizDayEvents {
+				event.Day = day
+			}
 			result[TomorrowsEvents] = nextBizDayEvents
 		}
 		return result

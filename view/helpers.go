@@ -117,7 +117,11 @@ func buildEventsBlock(editable bool, events model.Events) []slack.Block {
 		blocks = append(blocks, NoEventYetSection...)
 	} else {
 		blocks = addEvents(editable, blocks, TodayEventsHeader, events[model.TodaysEvents])
-		blocks = addEvents(editable, blocks, TomorrowEventsHeader, events[model.TomorrowsEvents])
+		nextBizDayHeader := TomorrowEventsHeader
+		if model.Days().IsFriday {
+			nextBizDayHeader = MondayEventsHeader
+		}
+		blocks = addEvents(editable, blocks, nextBizDayHeader, events[model.TomorrowsEvents])
 	}
 
 	return blocks

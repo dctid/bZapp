@@ -12,6 +12,7 @@ const EditEventsTitle = "bZapp - Edit Events"
 const EventsHeader = "Events"
 const TodayEventsHeader = "Today"
 const TomorrowEventsHeader = "Tomorrow"
+const MondayEventsHeader = "Monday"
 
 const TodayOptionValue = "today"
 const TomorrowOptionValue = "tomorrow"

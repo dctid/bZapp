@@ -35,13 +35,19 @@ func GetModelFromDb(ctx aws.Context, channel string) (*model.Model, error) {
 	log.Printf("model %+v", dbModel)
 	var currentModel model.Model
 	if len(dbModel.Item) == 0 {
-		currentModel = model.Model{ChannelId: channel}
+		currentModel = model.Model{
+			Index:     0,
+			Events:    model.Events{},
+			Goals:     model.Goals{},
+			ChannelId: channel,
+		}
 		SaveModel(ctx, channel, &currentModel)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		err = json.Unmarshal(dbModel.Item["model"].B, &currentModel)
+		modelString := dbModel.Item["model"].S
+		err = json.Unmarshal([]byte(*modelString), &currentModel)
 		if err != nil {
 			log.Printf("Couldn't parse metadata %s", err)
 		} else {
@@ -54,6 +60,8 @@ func GetModelFromDb(ctx aws.Context, channel string) (*model.Model, error) {
 }
 
 func SaveModel(ctx aws.Context, channel string, currentModel *model.Model) error {
+	log.Printf("CurrentModel: %v", currentModel)
+	log.Printf("ConvertedModel: %v", currentModel.ConvertToDbModel())
 	modelBytes, err := json.Marshal(currentModel.ConvertToDbModel())
 	if err != nil {
 		log.Printf("Couldn't convert model %s", err)
@@ -67,7 +75,7 @@ func SaveModel(ctx aws.Context, channel string, currentModel *model.Model) error
 				S: aws.String(channel),
 			},
 			"model": {
-				B: modelBytes,
+				S: aws.String(string(modelBytes)),
 			},
 		},
 		TableName: aws.String("bZappTable"),

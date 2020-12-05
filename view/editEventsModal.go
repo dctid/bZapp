@@ -34,6 +34,10 @@ func addEventsActions(index int) []slack.Block {
 
 	mins := []int{0, 15, 30, 45}
 	minOptions := mapOptions(mins, minOption)
+	nextBizDayHeader := TomorrowEventsHeader
+	if model.Days().IsFriday {
+		nextBizDayHeader = MondayEventsHeader
+	}
 	return []slack.Block{
 		slack.NewDividerBlock(),
 		slack.NewInputBlock(fmt.Sprintf("%s-%d", AddEventTitleInputBlock, index), slack.NewTextBlockObject(slack.PlainTextType, "Add Event", false, false),
@@ -41,8 +45,8 @@ func addEventsActions(index int) []slack.Block {
 		),
 		slack.NewInputBlock(fmt.Sprintf("%s-%d", AddEventDayInputBlock, index), slack.NewTextBlockObject(slack.PlainTextType, "Day", true, false),
 			slack.NewRadioButtonsBlockElement(AddEventDayActionId,
-				slack.NewOptionBlockObject(TodayOptionValue, slack.NewTextBlockObject(slack.PlainTextType, "Today", true, false)),
-				slack.NewOptionBlockObject(TomorrowOptionValue, slack.NewTextBlockObject(slack.PlainTextType, "Tomorrow", true, false))),
+				slack.NewOptionBlockObject(TodayOptionValue, slack.NewTextBlockObject(slack.PlainTextType, TodayEventsHeader, true, false)),
+				slack.NewOptionBlockObject(TomorrowOptionValue, slack.NewTextBlockObject(slack.PlainTextType, nextBizDayHeader, true, false))),
 		),
 		slack.NewInputBlock(fmt.Sprintf("%s-%d", AddEventHoursInputBlock, index), slack.NewTextBlockObject(slack.PlainTextType, "Hour", true, false),
 			slack.NewOptionsSelectBlockElement(slack.OptTypeStatic, slack.NewTextBlockObject(slack.PlainTextType, "Select hour", true, false), AddEventHoursActionId, hourOptions...),
