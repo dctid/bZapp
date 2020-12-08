@@ -7,17 +7,11 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/dctid/bZapp/model"
 	"log"
-	"os"
 	"time"
 )
 
 func GetModelFromDb(ctx aws.Context, channel string) (*model.Model, error) {
-	table := os.Getenv("DYNAMODB_TABLE_NAME")
 
-	endpoint, isSet := os.LookupEnv("DYNAMODB_ENDPOINT")
-	log.Printf("env: %s, %v", endpoint, isSet)
-
-	log.Printf("Table: %s", table)
 	input := &dynamodb.GetItemInput{
 		Key: map[string]*dynamodb.AttributeValue{
 			"id": {

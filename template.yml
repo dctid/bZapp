@@ -89,6 +89,10 @@ Parameters:
     Default: "Slack signing secret not set"
     Description: "Slack signing secret"
     Type: String
+  DynamoDbEndpoint:
+    Default: ""
+    Description: "Dynamo DB endpoint"
+    Type: String
 
 Resources:
   ApiGatewayAccount:
@@ -179,8 +183,7 @@ Resources:
         Variables:
           SLACK_TOKEN: !Ref SlackToken
           SLACK_SIGNING_SECRET: !Ref SlackSigningSecret
-          DYNAMODB_ENDPOINT: "http://docker.for.mac.host.internal:8000"
-          DYNAMODB_TABLE_NAME: bZappTable
+          DYNAMODB_ENDPOINT: !Ref DynamoDbEndpoint
       Events:
         Request:
           Properties:
@@ -191,13 +194,7 @@ Resources:
       Handler: main
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Ref BZappTable
-        - Statement:
-            - Action:
-                - kms:Encrypt
-              Effect: Allow
-              Resource: !GetAtt Key.Arn
-          Version: 2012-10-17
+            TableName: !Ref bZappTable
       Runtime: go1.x
     Type: AWS::Serverless::Function
 
@@ -208,8 +205,7 @@ Resources:
         Variables:
           SLACK_TOKEN: !Ref SlackToken
           SLACK_SIGNING_SECRET: !Ref SlackSigningSecret
-          DYNAMODB_ENDPOINT: "http://docker.for.mac.host.internal:8000"
-          DYNAMODB_TABLE_NAME: bZappTable
+          DYNAMODB_ENDPOINT: !Ref DynamoDbEndpoint
       Events:
         Request:
           Properties:
@@ -220,21 +216,19 @@ Resources:
       Handler: main
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Ref BZappTable
-        - Statement:
-            - Action:
-                - kms:Encrypt
-              Effect: Allow
-              Resource: !GetAtt Key.Arn
-          Version: 2012-10-17
+            TableName: !Ref bZappTable
       Runtime: go1.x
     Type: AWS::Serverless::Function
 
   bZappTable:
     Properties:
+      PrimaryKey:
+        Name: id
+        Type: String
+      TableName: bZappTable
       ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
     Type: AWS::Serverless::SimpleTable
 
   WebBucket:

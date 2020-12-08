@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/sns"
 	"github.com/aws/aws-xray-sdk-go/xray"
+	"log"
 	"os"
 )
 
@@ -31,6 +32,7 @@ func init() {
 		LogLevel: "info",
 	})
 	endpoint, isSet := os.LookupEnv("DYNAMODB_ENDPOINT")
+	log.Printf("endpoint: %s, %v", endpoint, isSet)
 	if isSet {
 		config := aws.Config{
 			Endpoint: &endpoint,
