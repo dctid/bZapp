@@ -22,7 +22,7 @@ func TestNewEditGoalsModal(t *testing.T) {
 		{
 			name: "empty",
 			args: args{
-				model: &model.Model{Index: 1, ChannelId: "fake id"},
+				model: &model.Model{Index: 1},
 				metadata: &model.Metadata{ChannelId: "fake id"},
 			},
 			want: format.PrettyJsonNoError(expectModalJson),

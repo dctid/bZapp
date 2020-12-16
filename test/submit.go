@@ -118,7 +118,6 @@ const SubmissionJson = `{
 			"type": "section"
 		}
 	],
- 	"channel": "D7P4LC5G9",
 	"delete_original": false,
 	"replace_original": false,
 	"response_type": "in_channel",

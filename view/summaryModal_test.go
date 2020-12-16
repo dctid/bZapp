@@ -213,7 +213,6 @@ func TestNewSummaryModal(t *testing.T) {
 			},
 		},
 		Goals: nil,
-		ChannelId: "Fakkkee",
 	}
 
 	testMetadata := &model.Metadata{ChannelId: "Fakkkee"}

@@ -640,7 +640,7 @@ func TestSlash_initialRequestInChannel(t *testing.T) {
 	assert.EqualValues(t, prettyJsonExpected, prettyJsonActual)
 	assert.EqualValues(t, events.APIGatewayProxyResponse{StatusCode: 200}, result)
 	actualPutCall := mocks.MockDynamoDbCalls.PutItemWithContext
-	currentModel := model.Model{ChannelId: "D7P4LC5G9", Events: model.Events{}, Goals: model.Goals{}}
+	currentModel := model.Model{Events: model.Events{}, Goals: model.Goals{}}
 	modelBytes, err := json.Marshal(currentModel)
 	expectedPutCall := &dynamodb.PutItemInput{
 		Item: map[string]*dynamodb.AttributeValue{
@@ -675,7 +675,6 @@ func TestSlash_appExistsInChannel(t *testing.T) {
 	Client = &mocks.MockClient{}
 	model.Clock = mocks.NewMockClock("2020-12-02 08:48:21")
 	currentModel := model.Model{
-		ChannelId: "D7P4LC5G9",
 		Events: model.Events{
 			"2020-12-02":    []model.Event{{
 				Id:    "today_event",
@@ -759,7 +758,6 @@ func TestSlash_appExistsInChannel_onFriday(t *testing.T) {
 	Client = &mocks.MockClient{}
 	model.Clock = mocks.NewMockClock("2020-12-04 08:48:21")
 	currentModel := model.Model{
-		ChannelId: "D7P4LC5G9",
 		Events: model.Events{
 			"2020-12-03":    []model.Event{{
 				Id:    "yesterday_event",

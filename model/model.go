@@ -8,7 +8,6 @@ type Model struct {
 	Index       int
 	Events      Events
 	Goals       Goals
-	ChannelId   string `json:"channel_id,omitempty"`
 }
 
 type Metadata struct {
@@ -34,7 +33,6 @@ func (modelToConvert *Model) ConvertToDbModel() *Model {
 		Index:     modelToConvert.Index,
 		Events:    modelToConvert.Events.ConvertToDate(),
 		Goals:     modelToConvert.Goals,
-		ChannelId: modelToConvert.ChannelId,
 	}
 }
 func (modelToConvert *Model) ConvertFromDbModel() *Model {

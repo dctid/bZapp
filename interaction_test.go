@@ -91,7 +91,7 @@ func TestInteraction(t *testing.T) {
 		wantDo          do
 		dynamoResponses *mocks.MockDynamoDB
 		wantDynamoCalls *mocks.MockDynamoDbInputs
-		date  			string
+		date            string
 	}{
 		{
 			name:     "open edit events",
@@ -112,13 +112,12 @@ func TestInteraction(t *testing.T) {
 							}`, test.EditEventsModal)),
 			},
 			dynamoResponses: &mocks.MockDynamoDB{
-				GetItemOutput: getItemOutput(&model.Model{ChannelId: "D7P4LC5G9"}),
+				GetItemOutput: getItemOutput(&model.Model{}),
 			},
 			wantDynamoCalls: &mocks.MockDynamoDbInputs{
 				GetItemWithContext: getItemInput,
 				PutItemWithContext: putItemInput(&model.Model{
-					Index:     1,
-					ChannelId: "D7P4LC5G9",
+					Index: 1,
 				}),
 			},
 			date: "2020-12-02 08:48:21",
@@ -144,7 +143,6 @@ func TestInteraction(t *testing.T) {
 			dynamoResponses: &mocks.MockDynamoDB{
 				GetItemOutput: getItemOutput(&model.Model{
 					Index: 4,
-					ChannelId: "D7P4LC5G9",
 					Events: model.Events{
 						"2020-11-28": []model.Event{{
 							Id:    "WyKVYV",
@@ -202,7 +200,6 @@ func TestInteraction(t *testing.T) {
 				GetItemWithContext: getItemInput,
 				PutItemWithContext: putItemInput(&model.Model{
 					Index: 4,
-					ChannelId: "D7P4LC5G9",
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
 							Id:    "WyKVYV",
@@ -240,7 +237,6 @@ func TestInteraction(t *testing.T) {
 			dynamoResponses: &mocks.MockDynamoDB{
 				GetItemOutput: getItemOutput(&model.Model{
 					Index: 4,
-					ChannelId: "D7P4LC5G9",
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
 							Id:    "WyKVYV",
@@ -266,7 +262,6 @@ func TestInteraction(t *testing.T) {
 				GetItemWithContext: getItemInput,
 				PutItemWithContext: putItemInput(&model.Model{
 					Index: 5,
-					ChannelId: "D7P4LC5G9",
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
 							Id:    "WyKVYV",
@@ -275,7 +270,7 @@ func TestInteraction(t *testing.T) {
 							Hour:  10,
 							Min:   0,
 							AmPm:  "AM",
-						},{
+						}, {
 							Id:    "Fake hash",
 							Title: "sd",
 							Day:   view.TodayOptionValue,
@@ -307,14 +302,13 @@ func TestInteraction(t *testing.T) {
 			},
 			wantErr: false,
 			wantDo: do{
-				url:     getUrl("https://slack.com/api/chat.postMessage"),
+				url:     getUrl("https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP"),
 				body:    format.PrettyJsonNoError(test.SubmissionJson),
 				headers: http.Header{"Authorization": []string{"Bearer token_token"}, "Content-type": []string{"application/json"}},
 			},
 			dynamoResponses: &mocks.MockDynamoDB{
 				GetItemOutput: getItemOutput(&model.Model{
-					Index:     6,
-					ChannelId: "D7P4LC5G9",
+					Index: 6,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
 							Id:    "coEbHc",
@@ -397,14 +391,13 @@ func TestInteraction(t *testing.T) {
 			},
 			wantErr: false,
 			wantDo: do{
-				url:     getUrl("https://slack.com/api/chat.postMessage"),
+				url:     getUrl("https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP"),
 				body:    format.PrettyJsonNoError(test.SubmissionJson),
 				headers: http.Header{"Authorization": []string{"Bearer token_token"}, "Content-type": []string{"application/json"}},
 			},
 			dynamoResponses: &mocks.MockDynamoDB{
 				GetItemOutput: getItemOutput(&model.Model{
-					Index:     6,
-					ChannelId: "D7P4LC5G9",
+					Index: 6,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
 							Id:    "coEbHc",
@@ -455,8 +448,7 @@ func TestInteraction(t *testing.T) {
 			},
 			dynamoResponses: &mocks.MockDynamoDB{
 				GetItemOutput: getItemOutput(&model.Model{
-					Index:     5,
-					ChannelId: "D7P4LC5G9",
+					Index: 5,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
 							Id:    "WyKVYV",
@@ -503,16 +495,12 @@ func TestInteraction(t *testing.T) {
 			},
 
 			dynamoResponses: &mocks.MockDynamoDB{
-				GetItemOutput: getItemOutput(&model.Model{
-					ChannelId: "D7P4LC5G9",
-				},
-				),
+				GetItemOutput: getItemOutput(&model.Model{}),
 			},
 			wantDynamoCalls: &mocks.MockDynamoDbInputs{
 				GetItemWithContext: getItemInput,
 				PutItemWithContext: putItemInput(&model.Model{
-					Index:     1,
-					ChannelId: "D7P4LC5G9",
+					Index: 1,
 				}),
 			},
 			date: "2020-12-02 08:48:21",
@@ -529,8 +517,7 @@ func TestInteraction(t *testing.T) {
 			wantDo:  do{},
 			dynamoResponses: &mocks.MockDynamoDB{
 				GetItemOutput: getItemOutput(&model.Model{
-					Index:     6,
-					ChannelId: "D7P4LC5G9",
+					Index: 6,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
 							Id:    "WyKVYV",
@@ -554,8 +541,7 @@ func TestInteraction(t *testing.T) {
 			wantDynamoCalls: &mocks.MockDynamoDbInputs{
 				GetItemWithContext: getItemInput,
 				PutItemWithContext: putItemInput(&model.Model{
-					Index:     7,
-					ChannelId: "D7P4LC5G9",
+					Index: 7,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
 							Id:    "WyKVYV",
@@ -597,8 +583,7 @@ func TestInteraction(t *testing.T) {
 			wantDo:  do{},
 			dynamoResponses: &mocks.MockDynamoDB{
 				GetItemOutput: getItemOutput(&model.Model{
-					Index:     7,
-					ChannelId: "D7P4LC5G9",
+					Index: 7,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
 							Id:    "WyKVYV",
@@ -627,8 +612,7 @@ func TestInteraction(t *testing.T) {
 			wantDynamoCalls: &mocks.MockDynamoDbInputs{
 				GetItemWithContext: getItemInput,
 				PutItemWithContext: putItemInput(&model.Model{
-					Index:     8,
-					ChannelId: "D7P4LC5G9",
+					Index: 8,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
 							Id:    "WyKVYV",
@@ -681,8 +665,7 @@ func TestInteraction(t *testing.T) {
 			},
 			dynamoResponses: &mocks.MockDynamoDB{
 				GetItemOutput: getItemOutput(&model.Model{
-					Index:     9,
-					ChannelId: "D7P4LC5G9",
+					Index: 9,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
 							Id:    "WyKVYV",
@@ -717,8 +700,7 @@ func TestInteraction(t *testing.T) {
 			wantDynamoCalls: &mocks.MockDynamoDbInputs{
 				GetItemWithContext: getItemInput,
 				PutItemWithContext: putItemInput(&model.Model{
-					Index:     9,
-					ChannelId: "D7P4LC5G9",
+					Index: 9,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
 							Id:    "WyKVYV",
@@ -769,8 +751,7 @@ func TestInteraction(t *testing.T) {
 			},
 			dynamoResponses: &mocks.MockDynamoDB{
 				GetItemOutput: getItemOutput(&model.Model{
-					Index:     9,
-					ChannelId: "D7P4LC5G9",
+					Index: 9,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
 							Id:    "WyKVYV",

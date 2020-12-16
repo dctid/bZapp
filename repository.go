@@ -33,7 +33,6 @@ func GetModelFromDb(ctx aws.Context, channel string) (*model.Model, error) {
 			Index:     0,
 			Events:    model.Events{},
 			Goals:     model.Goals{},
-			ChannelId: channel,
 		}
 		SaveModel(ctx, channel, &currentModel)
 		if err != nil {
