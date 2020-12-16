@@ -216,7 +216,9 @@ func TestNewSummaryModal(t *testing.T) {
 		ChannelId: "Fakkkee",
 	}
 
-	result := NewSummaryModal(testModel)
+	testMetadata := &model.Metadata{ChannelId: "Fakkkee"}
+
+	result := NewSummaryModal(testModel, testMetadata)
 	actualJson, _ := json.Marshal(result)
 	expectedJsonString, _ := format.PrettyJson(summaryModal)
 	actualJsonString, _ := format.PrettyJson(string(actualJson))

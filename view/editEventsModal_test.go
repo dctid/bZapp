@@ -790,7 +790,7 @@ func TestNewEditEventsModal(t *testing.T) {
 			model.TomorrowsEvents: tomorrowsEvents,
 		},
 		ChannelId: "D7P4LC5G9",
-	})
+	}, &model.Metadata{ChannelId: "D7P4LC5G9"})
 	actualJson, _ := json.Marshal(result)
 	expectedJsonString, _ := format.PrettyJson(editEventsModal)
 	actualJsonString, _ := format.PrettyJson(string(actualJson))
@@ -863,7 +863,7 @@ func TestNewEditEventsModalOnFriday(t *testing.T) {
 			model.TomorrowsEvents: tomorrowsEvents,
 		},
 		ChannelId: "D7P4LC5G9",
-	})
+	}, &model.Metadata{ChannelId: "D7P4LC5G9"})
 	actualJson, _ := json.Marshal(result)
 	expectedJsonString, _ := format.PrettyJson(editEventsModalOnFriday)
 	actualJsonString, _ := format.PrettyJson(string(actualJson))

@@ -6,7 +6,7 @@ import (
 	"github.com/slack-go/slack"
 )
 
-func NewEditEventsModal(updatedModel *model.Model) *slack.ModalViewRequest {
+func NewEditEventsModal(updatedModel *model.Model, updatedMetadata *model.Metadata) *slack.ModalViewRequest {
 	return &slack.ModalViewRequest{
 		Type:   slack.VTModal,
 		Title:  slack.NewTextBlockObject(slack.PlainTextType, EditEventsTitle, true, false),
@@ -16,7 +16,7 @@ func NewEditEventsModal(updatedModel *model.Model) *slack.ModalViewRequest {
 			BlockSet: buildSummaryEventBlocks(updatedModel.Index, updatedModel.Events),
 		},
 		NotifyOnClose: true,
-		PrivateMetadata: updatedModel.ConvertMetadataToJson(),
+		PrivateMetadata: updatedMetadata.ConvertMetadataToJson(),
 	}
 }
 

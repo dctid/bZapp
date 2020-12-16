@@ -50,11 +50,11 @@ func Interaction(ctx context.Context, event events.APIGatewayProxyRequest) (even
 
 	switch payload.Type {
 	case slack.InteractionTypeViewSubmission:
-		return viewSubmission(ctx, &payload, currentModel)
+		return viewSubmission(ctx, &payload, currentModel, metadata)
 	case slack.InteractionTypeBlockActions:
-		return actionEvent(ctx, &payload, currentModel)
+		return actionEvent(ctx, &payload, currentModel, metadata)
 	case slack.InteractionTypeViewClosed:
-		return viewClosed(&payload, currentModel)
+		return viewClosed(&payload, currentModel, metadata)
 	}
 
 	return events.APIGatewayProxyResponse{
@@ -65,11 +65,11 @@ func Interaction(ctx context.Context, event events.APIGatewayProxyRequest) (even
 
 }
 
-func viewSubmission(ctx context.Context, payload *slack.InteractionCallback, currentModel *model.Model) (events.APIGatewayProxyResponse, error) {
+func viewSubmission(ctx context.Context, payload *slack.InteractionCallback, currentModel *model.Model, currentMetadata *model.Metadata) (events.APIGatewayProxyResponse, error) {
 	if payload.View.Title.Text == view.EditGoalsTitle {
-		return pushModalWithAddedGoal(ctx, payload, currentModel)
+		return pushModalWithAddedGoal(ctx, payload, currentModel, currentMetadata)
 	} else if payload.View.Title.Text == view.EditEventsTitle {
-		return pushModalWithAddedEvent(ctx, payload, currentModel)
+		return pushModalWithAddedEvent(ctx, payload, currentModel, currentMetadata)
 	} else {
 		return publishbZapp(currentModel)
 	}
@@ -140,7 +140,7 @@ func handlePostMessageError(response slack.SlackResponse) (events.APIGatewayProx
 
 }
 
-func pushModalWithAddedEvent(ctx context.Context, payload *slack.InteractionCallback, currentModel *model.Model) (events.APIGatewayProxyResponse, error) {
+func pushModalWithAddedEvent(ctx context.Context, payload *slack.InteractionCallback, currentModel *model.Model, currentMetadata *model.Metadata) (events.APIGatewayProxyResponse, error) {
 
 	newEvent := view.BuildNewEvent(currentModel.Index, payload.View.State.Values)
 	currentModel.Events = currentModel.Events.AddEvent(newEvent)
@@ -148,7 +148,7 @@ func pushModalWithAddedEvent(ctx context.Context, payload *slack.InteractionCall
 
 	_ = SaveModel(ctx, currentModel.ChannelId, currentModel)
 
-	modalRequest := view.NewEditEventsModal(currentModel)
+	modalRequest := view.NewEditEventsModal(currentModel, currentMetadata)
 	modalUpdatedWithNewEvent := slack.NewUpdateViewSubmissionResponse(modalRequest)
 	jsonBytes, err := json.Marshal(modalUpdatedWithNewEvent)
 	if err != nil {
@@ -167,17 +167,17 @@ func pushModalWithAddedEvent(ctx context.Context, payload *slack.InteractionCall
 	}, nil
 }
 
-func actionEvent(ctx context.Context, payload *slack.InteractionCallback, currentModel *model.Model) (events.APIGatewayProxyResponse, error) {
+func actionEvent(ctx context.Context, payload *slack.InteractionCallback, currentModel *model.Model, currentMetadata *model.Metadata) (events.APIGatewayProxyResponse, error) {
 	log.Printf("action id %s\n", payload.ActionCallback.BlockActions[0].ActionID)
 	switch payload.ActionCallback.BlockActions[0].ActionID {
 	case view.EditEventsActionId:
-		return pushEditEventModal(ctx, payload, currentModel)
+		return pushEditEventModal(ctx, payload, currentModel, currentMetadata)
 	case view.EditGoalsActionId:
-		return pushEditGoalsModal(ctx, payload, currentModel)
+		return pushEditGoalsModal(ctx, payload, currentModel, currentMetadata)
 	case view.RemoveEventActionId:
-		return removeEvent(ctx, payload, currentModel)
+		return removeEvent(ctx, payload, currentModel, currentMetadata)
 	case view.RemoveGoalActionId:
-		return removeGoal(ctx, payload, currentModel)
+		return removeGoal(ctx, payload, currentModel, currentMetadata)
 	}
 	return events.APIGatewayProxyResponse{
 		Headers:    JsonHeaders(),
@@ -186,11 +186,11 @@ func actionEvent(ctx context.Context, payload *slack.InteractionCallback, curren
 	}, nil
 }
 
-func pushEditEventModal(ctx context.Context, payload *slack.InteractionCallback, currentModel *model.Model) (events.APIGatewayProxyResponse, error) {
+func pushEditEventModal(ctx context.Context, payload *slack.InteractionCallback, currentModel *model.Model, currentMetadata *model.Metadata) (events.APIGatewayProxyResponse, error) {
 
 	currentModel.Index++
 	_ = SaveModel(ctx, currentModel.ChannelId, currentModel)
-	modalRequest := view.NewEditEventsModal(currentModel)
+	modalRequest := view.NewEditEventsModal(currentModel, currentMetadata)
 
 	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true), slack.OptionHTTPClient(Client))
 	viewResponse, err := api.PushView(payload.TriggerID, *modalRequest)
@@ -217,11 +217,11 @@ func pushEditEventModal(ctx context.Context, payload *slack.InteractionCallback,
 	}, nil
 }
 
-func pushEditGoalsModal(ctx context.Context, payload *slack.InteractionCallback, currentModel *model.Model) (events.APIGatewayProxyResponse, error) {
+func pushEditGoalsModal(ctx context.Context, payload *slack.InteractionCallback, currentModel *model.Model, currentMetadata *model.Metadata) (events.APIGatewayProxyResponse, error) {
 
 	currentModel.Index++
 	_ = SaveModel(ctx, currentModel.ChannelId, currentModel)
-	modalRequest := view.NewEditGoalsModal(currentModel)
+	modalRequest := view.NewEditGoalsModal(currentModel, currentMetadata)
 
 	api := slack.New(os.Getenv("SLACK_TOKEN"), slack.OptionDebug(true), slack.OptionHTTPClient(Client))
 	viewResponse, err := api.PushView(payload.TriggerID, *modalRequest)
@@ -248,14 +248,14 @@ func pushEditGoalsModal(ctx context.Context, payload *slack.InteractionCallback,
 	}, nil
 }
 
-func pushModalWithAddedGoal(ctx context.Context, payload *slack.InteractionCallback, currentModel *model.Model) (events.APIGatewayProxyResponse, error) {
+func pushModalWithAddedGoal(ctx context.Context, payload *slack.InteractionCallback, currentModel *model.Model, currentMetadata *model.Metadata) (events.APIGatewayProxyResponse, error) {
 
 	category, goal := view.BuildNewGoalSectionBlock(currentModel.Index, payload.View.State.Values)
 	currentModel.Goals = currentModel.Goals.AddGoal(category, goal)
 	currentModel.Index++
 	_ = SaveModel(ctx, currentModel.ChannelId, currentModel)
 
-	modalRequest := view.NewEditGoalsModal(currentModel)
+	modalRequest := view.NewEditGoalsModal(currentModel, currentMetadata)
 	modalUpdatedWithNewEvent := slack.NewUpdateViewSubmissionResponse(modalRequest)
 
 	jsonBytes, err := json.Marshal(modalUpdatedWithNewEvent)
@@ -275,14 +275,14 @@ func pushModalWithAddedGoal(ctx context.Context, payload *slack.InteractionCallb
 	}, nil
 }
 
-func removeEvent(ctx context.Context, payload *slack.InteractionCallback, currentModel *model.Model) (events.APIGatewayProxyResponse, error) {
+func removeEvent(ctx context.Context, payload *slack.InteractionCallback, currentModel *model.Model, currentMetadata *model.Metadata) (events.APIGatewayProxyResponse, error) {
 
 	currentModel.Events = currentModel.Events.RemoveEvent(payload.ActionCallback.BlockActions[0].BlockID)
 	err := SaveModel(ctx, currentModel.ChannelId, currentModel)
 	if err != nil {
 		return events.APIGatewayProxyResponse{StatusCode: 500}, nil
 	}
-	modalRequest := view.NewEditEventsModal(currentModel)
+	modalRequest := view.NewEditEventsModal(currentModel, currentMetadata)
 	requestAsJson, _ := json.MarshalIndent(modalRequest, "", "\t")
 	log.Printf("Body sent to slack after removing event: %v", string(requestAsJson))
 
@@ -300,11 +300,11 @@ func removeEvent(ctx context.Context, payload *slack.InteractionCallback, curren
 	}, nil
 }
 
-func removeGoal(ctx context.Context, payload *slack.InteractionCallback, currentModel *model.Model) (events.APIGatewayProxyResponse, error) {
+func removeGoal(ctx context.Context, payload *slack.InteractionCallback, currentModel *model.Model, currentMetadata *model.Metadata) (events.APIGatewayProxyResponse, error) {
 
 	currentModel.Goals = currentModel.Goals.RemoveGoal(payload.ActionCallback.BlockActions[0].BlockID)
 	_ = SaveModel(ctx, currentModel.ChannelId, currentModel)
-	modalRequest :=  view.NewEditGoalsModal(currentModel)
+	modalRequest :=  view.NewEditGoalsModal(currentModel, currentMetadata)
 	requestAsJson, _ := json.MarshalIndent(modalRequest, "", "\t")
 	log.Printf("Body sent to slack after removing goal: %v", string(requestAsJson))
 
@@ -322,9 +322,9 @@ func removeGoal(ctx context.Context, payload *slack.InteractionCallback, current
 	}, nil
 }
 
-func viewClosed(payload *slack.InteractionCallback, currentModel *model.Model) (events.APIGatewayProxyResponse, error) {
+func viewClosed(payload *slack.InteractionCallback, currentModel *model.Model, currentMetadata *model.Metadata) (events.APIGatewayProxyResponse, error) {
 	if (payload.View.Title.Text == view.EditEventsTitle || payload.View.Title.Text == view.EditGoalsTitle) && !payload.IsCleared {
-		return returnToSummaryModal(payload, currentModel)
+		return returnToSummaryModal(payload, currentModel, currentMetadata)
 	}
 	return events.APIGatewayProxyResponse{
 		Headers:    JsonHeaders(),
@@ -333,8 +333,8 @@ func viewClosed(payload *slack.InteractionCallback, currentModel *model.Model) (
 	}, nil
 }
 
-func returnToSummaryModal(payload *slack.InteractionCallback, currentModel *model.Model) (events.APIGatewayProxyResponse, error) {
-	modalRequest := view.NewSummaryModal(currentModel)
+func returnToSummaryModal(payload *slack.InteractionCallback, currentModel *model.Model, currentMetadata *model.Metadata) (events.APIGatewayProxyResponse, error) {
+	modalRequest := view.NewSummaryModal(currentModel, currentMetadata)
 
 	update := slack.NewUpdateViewSubmissionResponse(&modalRequest)
 	jsonBytes, err := json.Marshal(update)

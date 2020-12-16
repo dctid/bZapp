@@ -12,6 +12,7 @@ func TestNewEditGoalsModal(t *testing.T) {
 
 	type args struct {
 		model *model.Model
+		metadata *model.Metadata
 	}
 	tests := []struct {
 		name string
@@ -22,13 +23,14 @@ func TestNewEditGoalsModal(t *testing.T) {
 			name: "empty",
 			args: args{
 				model: &model.Model{Index: 1, ChannelId: "fake id"},
+				metadata: &model.Metadata{ChannelId: "fake id"},
 			},
 			want: format.PrettyJsonNoError(expectModalJson),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewEditGoalsModal(tt.args.model); !assert.EqualValues(t, format.PrettyJsonNoError(marshalNoError(got)), tt.want) {
+			if got := NewEditGoalsModal(tt.args.model, tt.args.metadata); !assert.EqualValues(t, format.PrettyJsonNoError(marshalNoError(got)), tt.want) {
 				t.Errorf("NewEditGoalsModal() = %v, want %v", got, tt.want)
 			}
 		})

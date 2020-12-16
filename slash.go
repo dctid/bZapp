@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/dctid/bZapp/model"
 	"github.com/dctid/bZapp/view"
 	"github.com/slack-go/slack"
 	"log"
@@ -27,6 +28,7 @@ func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.API
 	}
 
 	triggerId := command.TriggerID
+
 	log.Printf("Channel id: %s", command.ChannelID)
 	currentModel, err := GetModelFromDb(ctx, command.ChannelID)
 	statusCode := 200
@@ -35,7 +37,10 @@ func Slash(ctx context.Context, event events.APIGatewayProxyRequest) (events.API
 		log.Printf("Err loading model: %v", err)
 	} else {
 
-		modalRequest := view.NewSummaryModal(currentModel)
+		modalRequest := view.NewSummaryModal(currentModel, &model.Metadata{
+			ChannelId:   command.ChannelID,
+			ResponseUrl: command.ResponseURL,
+		})
 		requestAsJson, _ := json.MarshalIndent(modalRequest, "", "\t")
 		log.Printf("Body sent to slack to open modal: %v", string(requestAsJson))
 

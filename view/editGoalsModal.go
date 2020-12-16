@@ -7,7 +7,7 @@ import (
 )
 
 
-func NewEditGoalsModal(updatedModel *model.Model) *slack.ModalViewRequest {
+func NewEditGoalsModal(updatedModel *model.Model, updatedMetadata *model.Metadata) *slack.ModalViewRequest {
 
 	return &slack.ModalViewRequest{
 		Type:   slack.VTModal,
@@ -18,7 +18,7 @@ func NewEditGoalsModal(updatedModel *model.Model) *slack.ModalViewRequest {
 			BlockSet: buildEditGoalsBlock(updatedModel.Index, updatedModel.Goals),
 		},
 		NotifyOnClose:   true,
-		PrivateMetadata: updatedModel.ConvertMetadataToJson(),
+		PrivateMetadata: updatedMetadata.ConvertMetadataToJson(),
 	}
 }
 

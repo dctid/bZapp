@@ -30,7 +30,7 @@ const initExpected = `{
       "text": "bZapp",
       "emoji": true
     },
-    "private_metadata": "{\"channel_id\":\"D7P4LC5G9\"}",
+    "private_metadata": "{\"channel_id\":\"D7P4LC5G9\",\"response_url\":\"https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP\"}",
     "submit": {
       "type": "plain_text",
       "text": "Submit",
@@ -232,7 +232,7 @@ const existingExpected = `{
 		"text": "Submit",
 		"emoji": true
 	},
-	"private_metadata": "{\"channel_id\":\"D7P4LC5G9\"}"
+	"private_metadata": "{\"channel_id\":\"D7P4LC5G9\",\"response_url\":\"https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP\"}"
 }
 }`
 const existingExpectedOnFriday = `{
@@ -335,7 +335,7 @@ const existingExpectedOnFriday = `{
 		"text": "Submit",
 		"emoji": true
 	},
-	"private_metadata": "{\"channel_id\":\"D7P4LC5G9\"}"
+	"private_metadata": "{\"channel_id\":\"D7P4LC5G9\",\"response_url\":\"https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP\"}"
 }
 }`
 
