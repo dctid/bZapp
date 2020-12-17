@@ -296,7 +296,10 @@ func TestInteraction(t *testing.T) {
 		{
 			name:     "submit and send message to channel",
 			args:     args{event: events.APIGatewayProxyRequest{Body: test.SubmitPayload}},
-			response: successResponse,
+			response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("ok"))),
+				StatusCode: 200,
+			},
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
 			},
@@ -344,21 +347,10 @@ func TestInteraction(t *testing.T) {
 			date: "2020-12-02 08:48:21",
 		},
 		{
-			name: "submit and send message to private channel bzapp is not a member",
+			name: "submit and send message when response url is expired",
 			args: args{event: events.APIGatewayProxyRequest{Body: test.SubmitPayload}},
 			response: &http.Response{
-				Body: ioutil.NopCloser(bytes.NewReader([]byte(
-					`{
-					  "ok": false,
-					  "error": "channel_not_found",
-					  "warning": "missing_charset",
-					  "response_metadata": {
-						"warnings": [
-						  "missing_charset"
-						]
-					  }
-					}`,
-				))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("expired_url"))),
 				StatusCode: 200,
 			},
 			want: events.APIGatewayProxyResponse{
@@ -376,8 +368,8 @@ func TestInteraction(t *testing.T) {
 						{
 							"type": "section",
 							"text": {
-								"type": "plain_text",
-								"text": "It looks like bZapp is not in your private channel :Shrug:. A simple @bzapp mention is you need to do!"
+								"type": "mrkdwn",
+								"text": "It looks like bZapp's comand expired before you could submit :timer_clock:. \nPlease close this modal, then reopen it with ` + "`/bzapp`" + ` and click submit again."
 							}
 						}
 					],

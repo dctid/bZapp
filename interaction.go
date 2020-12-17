@@ -92,16 +92,11 @@ func publishbZapp(currentModel *model.Model, metadata *model.Metadata) (events.A
 		log.Printf("Error: %s", err)
 	} else {
 		bytes, _ := ioutil.ReadAll(post.Body)
+		bodyString := string(bytes)
 		log.Printf("Success: %s", string(bytes))
-		var response slack.SlackResponse
-		err = json.Unmarshal(bytes, &response)
-		if err != nil {
-			log.Printf("Error!!!!: %s", err)
-		} else {
-			if !response.Ok {
-				log.Printf("Slack Msg Error: %s", response.Error)
-				return handlePostMessageError(response)
-			}
+		if bodyString != "ok" {
+			log.Printf("Error!!!!: %s", bodyString)
+			return handlePostMessageError(string(bytes))
 		}
 	}
 
@@ -110,11 +105,13 @@ func publishbZapp(currentModel *model.Model, metadata *model.Metadata) (events.A
 	}, nil
 }
 
-func handlePostMessageError(response slack.SlackResponse) (events.APIGatewayProxyResponse, error) {
+func handlePostMessageError(errorMessage string) (events.APIGatewayProxyResponse, error) {
 
-	errorMsg := fmt.Sprintf("Unknown error: %s", response.Error)
-	if response.Error == "channel_not_found" || response.Error == "not_in_channel" {
+	errorMsg := fmt.Sprintf("Unknown error: %s", errorMessage)
+	if errorMessage == "channel_not_found" || errorMessage == "not_in_channel" {
 		errorMsg = "It looks like bZapp is not in your private channel :Shrug:. A simple @bzapp mention is you need to do!"
+	} else if errorMessage == "expired_url" {
+		errorMsg = "It looks like bZapp's comand expired before you could submit :timer_clock:. \nPlease close this modal, then reopen it with `/bzapp` and click submit again."
 	}
 	modalUpdatedWithNewEvent := view.NewErrorModal(errorMsg)
 
@@ -300,7 +297,7 @@ func removeGoal(ctx context.Context, payload *slack.InteractionCallback, current
 
 	currentModel.Goals = currentModel.Goals.RemoveGoal(payload.ActionCallback.BlockActions[0].BlockID)
 	_ = SaveModel(ctx, currentMetadata.ChannelId, currentModel)
-	modalRequest :=  view.NewEditGoalsModal(currentModel, currentMetadata)
+	modalRequest := view.NewEditGoalsModal(currentModel, currentMetadata)
 	requestAsJson, _ := json.MarshalIndent(modalRequest, "", "\t")
 	log.Printf("Body sent to slack after removing goal: %v", string(requestAsJson))
 

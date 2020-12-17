@@ -12,7 +12,7 @@ func NewErrorModal(errorMessage string) *slack.ModalViewRequest {
 		Blocks: slack.Blocks{
 			BlockSet: []slack.Block{
 				slack.NewSectionBlock(
-					slack.NewTextBlockObject(slack.PlainTextType, errorMessage, false, false),
+					slack.NewTextBlockObject(slack.MarkdownType, errorMessage, false, false),
 					nil,
 					nil,
 				),
