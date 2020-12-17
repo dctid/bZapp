@@ -95,7 +95,7 @@ func TestInteraction(t *testing.T) {
 	}{
 		{
 			name:     "open edit events",
-			args:     args{event: events.APIGatewayProxyRequest{Body: test.EditEventsActionButton}},
+			args:     args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.EditEventsActionButtonPayload)}},
 			response: successResponse,
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
@@ -107,7 +107,7 @@ func TestInteraction(t *testing.T) {
 				headers: http.Header{"Authorization": []string{"Bearer token_token"}, "Content-Type": []string{"application/json"}},
 				body: format.PrettyJsonNoError(fmt.Sprintf(
 					`{
-								"trigger_id": "1288231154914.260884079521.ba1595ee20fab577e5ac042a518713fd",
+								"trigger_id": "Trigger",
 								"view": %s
 							}`, test.EditEventsModal)),
 			},
@@ -124,7 +124,7 @@ func TestInteraction(t *testing.T) {
 		},
 		{
 			name:     "remove event",
-			args:     args{event: events.APIGatewayProxyRequest{Body: test.RemoveEventAction}},
+			args:     args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.RemoveEventActionPayload)}},
 			response: successResponse,
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
@@ -137,6 +137,8 @@ func TestInteraction(t *testing.T) {
 				body: format.PrettyJsonNoError(fmt.Sprintf(
 					`{
 								"view_id": "V01CMKMUWUS",
+								"hash":"cornbeef",
+								"external_id": "outsideId",
 								"view": %s
 							}`, test.RemoveEventsModal)),
 			},
@@ -294,8 +296,8 @@ func TestInteraction(t *testing.T) {
 			date: "2020-12-02 08:48:21",
 		},
 		{
-			name:     "submit and send message to channel",
-			args:     args{event: events.APIGatewayProxyRequest{Body: test.SubmitPayload}},
+			name: "submit and send message to channel",
+			args: args{event: events.APIGatewayProxyRequest{Body: test.SubmitPayload}},
 			response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("ok"))),
 				StatusCode: 200,
@@ -841,3 +843,4 @@ func getUrl(urlString string) *url.URL {
 	result, _ := url.Parse(urlString)
 	return result
 }
+

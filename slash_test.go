@@ -8,7 +8,9 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/dctid/bZapp/format"
 	"github.com/dctid/bZapp/model"
+	"github.com/dctid/bZapp/test"
 	"github.com/dctid/bZapp/view"
+	"github.com/slack-go/slack"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -339,8 +341,7 @@ const existingExpectedOnFriday = `{
 }
 }`
 
-
- const response = `{
+const response = `{
 	"ok": true,
 	"error": "",
 	"view": {
@@ -599,7 +600,6 @@ const existingExpectedOnFriday = `{
 	}
 }`
 
-
 func TestSlash_initialRequestInChannel(t *testing.T) {
 	defer mocks.ResetMockDynamoDbCalls()
 	var urlCalled *url.URL = nil
@@ -624,13 +624,13 @@ func TestSlash_initialRequestInChannel(t *testing.T) {
 		body, _ := ioutil.ReadAll(req.Body)
 		bodyCalled = string(body)
 		return &http.Response{
-			Body: ioutil.NopCloser(bytes.NewReader([]byte(response))),
+			Body:       ioutil.NopCloser(bytes.NewReader([]byte(response))),
 			StatusCode: 200,
 		}, nil
 	}
 
 	result, err := Slash(context.Background(), events.APIGatewayProxyRequest{
-		Body: encodedBody,
+		Body: test.UrlEncode(slackCommand),
 	})
 	assert.NoError(t, err)
 	assert.EqualValues(t, expectUrl, urlCalled)
@@ -666,7 +666,6 @@ func TestSlash_initialRequestInChannel(t *testing.T) {
 	assert.EqualValues(t, expectedGetItemInput, actualGetItemInput)
 }
 
-
 func TestSlash_appExistsInChannel(t *testing.T) {
 	defer mocks.ResetMockDynamoDbCalls()
 	var urlCalled *url.URL = nil
@@ -676,7 +675,7 @@ func TestSlash_appExistsInChannel(t *testing.T) {
 	model.Clock = mocks.NewMockClock("2020-12-02 08:48:21")
 	currentModel := model.Model{
 		Events: model.Events{
-			"2020-12-02":    []model.Event{{
+			"2020-12-02": []model.Event{{
 				Id:    "today_event",
 				Title: "Let's do something",
 				Day:   view.TodayOptionValue,
@@ -707,7 +706,7 @@ func TestSlash_appExistsInChannel(t *testing.T) {
 				"id": {
 					S: aws.String("D7P4LC5G9"),
 				},
-				"model" : {
+				"model": {
 					S: aws.String(string(modelBytes)),
 				},
 			},
@@ -723,13 +722,13 @@ func TestSlash_appExistsInChannel(t *testing.T) {
 		body, _ := ioutil.ReadAll(req.Body)
 		bodyCalled = string(body)
 		return &http.Response{
-			Body: ioutil.NopCloser(bytes.NewReader([]byte(response))),
+			Body:       ioutil.NopCloser(bytes.NewReader([]byte(response))),
 			StatusCode: 200,
 		}, nil
 	}
 
 	result, err := Slash(context.Background(), events.APIGatewayProxyRequest{
-		Body: encodedBody,
+		Body: test.UrlEncode(slackCommand),
 	})
 	assert.NoError(t, err)
 	assert.EqualValues(t, expectUrl, urlCalled)
@@ -759,7 +758,7 @@ func TestSlash_appExistsInChannel_onFriday(t *testing.T) {
 	model.Clock = mocks.NewMockClock("2020-12-04 08:48:21")
 	currentModel := model.Model{
 		Events: model.Events{
-			"2020-12-03":    []model.Event{{
+			"2020-12-03": []model.Event{{
 				Id:    "yesterday_event",
 				Title: "Let's do something",
 				Day:   view.TodayOptionValue,
@@ -790,7 +789,7 @@ func TestSlash_appExistsInChannel_onFriday(t *testing.T) {
 				"id": {
 					S: aws.String("D7P4LC5G9"),
 				},
-				"model" : {
+				"model": {
 					S: aws.String(string(modelBytes)),
 				},
 			},
@@ -806,13 +805,13 @@ func TestSlash_appExistsInChannel_onFriday(t *testing.T) {
 		body, _ := ioutil.ReadAll(req.Body)
 		bodyCalled = string(body)
 		return &http.Response{
-			Body: ioutil.NopCloser(bytes.NewReader([]byte(response))),
+			Body:       ioutil.NopCloser(bytes.NewReader([]byte(response))),
 			StatusCode: 200,
 		}, nil
 	}
 
 	result, err := Slash(context.Background(), events.APIGatewayProxyRequest{
-		Body: encodedBody,
+		Body: test.UrlEncode(slackCommand),
 	})
 	assert.NoError(t, err)
 	assert.EqualValues(t, expectUrl, urlCalled)
@@ -833,4 +832,16 @@ func TestSlash_appExistsInChannel_onFriday(t *testing.T) {
 	assert.EqualValues(t, expectedGetItemInput, actualGetItemInput)
 }
 
-var encodedBody = `token=8KTh0sVRkeZozlTxrBRqk1NO&team_id=T7NS02BFB&team_domain=ford-community&channel_id=D7P4LC5G9&channel_name=directmessage&user_id=U7QNBA36K&user_name=cdorman1&command=%2Fbzapp&text=&response_url=https%3A%2F%2Fhooks.slack.com%2Fcommands%2FT7NS02BFB%2F1307783467168%2FGvz9lFVBwn9xo8TweP2vJHsP&trigger_id=1282571347205.260884079521.45166c59ef86cfcf9409d2ec2d4b4a58`
+var slackCommand = slack.SlashCommand{
+	Token:       "8KTh0sVRkeZozlTxrBRqk1NO",
+	TeamID:      "T7NS02BFB",
+	TeamDomain:  "ford-community",
+	ChannelID:   "D7P4LC5G9",
+	ChannelName: "directmessage",
+	UserID:      "U7QNBA36K",
+	UserName:    "cdorman1",
+	Command:     "/bzapp",
+	ResponseURL: "https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP",
+	TriggerID:   "1282571347205.260884079521.45166c59ef86cfcf9409d2ec2d4b4a58",
+}
+
