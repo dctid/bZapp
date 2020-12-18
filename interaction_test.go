@@ -228,7 +228,7 @@ func TestInteraction(t *testing.T) {
 		},
 		{
 			name: "add event submission",
-			args: args{event: events.APIGatewayProxyRequest{Body: test.AddEventSubmission}},
+			args: args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.AddEventSubmissionPayload)}},
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
 				Headers:    JsonHeaders(),
@@ -297,7 +297,7 @@ func TestInteraction(t *testing.T) {
 		},
 		{
 			name: "submit and send message to channel",
-			args: args{event: events.APIGatewayProxyRequest{Body: test.SubmitPayload}},
+			args: args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.SubmitPayload)}},
 			response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("ok"))),
 				StatusCode: 200,
@@ -350,7 +350,7 @@ func TestInteraction(t *testing.T) {
 		},
 		{
 			name: "submit and send message when response url is expired",
-			args: args{event: events.APIGatewayProxyRequest{Body: test.SubmitPayload}},
+			args: args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.SubmitPayload)}},
 			response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("expired_url"))),
 				StatusCode: 200,
@@ -428,7 +428,7 @@ func TestInteraction(t *testing.T) {
 		},
 		{
 			name:     "close edit events",
-			args:     args{event: events.APIGatewayProxyRequest{Body: test.CloseEditEvents}},
+			args:     args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.CloseEditEventsPayload)}},
 			response: successResponse,
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
@@ -471,7 +471,7 @@ func TestInteraction(t *testing.T) {
 		},
 		{
 			name:     "open edit goals actions",
-			args:     args{event: events.APIGatewayProxyRequest{Body: test.EditGoalsActionButton}},
+			args:     args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.EditGoalsActionButtonPayload)}},
 			response: successResponse,
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
@@ -483,7 +483,7 @@ func TestInteraction(t *testing.T) {
 				headers: http.Header{"Authorization": []string{"Bearer token_token"}, "Content-Type": []string{"application/json"}},
 				body: format.PrettyJsonNoError(fmt.Sprintf(
 					`{
-								"trigger_id": "1411346195543.260884079521.14fdd4f0ec90fe20a07ea8dc9429d891",
+								"trigger_id": "EditGoalsTrigger",
 								"view": %s
 							}`, test.EditGoalsModal)),
 			},
@@ -501,7 +501,7 @@ func TestInteraction(t *testing.T) {
 		},
 		{
 			name: "add goal submission",
-			args: args{event: events.APIGatewayProxyRequest{Body: test.AddGoalSubmission}},
+			args: args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.AddGoalSubmissionPayload)}},
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
 				Headers:    JsonHeaders(),
@@ -567,7 +567,7 @@ func TestInteraction(t *testing.T) {
 		},
 		{
 			name: "add goal 2nd submission",
-			args: args{event: events.APIGatewayProxyRequest{Body: test.Add2ndGoalSubmission}},
+			args: args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.Add2ndGoalSubmissionPayload)}},
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
 				Headers:    JsonHeaders(),
@@ -641,7 +641,7 @@ func TestInteraction(t *testing.T) {
 		},
 		{
 			name:     "remove goal actions",
-			args:     args{event: events.APIGatewayProxyRequest{Body: test.RemoveGoalAction}},
+			args:     args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.RemoveGoalActionPayload)}},
 			response: successResponse,
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
@@ -654,6 +654,8 @@ func TestInteraction(t *testing.T) {
 				body: format.PrettyJsonNoError(fmt.Sprintf(
 					`{
 								"view_id": "V01DBFTR588",
+								"external_id": "remove_goal_outsideId",
+								"hash": "remove_goal_hash",
 								"view": %s
 							}`, test.RemoveGoalsModal)),
 			},
@@ -731,7 +733,7 @@ func TestInteraction(t *testing.T) {
 		},
 		{
 			name:     "close edit goals",
-			args:     args{event: events.APIGatewayProxyRequest{Body: test.CloseEditGoals}},
+			args:     args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.CloseEditGoalsPayload)}},
 			response: successResponse,
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
