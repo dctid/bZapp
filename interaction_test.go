@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -108,11 +107,7 @@ func TestInteraction(t *testing.T) {
 			wantDo: do{
 				url:     getUrl("https://slack.com/api/views.push"),
 				headers: http.Header{"Authorization": []string{"Bearer token_token"}, "Content-Type": []string{"application/json"}},
-				body: format.PrettyJsonNoError(fmt.Sprintf(
-					`{
-								"trigger_id": "Trigger",
-								"view": %s
-							}`, test.EditEventsModal)),
+				body: test.ReadFile(t, "interaction/edit_events_modal_response.json"),
 			},
 			dynamoResponses: &mocks.MockDynamoDB{
 				GetItemOutput: getItemOutput(&model.Model{}),
@@ -137,13 +132,7 @@ func TestInteraction(t *testing.T) {
 			wantDo: do{
 				url:     getUrl("https://slack.com/api/views.update"),
 				headers: http.Header{"Authorization": []string{"Bearer token_token"}, "Content-Type": []string{"application/json"}},
-				body: format.PrettyJsonNoError(fmt.Sprintf(
-					`{
-								"view_id": "V01CMKMUWUS",
-								"hash":"cornbeef",
-								"external_id": "outsideId",
-								"view": %s
-							}`, test.RemoveEventsModal)),
+				body: test.ReadFile(t, "interaction/add_event_modal_with_event_removed.json"),
 			},
 			dynamoResponses: &mocks.MockDynamoDB{
 				GetItemOutput: getItemOutput(&model.Model{
@@ -235,7 +224,7 @@ func TestInteraction(t *testing.T) {
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
 				Headers:    JsonHeaders(),
-				Body:       format.PrettyJsonNoError(test.AddEventSubmissionResponse),
+				Body:       test.ReadFile(t, "interaction/add_event_response.json"),
 			},
 			wantErr: false,
 			wantDo:  do{},
@@ -313,7 +302,7 @@ func TestInteraction(t *testing.T) {
 			wantErr: false,
 			wantDo: do{
 				url:     getUrl("https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP"),
-				body:    format.PrettyJsonNoError(test.SubmissionJson),
+				body:    test.ReadFile(t, "interaction/post_message_to_channel.json"),
 				headers: http.Header{"Authorization": []string{"Bearer token_token"}, "Content-type": []string{"application/json"}},
 			},
 			dynamoResponses: &mocks.MockDynamoDB{
@@ -393,7 +382,7 @@ func TestInteraction(t *testing.T) {
 			wantErr: false,
 			wantDo: do{
 				url:     getUrl("https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP"),
-				body:    format.PrettyJsonNoError(test.SubmissionJson),
+				body:    test.ReadFile(t, "interaction/post_message_to_channel.json"),
 				headers: http.Header{"Authorization": []string{"Bearer token_token"}, "Content-type": []string{"application/json"}},
 			},
 			dynamoResponses: &mocks.MockDynamoDB{
@@ -444,7 +433,7 @@ func TestInteraction(t *testing.T) {
 			wantErr: false,
 			wantDo: do{
 				url:     getUrl("https://slack.com/api/views.update"),
-				body:    format.PrettyJsonNoError(test.SummaryModal),
+				body:    test.ReadFile(t, "interaction/summary_modal_with_added_events_body.json"),
 				headers: http.Header{"Authorization": []string{"Bearer token_token"}, "Content-Type": []string{"application/json"}},
 			},
 			dynamoResponses: &mocks.MockDynamoDB{
@@ -488,11 +477,7 @@ func TestInteraction(t *testing.T) {
 			wantDo: do{
 				url:     getUrl("https://slack.com/api/views.push"),
 				headers: http.Header{"Authorization": []string{"Bearer token_token"}, "Content-Type": []string{"application/json"}},
-				body: format.PrettyJsonNoError(fmt.Sprintf(
-					`{
-								"trigger_id": "EditGoalsTrigger",
-								"view": %s
-							}`, test.EditGoalsModal)),
+				body: test.ReadFile(t, "interaction/edit_goals_modal_response.json"),
 			},
 
 			dynamoResponses: &mocks.MockDynamoDB{
@@ -512,7 +497,7 @@ func TestInteraction(t *testing.T) {
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
 				Headers:    JsonHeaders(),
-				Body:       format.PrettyJsonNoError(test.AddGoalSubmissionResponse),
+				Body:        test.ReadFile(t, "interaction/add_goal_response.json"),
 			},
 			wantErr: false,
 			wantDo:  do{},
@@ -578,7 +563,7 @@ func TestInteraction(t *testing.T) {
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
 				Headers:    JsonHeaders(),
-				Body:       format.PrettyJsonNoError(test.Add2ndGoalSubmissionResponse),
+				Body:       test.ReadFile(t, "interaction/add_2nd_goal_response.json"),
 			},
 			wantErr: false,
 			wantDo:  do{},
@@ -658,13 +643,7 @@ func TestInteraction(t *testing.T) {
 			wantDo: do{
 				url:     getUrl("https://slack.com/api/views.update"),
 				headers: http.Header{"Authorization": []string{"Bearer token_token"}, "Content-Type": []string{"application/json"}},
-				body: format.PrettyJsonNoError(fmt.Sprintf(
-					`{
-								"view_id": "V01DBFTR588",
-								"external_id": "remove_goal_outsideId",
-								"hash": "remove_goal_hash",
-								"view": %s
-							}`, test.RemoveGoalsModal)),
+				body: test.ReadFile(t, "interaction/edit_goals_modal_with_goal_removed.json"),
 			},
 			dynamoResponses: &mocks.MockDynamoDB{
 				GetItemOutput: getItemOutput(&model.Model{
@@ -750,7 +729,7 @@ func TestInteraction(t *testing.T) {
 			wantDo: do{
 				url:     getUrl("https://slack.com/api/views.update"),
 				headers: http.Header{"Authorization": []string{"Bearer token_token"}, "Content-Type": []string{"application/json"}},
-				body:    format.PrettyJsonNoError(test.SummaryModalWithGoals),
+				body:    test.ReadFile(t, "interaction/summary_modal_with_added_goals_body.json"),
 			},
 			dynamoResponses: &mocks.MockDynamoDB{
 				GetItemOutput: getItemOutput(&model.Model{
