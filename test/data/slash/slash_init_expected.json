@@ -1,0 +1,87 @@
+{
+  "trigger_id": "1282571347205.260884079521.45166c59ef86cfcf9409d2ec2d4b4a58",
+  "view": {
+    "type": "modal",
+    "title": {
+      "type": "plain_text",
+      "text": "bZapp",
+      "emoji": true
+    },
+    "private_metadata": "{\"channel_id\":\"D7P4LC5G9\",\"response_url\":\"https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP\"}",
+    "submit": {
+      "type": "plain_text",
+      "text": "Submit",
+      "emoji": true
+    },
+    "close": {
+      "type": "plain_text",
+      "text": "Cancel",
+      "emoji": true
+    },
+    "blocks": [
+      {
+        "type": "divider"
+      },
+      {
+        "text": {
+          "text": "Events",
+          "type": "plain_text"
+        },
+        "type": "header"
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "_No events yet_"
+        }
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "text": {
+          "text": "Goals",
+          "type": "plain_text"
+        },
+        "type": "header"
+      },
+      {
+        "text": {
+          "text": "_Nogoalsyet_",
+          "type": "mrkdwn"
+        },
+        "type": "section"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "actions",
+        "block_id": "actions_block",
+        "elements": [
+          {
+            "type": "button",
+            "action_id": "edit_events",
+            "text": {
+              "type": "plain_text",
+              "text": "Edit Events",
+              "emoji": true
+            },
+            "value": "edit_events"
+          },
+          {
+            "action_id": "edit_goals",
+            "text": {
+              "emoji": true,
+              "text": "EditGoals",
+              "type": "plain_text"
+            },
+            "type": "button",
+            "value": "edit_goals"
+          }
+        ]
+      }
+    ]
+  }
+}

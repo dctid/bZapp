@@ -23,9 +23,12 @@ import (
 	"testing"
 )
 
-var successResponse = &http.Response{
-	Body:       ioutil.NopCloser(bytes.NewReader([]byte(response))),
-	StatusCode: 200,
+func successResponse(t *testing.T) *http.Response {
+	response := test.ReadFile(t, "slash/slash_response.json")
+	return &http.Response{
+		Body:       ioutil.NopCloser(bytes.NewReader([]byte(response))),
+		StatusCode: 200,
+	}
 }
 
 func getItemOutput(modelToReturn *model.Model) *dynamodb.GetItemOutput {
@@ -85,7 +88,7 @@ func TestInteraction(t *testing.T) {
 	tests := []struct {
 		name            string
 		args            args
-		response        *http.Response
+		response        func(t *testing.T) *http.Response
 		want            events.APIGatewayProxyResponse
 		wantErr         bool
 		wantDo          do
@@ -298,9 +301,11 @@ func TestInteraction(t *testing.T) {
 		{
 			name: "submit and send message to channel",
 			args: args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.SubmitPayload)}},
-			response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("ok"))),
-				StatusCode: 200,
+			response: func(*testing.T) *http.Response {
+				return &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("ok"))),
+					StatusCode: 200,
+				}
 			},
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
@@ -351,9 +356,11 @@ func TestInteraction(t *testing.T) {
 		{
 			name: "submit and send message when response url is expired",
 			args: args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.SubmitPayload)}},
-			response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("expired_url"))),
-				StatusCode: 200,
+			response: func(*testing.T) *http.Response {
+				return &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("expired_url"))),
+					StatusCode: 200,
+				}
 			},
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
@@ -800,7 +807,7 @@ func TestInteraction(t *testing.T) {
 				headers: req.Header,
 			}
 
-			return tt.response, nil
+			return tt.response(t), nil
 		}
 
 		t.Run(tt.name, func(t *testing.T) {
@@ -845,4 +852,3 @@ func getUrl(urlString string) *url.URL {
 	result, _ := url.Parse(urlString)
 	return result
 }
-

@@ -1,6 +1,8 @@
 package test
 
-import "github.com/slack-go/slack"
+import (
+	"github.com/slack-go/slack"
+)
 
 var CloseEditGoalsPayload = slack.InteractionCallback{
 	Type:      "view_closed",

@@ -219,7 +219,7 @@ func TestNewSummaryModal(t *testing.T) {
 
 	result := NewSummaryModal(testModel, testMetadata)
 	actualJson, _ := json.Marshal(result)
-	expectedJsonString, _ := format.PrettyJson(summaryModal)
-	actualJsonString, _ := format.PrettyJson(string(actualJson))
+	expectedJsonString := format.PrettyJson(t, summaryModal)
+	actualJsonString := format.PrettyJson(t, string(actualJson))
 	assert.EqualValues(t, expectedJsonString, actualJsonString)
 }

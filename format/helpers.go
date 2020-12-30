@@ -2,8 +2,9 @@ package format
 
 import (
 	"encoding/json"
-	"log"
+	"github.com/stretchr/testify/assert"
 	"strings"
+	"testing"
 )
 
 const (
@@ -11,26 +12,30 @@ const (
 	tab   = "\t"
 )
 
-func PrettyJson(data string) (string, error) {
+
+func PrettyJson(t *testing.T, data string) string {
+	expectedJson := []byte(strings.Join(strings.Fields(data), ""))
+	var expectedMap map[string]interface{}
+	err := json.Unmarshal(expectedJson, &expectedMap)
+	assert.NoError(t, err)
+
+	indent, err := json.MarshalIndent(expectedMap, empty, tab)
+	assert.NoError(t, err)
+	return string(indent)
+}
+
+func PrettyJsonNoError(data string) (string) {
 	expectedJson := []byte(strings.Join(strings.Fields(data), ""))
 	var expectedMap map[string]interface{}
 	err := json.Unmarshal(expectedJson, &expectedMap)
 	if err != nil {
-		return empty, err
+		return empty
 	}
 
 	indent, err := json.MarshalIndent(expectedMap, empty, tab)
 	if err != nil {
-		return empty, err
+		return empty
 	}
-	return string(indent), nil
-}
-
-func PrettyJsonNoError(data string) (string) {
-	result, err := PrettyJson(data)
-	if err != nil {
-		log.Printf("Pretty failed: %s", err)
-	}
-	return result
+	return string(indent)
 }
 

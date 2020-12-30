@@ -86,3 +86,4 @@ func slashCommandParse(bodyStr string) (slack.SlashCommand, error) {
 		TriggerID:      body.Get("trigger_id"),
 	}, nil
 }
+

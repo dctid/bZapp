@@ -23,583 +23,6 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
-const initExpected = `{
-  "trigger_id": "1282571347205.260884079521.45166c59ef86cfcf9409d2ec2d4b4a58",
-  "view": {
-    "type": "modal",
-    "title": {
-      "type": "plain_text",
-      "text": "bZapp",
-      "emoji": true
-    },
-    "private_metadata": "{\"channel_id\":\"D7P4LC5G9\",\"response_url\":\"https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP\"}",
-    "submit": {
-      "type": "plain_text",
-      "text": "Submit",
-      "emoji": true
-    },
-    "close": {
-      "type": "plain_text",
-      "text": "Cancel",
-      "emoji": true
-    },
-    "blocks": [
-      {
-        "type": "divider"
-      },
-      {
-		"text": {
-			"text": "Events",
-			"type": "plain_text"
-		},
-		"type": "header"
-      },
-      {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": "_No events yet_"
-        }
-      },
-      {
-        "type": "divider"
-      },
-      {
-		"text": {
-			"text": "Goals",
-			"type": "plain_text"
-		},
-		"type": "header"
-      },
-      {
-        "text": {
-          "text": "_Nogoalsyet_",
-          "type": "mrkdwn"
-        },
-        "type": "section"
-      },
-      {
-        "type": "divider"
-      },
-      {
-        "type": "actions",
-        "block_id": "actions_block",
-        "elements": [
-          {
-            "type": "button",
-            "action_id": "edit_events",
-            "text": {
-              "type": "plain_text",
-              "text": "Edit Events",
-              "emoji": true
-            },
-            "value": "edit_events"
-          },
-          {
-            "action_id": "edit_goals",
-            "text": {
-              "emoji": true,
-              "text": "EditGoals",
-              "type": "plain_text"
-            },
-            "type": "button",
-            "value": "edit_goals"
-          }
-        ]
-      }
-    ]
-  }
-}`
-
-const existingExpected = `{
-  "trigger_id": "1282571347205.260884079521.45166c59ef86cfcf9409d2ec2d4b4a58",
-  "view": {
-	"type": "modal",
-	"title": {
-		"type": "plain_text",
-		"text": "bZapp",
-		"emoji": true
-	},
-	"blocks": [
-		{
-			"type": "divider"
-		},
-		{
-			"type": "header",
-			"text": {
-				"type": "plain_text",
-				"text": "Events"
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "context",
-			"elements": [
-				{
-					"type": "mrkdwn",
-					"text": "*Today*"
-				}
-			]
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": ":small_orange_diamond: 9:15 Let's do something"
-			},
-			"block_id": "today_event"
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "context",
-			"elements": [
-				{
-					"type": "mrkdwn",
-					"text": "*Tomorrow*"
-				}
-			]
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": ":small_orange_diamond: 3:30 Let's do something else"
-			},
-			"block_id": "tomorrow_event"
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "header",
-			"text": {
-				"type": "plain_text",
-				"text": "Goals"
-			}
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "_No goals yet_"
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "actions",
-			"block_id": "actions_block",
-			"elements": [
-				{
-					"type": "button",
-					"text": {
-						"type": "plain_text",
-						"text": "Edit Events",
-						"emoji": true
-					},
-					"action_id": "edit_events",
-					"value": "edit_events"
-				},
-				{
-					"type": "button",
-					"text": {
-						"type": "plain_text",
-						"text": "Edit Goals",
-						"emoji": true
-					},
-					"action_id": "edit_goals",
-					"value": "edit_goals"
-				}
-			]
-		}
-	],
-	"close": {
-		"type": "plain_text",
-		"text": "Cancel",
-		"emoji": true
-	},
-	"submit": {
-		"type": "plain_text",
-		"text": "Submit",
-		"emoji": true
-	},
-	"private_metadata": "{\"channel_id\":\"D7P4LC5G9\",\"response_url\":\"https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP\"}"
-}
-}`
-const existingExpectedOnFriday = `{
-  "trigger_id": "1282571347205.260884079521.45166c59ef86cfcf9409d2ec2d4b4a58",
-  "view": {
-	"type": "modal",
-	"title": {
-		"type": "plain_text",
-		"text": "bZapp",
-		"emoji": true
-	},
-	"blocks": [
-		{
-			"type": "divider"
-		},
-		{
-			"type": "header",
-			"text": {
-				"type": "plain_text",
-				"text": "Events"
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "context",
-			"elements": [
-				{
-					"type": "mrkdwn",
-					"text": "*Today*"
-				}
-			]
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": ":small_orange_diamond: 3:30 Let's do something else"
-			},
-			"block_id": "today_event"
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "header",
-			"text": {
-				"type": "plain_text",
-				"text": "Goals"
-			}
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "_No goals yet_"
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "actions",
-			"block_id": "actions_block",
-			"elements": [
-				{
-					"type": "button",
-					"text": {
-						"type": "plain_text",
-						"text": "Edit Events",
-						"emoji": true
-					},
-					"action_id": "edit_events",
-					"value": "edit_events"
-				},
-				{
-					"type": "button",
-					"text": {
-						"type": "plain_text",
-						"text": "Edit Goals",
-						"emoji": true
-					},
-					"action_id": "edit_goals",
-					"value": "edit_goals"
-				}
-			]
-		}
-	],
-	"close": {
-		"type": "plain_text",
-		"text": "Cancel",
-		"emoji": true
-	},
-	"submit": {
-		"type": "plain_text",
-		"text": "Submit",
-		"emoji": true
-	},
-	"private_metadata": "{\"channel_id\":\"D7P4LC5G9\",\"response_url\":\"https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP\"}"
-}
-}`
-
-const response = `{
-	"ok": true,
-	"error": "",
-	"view": {
-		"ok": false,
-		"error": "",
-		"id": "V018C5094DQ",
-		"team_id": "T7NS02BFB",
-		"type": "view",
-		"title": {
-			"type": "plain_text",
-			"text": "bZapp",
-			"emoji": true
-		},
-		"close": {
-			"type": "plain_text",
-			"text": "Cancel",
-			"emoji": true
-		},
-		"submit": {
-			"type": "plain_text",
-			"text": "Submit",
-			"emoji": true
-		},
-		"blocks": [
-			{
-				"type": "divider",
-				"block_id": "kTDEm"
-			},
-			{
-				"type": "context",
-				"block_id": "zzEF",
-				"elements": [
-					{
-						"type": "mrkdwn",
-						"text": "*Today's Events*"
-					}
-				]
-			},
-			{
-				"type": "divider",
-				"block_id": "X=862"
-			},
-			{
-				"type": "section",
-				"text": {
-					"type": "mrkdwn",
-					"text": "No events yet"
-				},
-				"block_id": "F+41T"
-			},
-			{
-				"type": "divider",
-				"block_id": "s6+nf"
-			},
-			{
-				"type": "context",
-				"block_id": "jD+",
-				"elements": [
-					{
-						"type": "mrkdwn",
-						"text": "*Tomorrow's Events*"
-					}
-				]
-			},
-			{
-				"type": "divider",
-				"block_id": "e5z8"
-			},
-			{
-				"type": "section",
-				"text": {
-					"type": "mrkdwn",
-					"text": "No events yet"
-				},
-				"block_id": "IVdv"
-			},
-			{
-				"type": "divider",
-				"block_id": "X6E"
-			},
-			{
-				"type": "input",
-				"block_id": "OM=8",
-				"label": {
-					"type": "plain_text",
-					"text": "Add Event",
-					"emoji": true
-				},
-				"element": {
-					"type": "plain_text_input",
-					"action_id": "add_event",
-					"placeholder": {
-						"type": "plain_text",
-						"text": "Title",
-						"emoji": true
-					}
-				}
-			},
-			{
-				"type": "actions",
-				"block_id": "pR5OI",
-				"elements": [
-					{
-						"type": "static_select",
-						"placeholder": {
-							"type": "plain_text",
-							"text": "Select hour",
-							"emoji": true
-						},
-						"action_id": "hours_select",
-						"options": [
-							{
-								"text": {
-									"type": "plain_text",
-									"text": "9 AM",
-									"emoji": true
-								},
-								"value": "hour-9"
-							},
-							{
-								"text": {
-									"type": "plain_text",
-									"text": "10 AM",
-									"emoji": true
-								},
-								"value": "hour-10"
-							},
-							{
-								"text": {
-									"type": "plain_text",
-									"text": "11 AM",
-									"emoji": true
-								},
-								"value": "hour-11"
-							},
-							{
-								"text": {
-									"type": "plain_text",
-									"text": "12 PM",
-									"emoji": true
-								},
-								"value": "hour-12"
-							},
-							{
-								"text": {
-									"type": "plain_text",
-									"text": "1 PM",
-									"emoji": true
-								},
-								"value": "hour-1"
-							},
-							{
-								"text": {
-									"type": "plain_text",
-									"text": "2 PM",
-									"emoji": true
-								},
-								"value": "hour-2"
-							},
-							{
-								"text": {
-									"type": "plain_text",
-									"text": "3 PM",
-									"emoji": true
-								},
-								"value": "hour-3"
-							},
-							{
-								"text": {
-									"type": "plain_text",
-									"text": "4 PM",
-									"emoji": true
-								},
-								"value": "hour-4"
-							}
-						]
-					},
-					{
-						"type": "static_select",
-						"placeholder": {
-							"type": "plain_text",
-							"text": "Select minutes",
-							"emoji": true
-						},
-						"action_id": "mins_select",
-						"options": [
-							{
-								"text": {
-									"type": "plain_text",
-									"text": "00",
-									"emoji": true
-								},
-								"value": "min-0"
-							},
-							{
-								"text": {
-									"type": "plain_text",
-									"text": "15",
-									"emoji": true
-								},
-								"value": "min-15"
-							},
-							{
-								"text": {
-									"type": "plain_text",
-									"text": "30",
-									"emoji": true
-								},
-								"value": "min-30"
-							},
-							{
-								"text": {
-									"type": "plain_text",
-									"text": "45",
-									"emoji": true
-								},
-								"value": "min-45"
-							}
-						]
-					},
-					{
-						"type": "datepicker",
-						"action_id": "datepicker",
-						"placeholder": {
-							"type": "plain_text",
-							"text": "Select a date",
-							"emoji": true
-						}
-					},
-					{
-						"type": "button",
-						"text": {
-							"type": "plain_text",
-							"text": "Add",
-							"emoji": true
-						},
-						"action_id": "lk/mR",
-						"value": "add_event"
-					}
-				]
-			}
-		],
-		"private_metadata": "",
-		"callback_id": "",
-		"state": {
-			"values": {}
-		},
-		"hash": "1596660783.uygR3WMh",
-		"clear_on_close": false,
-		"notify_on_close": false,
-		"root_view_id": "V018C5094DQ",
-		"previous_view_id": "",
-		"app_id": "A0131JT7VPF",
-		"external_id": "",
-		"bot_id": "B0133F8RE11"
-	}
-}`
-
 func TestSlash_initialRequestInChannel(t *testing.T) {
 	defer mocks.ResetMockDynamoDbCalls()
 	var urlCalled *url.URL = nil
@@ -615,14 +38,12 @@ func TestSlash_initialRequestInChannel(t *testing.T) {
 		PutItemOutput: &dynamodb.PutItemOutput{},
 	}
 
-	prettyJsonExpected, err := format.PrettyJson(initExpected)
-	assert.NoError(t, err)
-
 	mocks.GetDoFunc = func(req *http.Request) (*http.Response, error) {
 		log.Printf("url %s ", req.URL)
 		urlCalled = req.URL
 		body, _ := ioutil.ReadAll(req.Body)
 		bodyCalled = string(body)
+		response := test.ReadFile(t, "slash/slash_response.json")
 		return &http.Response{
 			Body:       ioutil.NopCloser(bytes.NewReader([]byte(response))),
 			StatusCode: 200,
@@ -635,7 +56,8 @@ func TestSlash_initialRequestInChannel(t *testing.T) {
 	assert.NoError(t, err)
 	assert.EqualValues(t, expectUrl, urlCalled)
 
-	prettyJsonActual, err := format.PrettyJson(bodyCalled)
+	prettyJsonExpected := test.ReadFile(t,"slash/slash_init_expected.json")
+	prettyJsonActual := format.PrettyJson(t, bodyCalled)
 	assert.NoError(t, err)
 	assert.EqualValues(t, prettyJsonExpected, prettyJsonActual)
 	assert.EqualValues(t, events.APIGatewayProxyResponse{StatusCode: 200}, result)
@@ -713,14 +135,13 @@ func TestSlash_appExistsInChannel(t *testing.T) {
 		},
 	}
 
-	prettyJsonExpected, err := format.PrettyJson(existingExpected)
-	assert.NoError(t, err)
 
 	mocks.GetDoFunc = func(req *http.Request) (*http.Response, error) {
 		log.Printf("url %s ", req.URL)
 		urlCalled = req.URL
 		body, _ := ioutil.ReadAll(req.Body)
 		bodyCalled = string(body)
+		response := test.ReadFile(t, "slash/slash_response.json")
 		return &http.Response{
 			Body:       ioutil.NopCloser(bytes.NewReader([]byte(response))),
 			StatusCode: 200,
@@ -733,7 +154,8 @@ func TestSlash_appExistsInChannel(t *testing.T) {
 	assert.NoError(t, err)
 	assert.EqualValues(t, expectUrl, urlCalled)
 
-	prettyJsonActual, err := format.PrettyJson(bodyCalled)
+	prettyJsonExpected := test.ReadFile(t, "slash/slash_existing_channel.json")
+	prettyJsonActual := format.PrettyJson(t, bodyCalled)
 	assert.NoError(t, err)
 	assert.EqualValues(t, prettyJsonExpected, prettyJsonActual)
 	assert.EqualValues(t, events.APIGatewayProxyResponse{StatusCode: 200}, result)
@@ -796,14 +218,13 @@ func TestSlash_appExistsInChannel_onFriday(t *testing.T) {
 		},
 	}
 
-	prettyJsonExpected, err := format.PrettyJson(existingExpectedOnFriday)
-	assert.NoError(t, err)
 
 	mocks.GetDoFunc = func(req *http.Request) (*http.Response, error) {
 		log.Printf("url %s ", req.URL)
 		urlCalled = req.URL
 		body, _ := ioutil.ReadAll(req.Body)
 		bodyCalled = string(body)
+		response := test.ReadFile(t, "slash/slash_response.json")
 		return &http.Response{
 			Body:       ioutil.NopCloser(bytes.NewReader([]byte(response))),
 			StatusCode: 200,
@@ -816,7 +237,8 @@ func TestSlash_appExistsInChannel_onFriday(t *testing.T) {
 	assert.NoError(t, err)
 	assert.EqualValues(t, expectUrl, urlCalled)
 
-	prettyJsonActual, err := format.PrettyJson(bodyCalled)
+	prettyJsonExpected := test.ReadFile(t, "slash/slash_existing_channel_on_friday.json")
+	prettyJsonActual := format.PrettyJson(t, bodyCalled)
 	assert.NoError(t, err)
 	assert.EqualValues(t, prettyJsonExpected, prettyJsonActual)
 	assert.EqualValues(t, events.APIGatewayProxyResponse{StatusCode: 200}, result)

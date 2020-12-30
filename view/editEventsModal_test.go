@@ -791,8 +791,8 @@ func TestNewEditEventsModal(t *testing.T) {
 		},
 	}, &model.Metadata{ChannelId: "D7P4LC5G9"})
 	actualJson, _ := json.Marshal(result)
-	expectedJsonString, _ := format.PrettyJson(editEventsModal)
-	actualJsonString, _ := format.PrettyJson(string(actualJson))
+	expectedJsonString := format.PrettyJson(t, editEventsModal)
+	actualJsonString := format.PrettyJson(t, string(actualJson))
 
 	assert.EqualValues(t, expectedJsonString, actualJsonString)
 }
@@ -863,8 +863,8 @@ func TestNewEditEventsModalOnFriday(t *testing.T) {
 		},
 	}, &model.Metadata{ChannelId: "D7P4LC5G9"})
 	actualJson, _ := json.Marshal(result)
-	expectedJsonString, _ := format.PrettyJson(editEventsModalOnFriday)
-	actualJsonString, _ := format.PrettyJson(string(actualJson))
+	expectedJsonString := format.PrettyJson(t, editEventsModalOnFriday)
+	actualJsonString := format.PrettyJson(t, string(actualJson))
 
 	assert.EqualValues(t, expectedJsonString, actualJsonString)
 }
