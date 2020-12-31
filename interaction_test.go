@@ -1,12 +1,9 @@
 package bZapp
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/dctid/bZapp/format"
 	"github.com/dctid/bZapp/mocks"
 	"github.com/dctid/bZapp/model"
@@ -21,52 +18,6 @@ import (
 	"reflect"
 	"testing"
 )
-
-func successResponse(t *testing.T) *http.Response {
-	response := test.ReadFile(t, "slash/slash_response.json")
-	return &http.Response{
-		Body:       ioutil.NopCloser(bytes.NewReader([]byte(response))),
-		StatusCode: 200,
-	}
-}
-
-func getItemOutput(modelToReturn *model.Model) *dynamodb.GetItemOutput {
-	modelBytes, _ := json.Marshal(modelToReturn)
-	return &dynamodb.GetItemOutput{
-		Item: map[string]*dynamodb.AttributeValue{
-			"id": {
-				S: aws.String("D7P4LC5G9"),
-			},
-			"model": {
-				S: aws.String(string(modelBytes)),
-			},
-		},
-	}
-}
-
-func putItemInput(modelToSave *model.Model) *dynamodb.PutItemInput {
-	modelBytes, _ := json.Marshal(modelToSave)
-	return &dynamodb.PutItemInput{
-		Item: map[string]*dynamodb.AttributeValue{
-			"id": {
-				S: aws.String("D7P4LC5G9"),
-			},
-			"model": {
-				S: aws.String(string(modelBytes)),
-			},
-		},
-		TableName: aws.String("bZappTable"),
-	}
-}
-
-var getItemInput = &dynamodb.GetItemInput{
-	Key: map[string]*dynamodb.AttributeValue{
-		"id": {
-			S: aws.String("D7P4LC5G9"),
-		},
-	},
-	TableName: aws.String("bZappTable"),
-}
 
 func TestInteraction(t *testing.T) {
 	Client = &mocks.MockClient{}
@@ -87,7 +38,7 @@ func TestInteraction(t *testing.T) {
 	tests := []struct {
 		name            string
 		args            args
-		response        func(t *testing.T) *http.Response
+		response        *http.Response
 		want            events.APIGatewayProxyResponse
 		wantErr         bool
 		wantDo          do
@@ -98,23 +49,23 @@ func TestInteraction(t *testing.T) {
 		{
 			name:     "open edit events",
 			args:     args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.EditEventsActionButtonPayload)}},
-			response: successResponse,
+			response: test.SuccessResponse(test.ReadFile(t, "slash/slash_response.json")),
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
 				Headers:    JsonHeaders(),
 			},
 			wantErr: false,
 			wantDo: do{
-				url:     getUrl("https://slack.com/api/views.push"),
+				url:     test.ParseUrl("https://slack.com/api/views.push"),
 				headers: http.Header{"Authorization": []string{"Bearer token_token"}, "Content-Type": []string{"application/json"}},
-				body: test.ReadFile(t, "interaction/edit_events_modal_response.json"),
+				body:    test.ReadFile(t, "interaction/edit_events_modal_response.json"),
 			},
 			dynamoResponses: &mocks.MockDynamoDB{
-				GetItemOutput: getItemOutput(&model.Model{}),
+				GetItemOutput: test.GetItemOutput("open_edit_events_channel_id", &model.Model{}),
 			},
 			wantDynamoCalls: &mocks.MockDynamoDbInputs{
-				GetItemWithContext: getItemInput,
-				PutItemWithContext: putItemInput(&model.Model{
+				GetItemWithContext: test.GetItemInput("open_edit_events_channel_id"),
+				PutItemWithContext: test.PutItemInput("open_edit_events_channel_id", &model.Model{
 					Index: 1,
 				}),
 			},
@@ -123,19 +74,19 @@ func TestInteraction(t *testing.T) {
 		{
 			name:     "remove event",
 			args:     args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.RemoveEventActionPayload)}},
-			response: successResponse,
+			response: test.SuccessResponse(test.ReadFile(t, "slash/slash_response.json")),
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
 				Headers:    JsonHeaders(),
 			},
 			wantErr: false,
 			wantDo: do{
-				url:     getUrl("https://slack.com/api/views.update"),
+				url:     test.ParseUrl("https://slack.com/api/views.update"),
 				headers: http.Header{"Authorization": []string{"Bearer token_token"}, "Content-Type": []string{"application/json"}},
-				body: test.ReadFile(t, "interaction/add_event_modal_with_event_removed.json"),
+				body:    test.ReadFile(t, "interaction/add_event_modal_with_event_removed.json"),
 			},
 			dynamoResponses: &mocks.MockDynamoDB{
-				GetItemOutput: getItemOutput(&model.Model{
+				GetItemOutput: test.GetItemOutput("remove_event_channel_id", &model.Model{
 					Index: 4,
 					Events: model.Events{
 						"2020-11-28": []model.Event{{
@@ -187,12 +138,11 @@ func TestInteraction(t *testing.T) {
 						},
 						},
 					},
-				},
-				),
+				}),
 			},
 			wantDynamoCalls: &mocks.MockDynamoDbInputs{
-				GetItemWithContext: getItemInput,
-				PutItemWithContext: putItemInput(&model.Model{
+				GetItemWithContext: test.GetItemInput("remove_event_channel_id"),
+				PutItemWithContext: test.PutItemInput("remove_event_channel_id", &model.Model{
 					Index: 4,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
@@ -229,7 +179,7 @@ func TestInteraction(t *testing.T) {
 			wantErr: false,
 			wantDo:  do{},
 			dynamoResponses: &mocks.MockDynamoDB{
-				GetItemOutput: getItemOutput(&model.Model{
+				GetItemOutput: test.GetItemOutput("add_event_channel_id", &model.Model{
 					Index: 4,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
@@ -249,12 +199,11 @@ func TestInteraction(t *testing.T) {
 							AmPm:  "AM",
 						}},
 					},
-				},
-				),
+				}),
 			},
 			wantDynamoCalls: &mocks.MockDynamoDbInputs{
-				GetItemWithContext: getItemInput,
-				PutItemWithContext: putItemInput(&model.Model{
+				GetItemWithContext: test.GetItemInput("add_event_channel_id"),
+				PutItemWithContext: test.PutItemInput("add_event_channel_id", &model.Model{
 					Index: 5,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
@@ -288,25 +237,20 @@ func TestInteraction(t *testing.T) {
 			date: "2020-12-02 08:48:21",
 		},
 		{
-			name: "submit and send message to channel",
-			args: args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.SubmitPayload)}},
-			response: func(*testing.T) *http.Response {
-				return &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("ok"))),
-					StatusCode: 200,
-				}
-			},
+			name:     "submit and send message to channel",
+			args:     args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.SubmitPayload)}},
+			response: test.SuccessResponse("ok"),
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
 			},
 			wantErr: false,
 			wantDo: do{
-				url:     getUrl("https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP"),
+				url:     test.ParseUrl("https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP"),
 				body:    test.ReadFile(t, "interaction/post_message_to_channel.json"),
 				headers: http.Header{"Authorization": []string{"Bearer token_token"}, "Content-type": []string{"application/json"}},
 			},
 			dynamoResponses: &mocks.MockDynamoDB{
-				GetItemOutput: getItemOutput(&model.Model{
+				GetItemOutput: test.GetItemOutput("send_message_channel_id", &model.Model{
 					Index: 6,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
@@ -334,59 +278,29 @@ func TestInteraction(t *testing.T) {
 							{Id: "bSAnHN", Value: "sfd"},
 						},
 					},
-				},
-				),
+				}),
 			},
 			wantDynamoCalls: &mocks.MockDynamoDbInputs{
-				GetItemWithContext: getItemInput,
+				GetItemWithContext: test.GetItemInput("send_message_channel_id"),
 			},
 			date: "2020-12-02 08:48:21",
 		},
 		{
-			name: "submit and send message when response url is expired",
-			args: args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.SubmitPayload)}},
-			response: func(*testing.T) *http.Response {
-				return &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("expired_url"))),
-					StatusCode: 200,
-				}
-			},
+			name:     "submit and send message when response url is expired",
+			args:     args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.SubmitPayload)}},
+			response: test.SuccessResponse("expired_url"),
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
-				Body: format.PrettyJsonNoError(`{
-					"response_action": "update",
-					"view": {
-						"type": "modal",
-						"title": {
-							"type": "plain_text",
-							"text": "bZapp",
-							"emoji": true
-						},
-						"blocks": [
-						{
-							"type": "section",
-							"text": {
-								"type": "mrkdwn",
-								"text": "It looks like bZapp's comand expired before you could submit :timer_clock:. \nPlease close this modal, then reopen it with ` + "`/bzapp`" + ` and click submit again."
-							}
-						}
-					],
-						"close": {
-						"type": "plain_text",
-						"text": "Close",
-						"emoji": true
-					}
-					}
-				}`),
+				Body: test.ReadFile(t, "interaction/post_message_url_expired.json"),
 			},
 			wantErr: false,
 			wantDo: do{
-				url:     getUrl("https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP"),
+				url:     test.ParseUrl("https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP"),
 				body:    test.ReadFile(t, "interaction/post_message_to_channel.json"),
 				headers: http.Header{"Authorization": []string{"Bearer token_token"}, "Content-type": []string{"application/json"}},
 			},
 			dynamoResponses: &mocks.MockDynamoDB{
-				GetItemOutput: getItemOutput(&model.Model{
+				GetItemOutput: test.GetItemOutput("send_message_channel_id", &model.Model{
 					Index: 6,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
@@ -414,30 +328,29 @@ func TestInteraction(t *testing.T) {
 							{Id: "bSAnHN", Value: "sfd"},
 						},
 					},
-				},
-				),
+				}),
 			},
 			wantDynamoCalls: &mocks.MockDynamoDbInputs{
-				GetItemWithContext: getItemInput,
+				GetItemWithContext: test.GetItemInput("send_message_channel_id"),
 			},
 			date: "2020-12-02 08:48:21",
 		},
 		{
 			name:     "close edit events",
 			args:     args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.CloseEditEventsPayload)}},
-			response: successResponse,
+			response: test.SuccessResponse(test.ReadFile(t, "slash/slash_response.json")),
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
 				Headers:    JsonHeaders(),
 			},
 			wantErr: false,
 			wantDo: do{
-				url:     getUrl("https://slack.com/api/views.update"),
+				url:     test.ParseUrl("https://slack.com/api/views.update"),
 				body:    test.ReadFile(t, "interaction/summary_modal_with_added_events_body.json"),
 				headers: http.Header{"Authorization": []string{"Bearer token_token"}, "Content-Type": []string{"application/json"}},
 			},
 			dynamoResponses: &mocks.MockDynamoDB{
-				GetItemOutput: getItemOutput(&model.Model{
+				GetItemOutput: test.GetItemOutput("close_edit_events_channel_id", &model.Model{
 					Index: 5,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
@@ -457,35 +370,34 @@ func TestInteraction(t *testing.T) {
 							AmPm:  "AM",
 						}},
 					},
-				},
-				),
+				}),
 			},
 			wantDynamoCalls: &mocks.MockDynamoDbInputs{
-				GetItemWithContext: getItemInput,
+				GetItemWithContext: test.GetItemInput("close_edit_events_channel_id"),
 			},
 			date: "2020-12-02 08:48:21",
 		},
 		{
 			name:     "open edit goals actions",
 			args:     args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.EditGoalsActionButtonPayload)}},
-			response: successResponse,
+			response: test.SuccessResponse(test.ReadFile(t, "slash/slash_response.json")),
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
 				Headers:    JsonHeaders(),
 			},
 			wantErr: false,
 			wantDo: do{
-				url:     getUrl("https://slack.com/api/views.push"),
+				url:     test.ParseUrl("https://slack.com/api/views.push"),
 				headers: http.Header{"Authorization": []string{"Bearer token_token"}, "Content-Type": []string{"application/json"}},
-				body: test.ReadFile(t, "interaction/edit_goals_modal_response.json"),
+				body:    test.ReadFile(t, "interaction/edit_goals_modal_response.json"),
 			},
 
 			dynamoResponses: &mocks.MockDynamoDB{
-				GetItemOutput: getItemOutput(&model.Model{}),
+				GetItemOutput: test.GetItemOutput("open_edit_events_channel_id", &model.Model{}),
 			},
 			wantDynamoCalls: &mocks.MockDynamoDbInputs{
-				GetItemWithContext: getItemInput,
-				PutItemWithContext: putItemInput(&model.Model{
+				GetItemWithContext: test.GetItemInput("open_edit_events_channel_id"),
+				PutItemWithContext: test.PutItemInput("open_edit_events_channel_id", &model.Model{
 					Index: 1,
 				}),
 			},
@@ -502,7 +414,7 @@ func TestInteraction(t *testing.T) {
 			wantErr: false,
 			wantDo:  do{},
 			dynamoResponses: &mocks.MockDynamoDB{
-				GetItemOutput: getItemOutput(&model.Model{
+				GetItemOutput: test.GetItemOutput("add_goal_channel_id", &model.Model{
 					Index: 6,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
@@ -525,8 +437,8 @@ func TestInteraction(t *testing.T) {
 				}),
 			},
 			wantDynamoCalls: &mocks.MockDynamoDbInputs{
-				GetItemWithContext: getItemInput,
-				PutItemWithContext: putItemInput(&model.Model{
+				GetItemWithContext: test.GetItemInput("add_goal_channel_id"),
+				PutItemWithContext: test.PutItemInput("add_goal_channel_id", &model.Model{
 					Index: 7,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
@@ -568,7 +480,7 @@ func TestInteraction(t *testing.T) {
 			wantErr: false,
 			wantDo:  do{},
 			dynamoResponses: &mocks.MockDynamoDB{
-				GetItemOutput: getItemOutput(&model.Model{
+				GetItemOutput: test.GetItemOutput("add_2nd_goal_channel_id", &model.Model{
 					Index: 7,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
@@ -596,8 +508,8 @@ func TestInteraction(t *testing.T) {
 				}),
 			},
 			wantDynamoCalls: &mocks.MockDynamoDbInputs{
-				GetItemWithContext: getItemInput,
-				PutItemWithContext: putItemInput(&model.Model{
+				GetItemWithContext: test.GetItemInput("add_2nd_goal_channel_id"),
+				PutItemWithContext: test.PutItemInput("add_2nd_goal_channel_id", &model.Model{
 					Index: 8,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
@@ -634,19 +546,19 @@ func TestInteraction(t *testing.T) {
 		{
 			name:     "remove goal actions",
 			args:     args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.RemoveGoalActionPayload)}},
-			response: successResponse,
+			response: test.SuccessResponse(test.ReadFile(t, "slash/slash_response.json")),
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
 				Headers:    JsonHeaders(),
 			},
 			wantErr: false,
 			wantDo: do{
-				url:     getUrl("https://slack.com/api/views.update"),
+				url:     test.ParseUrl("https://slack.com/api/views.update"),
 				headers: http.Header{"Authorization": []string{"Bearer token_token"}, "Content-Type": []string{"application/json"}},
-				body: test.ReadFile(t, "interaction/edit_goals_modal_with_goal_removed.json"),
+				body:    test.ReadFile(t, "interaction/edit_goals_modal_with_goal_removed.json"),
 			},
 			dynamoResponses: &mocks.MockDynamoDB{
-				GetItemOutput: getItemOutput(&model.Model{
+				GetItemOutput: test.GetItemOutput("remove_goal_channel_id", &model.Model{
 					Index: 9,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
@@ -680,8 +592,8 @@ func TestInteraction(t *testing.T) {
 				}),
 			},
 			wantDynamoCalls: &mocks.MockDynamoDbInputs{
-				GetItemWithContext: getItemInput,
-				PutItemWithContext: putItemInput(&model.Model{
+				GetItemWithContext: test.GetItemInput("remove_goal_channel_id"),
+				PutItemWithContext: test.PutItemInput("remove_goal_channel_id", &model.Model{
 					Index: 9,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
@@ -720,19 +632,19 @@ func TestInteraction(t *testing.T) {
 		{
 			name:     "close edit goals",
 			args:     args{event: events.APIGatewayProxyRequest{Body: test.MakePayload(test.CloseEditGoalsPayload)}},
-			response: successResponse,
+			response: test.SuccessResponse(test.ReadFile(t, "slash/slash_response.json")),
 			want: events.APIGatewayProxyResponse{
 				StatusCode: 200,
 				Headers:    JsonHeaders(),
 			},
 			wantErr: false,
 			wantDo: do{
-				url:     getUrl("https://slack.com/api/views.update"),
+				url:     test.ParseUrl("https://slack.com/api/views.update"),
 				headers: http.Header{"Authorization": []string{"Bearer token_token"}, "Content-Type": []string{"application/json"}},
 				body:    test.ReadFile(t, "interaction/summary_modal_with_added_goals_body.json"),
 			},
 			dynamoResponses: &mocks.MockDynamoDB{
-				GetItemOutput: getItemOutput(&model.Model{
+				GetItemOutput: test.GetItemOutput("close_edit_goals_channel_id", &model.Model{
 					Index: 9,
 					Events: model.Events{
 						"2020-12-02": []model.Event{{
@@ -765,7 +677,7 @@ func TestInteraction(t *testing.T) {
 				}),
 			},
 			wantDynamoCalls: &mocks.MockDynamoDbInputs{
-				GetItemWithContext: getItemInput,
+				GetItemWithContext: test.GetItemInput("close_edit_goals_channel_id"),
 			},
 			date: "2020-12-02 08:48:21",
 		},
@@ -786,10 +698,11 @@ func TestInteraction(t *testing.T) {
 				headers: req.Header,
 			}
 
-			return tt.response(t), nil
+			return tt.response, nil
 		}
 
 		t.Run(tt.name, func(t *testing.T) {
+			mocks.ResetMockDynamoDbCalls()
 			got, err := Interaction(context.Background(), tt.args.event)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Interaction() error = %v, wantErr %v", err, tt.wantErr)
@@ -823,11 +736,6 @@ func TestInteraction(t *testing.T) {
 				assert.EqualValues(t, tt.wantDynamoCalls.DeleteItemWithContext, mocks.MockDynamoDbCalls.DeleteItemWithContext)
 			}
 		})
-		mocks.ResetMockDynamoDbCalls()
-	}
-}
 
-func getUrl(urlString string) *url.URL {
-	result, _ := url.Parse(urlString)
-	return result
+	}
 }

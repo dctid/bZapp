@@ -15,7 +15,7 @@ var RemoveEventActionPayload = slack.InteractionCallback{
 	View: slack.View{
 		ID: "V01CMKMUWUS",
 		ExternalID: "outsideId",
-		PrivateMetadata: `{"channel_id":"D7P4LC5G9","response_url":"https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP"}`,
+		PrivateMetadata: `{"channel_id":"remove_event_channel_id","response_url":"https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP"}`,
 	},
 	ViewSubmissionCallback: slack.ViewSubmissionCallback{Hash: "cornbeef"},
 }

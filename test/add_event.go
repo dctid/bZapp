@@ -12,7 +12,7 @@ var AddEventSubmissionPayload = slack.InteractionCallback{
 			"add_event_hours_input_block-4": {"add_event_hour": slack.BlockAction{SelectedOption: slack.OptionBlockObject{Text: &slack.TextBlockObject{Text: "1 PM"}}}},
 			"add_event_mins_input_block-4": {"add_event_mins": slack.BlockAction{SelectedOption: slack.OptionBlockObject{Text: &slack.TextBlockObject{Text: "15"}}}},
 		}},
-		PrivateMetadata: `{"channel_id":"D7P4LC5G9","response_url":"https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP"}`,
+		PrivateMetadata: `{"channel_id":"add_event_channel_id","response_url":"https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP"}`,
 	},
 }
 

@@ -11,7 +11,7 @@ var EditEventsActionButtonPayload = slack.InteractionCallback{
 		}},
 	},
 	View: slack.View{
-		PrivateMetadata: `{"channel_id":"D7P4LC5G9","response_url":"https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP"}`,
+		PrivateMetadata: `{"channel_id":"open_edit_events_channel_id","response_url":"https://hooks.slack.com/commands/T7NS02BFB/1307783467168/Gvz9lFVBwn9xo8TweP2vJHsP"}`,
 	},
 }
 

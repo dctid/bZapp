@@ -67,7 +67,7 @@ func TestSlash_initialRequestInChannel(t *testing.T) {
 	expectedPutCall := &dynamodb.PutItemInput{
 		Item: map[string]*dynamodb.AttributeValue{
 			"id": {
-				S: aws.String("D7P4LC5G9"),
+				S: aws.String("slash_command_channel_id"),
 			},
 			"model": {
 				S: aws.String(string(modelBytes)),
@@ -79,7 +79,7 @@ func TestSlash_initialRequestInChannel(t *testing.T) {
 	expectedGetItemInput := &dynamodb.GetItemInput{
 		Key: map[string]*dynamodb.AttributeValue{
 			"id": {
-				S: aws.String("D7P4LC5G9"),
+				S: aws.String("slash_command_channel_id"),
 			},
 		},
 		TableName: aws.String("bZappTable"),
@@ -126,7 +126,7 @@ func TestSlash_appExistsInChannel(t *testing.T) {
 		GetItemOutput: &dynamodb.GetItemOutput{
 			Item: map[string]*dynamodb.AttributeValue{
 				"id": {
-					S: aws.String("D7P4LC5G9"),
+					S: aws.String("slash_command_channel_id"),
 				},
 				"model": {
 					S: aws.String(string(modelBytes)),
@@ -162,7 +162,7 @@ func TestSlash_appExistsInChannel(t *testing.T) {
 	expectedGetItemInput := &dynamodb.GetItemInput{
 		Key: map[string]*dynamodb.AttributeValue{
 			"id": {
-				S: aws.String("D7P4LC5G9"),
+				S: aws.String("slash_command_channel_id"),
 			},
 		},
 		TableName: aws.String("bZappTable"),
@@ -209,7 +209,7 @@ func TestSlash_appExistsInChannel_onFriday(t *testing.T) {
 		GetItemOutput: &dynamodb.GetItemOutput{
 			Item: map[string]*dynamodb.AttributeValue{
 				"id": {
-					S: aws.String("D7P4LC5G9"),
+					S: aws.String("slash_command_channel_id"),
 				},
 				"model": {
 					S: aws.String(string(modelBytes)),
@@ -245,7 +245,7 @@ func TestSlash_appExistsInChannel_onFriday(t *testing.T) {
 	expectedGetItemInput := &dynamodb.GetItemInput{
 		Key: map[string]*dynamodb.AttributeValue{
 			"id": {
-				S: aws.String("D7P4LC5G9"),
+				S: aws.String("slash_command_channel_id"),
 			},
 		},
 		TableName: aws.String("bZappTable"),
@@ -258,7 +258,7 @@ var slackCommand = slack.SlashCommand{
 	Token:       "8KTh0sVRkeZozlTxrBRqk1NO",
 	TeamID:      "T7NS02BFB",
 	TeamDomain:  "ford-community",
-	ChannelID:   "D7P4LC5G9",
+	ChannelID:   "slash_command_channel_id",
 	ChannelName: "directmessage",
 	UserID:      "U7QNBA36K",
 	UserName:    "cdorman1",
