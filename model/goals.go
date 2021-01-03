@@ -6,8 +6,8 @@ type Goals map[string][]Goal
 
 
 type Goal struct {
-	Id string
-	Value string
+	Id string `json:"id,omitempty"`
+	Value string `json:"value,omitempty"`
 }
 
 func (goals Goals) RemoveGoal(id string) Goals {

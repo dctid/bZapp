@@ -14,12 +14,12 @@ const (
 )
 
 type Event struct {
-	Id    string
-	Title string
-	Day   string
-	Hour  int
-	Min   int
-	AmPm  string
+	Id    string `json:"id,omitempty"`
+	Title string `json:"title,omitempty"`
+	Day   string `json:"day,omitempty"`
+	Hour  int    `json:"hour,omitempty"`
+	Min   int    `json:"min,omitempty"`
+	AmPm  string `json:"am-pm,omitempty"`
 }
 
 func (event Event) ToString() string {

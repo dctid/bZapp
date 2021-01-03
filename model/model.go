@@ -5,9 +5,9 @@ import (
 )
 
 type Model struct {
-	Index       int
-	Events      Events
-	Goals       Goals
+	Index  int    `json:"index"`
+	Events Events `json:"events"`
+	Goals  Goals  `json:"goals"`
 }
 
 type Metadata struct {
@@ -30,9 +30,9 @@ func (modelToConvert *Metadata) ConvertMetadataToJson() string {
 
 func (modelToConvert *Model) ConvertToDbModel() *Model {
 	return &Model{
-		Index:     modelToConvert.Index,
-		Events:    modelToConvert.Events.ConvertToDate(),
-		Goals:     modelToConvert.Goals,
+		Index:  modelToConvert.Index,
+		Events: modelToConvert.Events.ConvertToDate(),
+		Goals:  modelToConvert.Goals,
 	}
 }
 func (modelToConvert *Model) ConvertFromDbModel() *Model {

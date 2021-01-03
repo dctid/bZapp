@@ -5,160 +5,11 @@ import (
 	"github.com/dctid/bZapp/format"
 	"github.com/dctid/bZapp/mocks"
 	"github.com/dctid/bZapp/model"
+	"github.com/dctid/bZapp/test"
 
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
-
-var summaryModal = `{
-  "title": {
-    "type": "plain_text",
-    "text": "bZapp",
-    "emoji": true
-  },
-  "private_metadata": "{\"channel_id\":\"Fakkkee\"}",
-  "submit": {
-    "type": "plain_text",
-    "text": "Submit",
-    "emoji": true
-  },
-  "type": "modal",
-  "close": {
-    "type": "plain_text",
-    "text": "Cancel",
-    "emoji": true
-  },
-  "blocks": [
-    {
-		"type": "divider"
-		},
-		{
-		"text": {
-			"text": "Events",
-			"type": "plain_text"
-		},
-		"type": "header"
-	},
-	{
-		"type": "divider"
-	},
-	{
-      "type": "context",
-      "elements": [
-        {
-          "type": "mrkdwn",
-          "text": "*Today*"
-        }
-      ]
-    },
-    {
-      "type": "divider"
-    },
-    {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": ":small_orange_diamond: 9:15 Standup"
-      }
-    },
-    {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": ":small_orange_diamond: 11:30 IPM"
-      }
-    },
-    {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": ":small_orange_diamond: 3:15 Retro"
-      }
-    },
-    {
-      "type": "divider"
-    },
-    {
-      "type": "context",
-      "elements": [
-        {
-          "type": "mrkdwn",
-          "text": "*Tomorrow*"
-        }
-      ]
-    },
-    {
-      "type": "divider"
-    },
-    {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": ":small_orange_diamond: 9:15 Standup"
-      }
-    },
-    {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": ":small_orange_diamond: 1:30 User Interview"
-      }
-    },
-    {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": ":small_orange_diamond: 3:00 Synthesis"
-      }
-    },
-    {
-      "type": "divider"
-    },
-    {
-		"text": {
-			"text": "Goals",
-			"type": "plain_text"
-		},
-		"type": "header"
-    },
-    {
-      "text": {
-        "text": "_Nogoalsyet_",
-        "type": "mrkdwn"
-      },
-      "type": "section"
-    },
-    {
-      "type": "divider"
-    },
-    {
-      "type": "actions",
-      "block_id": "actions_block",
-      "elements": [
-        {
-          "type": "button",
-          "action_id": "edit_events",
-          "text": {
-            "type": "plain_text",
-            "text": "Edit Events",
-            "emoji": true
-          },
-          "value": "edit_events"
-        },
-        {
-          "action_id": "edit_goals",
-          "text": {
-            "emoji": true,
-            "text": "EditGoals",
-            "type": "plain_text"
-          },
-          "type": "button",
-          "value": "edit_goals"
-        }
-      ]
-    }
-  ]
-}`
 
 func TestNewSummaryModal(t *testing.T) {
 	model.Clock = mocks.NewMockClock("2020-12-02 08:48:21")
@@ -219,7 +70,7 @@ func TestNewSummaryModal(t *testing.T) {
 
 	result := NewSummaryModal(testModel, testMetadata)
 	actualJson, _ := json.Marshal(result)
-	expectedJsonString := format.PrettyJson(t, summaryModal)
+	expectedJsonString := test.ReadFile(t, "view/summary_modal.json")
 	actualJsonString := format.PrettyJson(t, string(actualJson))
 	assert.EqualValues(t, expectedJsonString, actualJsonString)
 }

@@ -76,7 +76,7 @@ func TestNewEditEventsModal(t *testing.T) {
 		},
 	}, &model.Metadata{ChannelId: "edit_events_modal_channel_id"})
 	actualJson, _ := json.Marshal(result)
-	expectedJsonString := test.ReadFile(t, "edit_events_modal/edit_events_modal.json")
+	expectedJsonString := test.ReadFile(t, "view/edit_events_modal.json")
 	actualJsonString := format.PrettyJson(t, string(actualJson))
 
 	assert.EqualValues(t, expectedJsonString, actualJsonString)
@@ -148,7 +148,7 @@ func TestNewEditEventsModalOnFriday(t *testing.T) {
 		},
 	}, &model.Metadata{ChannelId: "edit_events_on_friday_modal_channel_id"})
 	actualJson, _ := json.Marshal(result)
-	expectedJsonString := test.ReadFile(t, "edit_events_modal/edit_events_modal_on_friday.json")
+	expectedJsonString := test.ReadFile(t, "view/edit_events_modal_on_friday.json")
 	actualJsonString := format.PrettyJson(t, string(actualJson))
 
 	assert.EqualValues(t, expectedJsonString, actualJsonString)

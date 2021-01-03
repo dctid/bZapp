@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/dctid/bZapp/format"
 	"github.com/dctid/bZapp/model"
+	"github.com/dctid/bZapp/test"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -25,7 +26,7 @@ func TestNewEditGoalsModal(t *testing.T) {
 				model: &model.Model{Index: 1},
 				metadata: &model.Metadata{ChannelId: "fake id"},
 			},
-			want: format.PrettyJsonNoError(expectModalJson),
+			want: test.ReadFile(t, "view/edit_goals_modal.json"),
 		},
 	}
 	for _, tt := range tests {
@@ -42,112 +43,3 @@ func marshalNoError(thing interface{}) string {
 	return string(marshal)
 }
 
-const expectModalJson = `{
-	"title": {
-		"type": "plain_text",
-		"text": "bZapp - Edit Goals",
-		"emoji": true
-	},
-	"notify_on_close": true,
-	"private_metadata": "{\"channel_id\":\"fakeid\"}",
-	"submit": {
-		"type": "plain_text",
-		"text": "Add",
-		"emoji": true
-	},
-	"type": "modal",
-	"close": {
-		"type": "plain_text",
-		"text": "Back",
-		"emoji": true
-	},
-	"blocks": [
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "_No goals yet_"
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "input",
-			"block_id": "add_goal_category_input_block-1",
-			"element": {
-				"type": "static_select",
-				"action_id": "add_goal_category",
-				"placeholder": {
-					"type": "plain_text",
-					"text": "Choose Goal",
-					"emoji": true
-				},
-				"options": [
-					{
-						"text": {
-							"type": "plain_text",
-							"text": "Customer Questions?",
-							"emoji": true
-						},
-						"value": "Customer Questions?"
-					},
-					{
-						"text": {
-							"type": "plain_text",
-							"text": "Team Needs",
-							"emoji": true
-						},
-						"value": "Team Needs"
-					},
-					{
-						"text": {
-							"type": "plain_text",
-							"text": "Learnings",
-							"emoji": true
-						},
-						"value": "Learnings"
-					},
-					{
-						"text": {
-							"type": "plain_text",
-							"text": "Questions?",
-							"emoji": true
-						},
-						"value": "Questions?"
-					},
-					{
-						"text": {
-							"type": "plain_text",
-							"text": "Other",
-							"emoji": true
-						},
-						"value": "Other"
-					}
-				]
-			},
-			"label": {
-				"type": "plain_text",
-				"text": "Goal to Add to",
-				"emoji": true
-			}
-		},
-		{
-			"type": "input",
-			"block_id": "add_goal_input_block-1",
-			"element": {
-				"action_id": "add_goal",
-				"type": "plain_text_input",
-				"placeholder": {
-					"text": "Goal",
-					"type": "plain_text"
-				}
-			},
-			"label": {
-				"type": "plain_text",
-				"text": "Goal to Add",
-				"emoji": true
-			}
-		}
-	]
-}`

@@ -156,6 +156,9 @@ Resources:
           Properties:
             Method: GET
             Path: /
+            RequestParameters:
+              method.request.querystring.something:
+                Required: true
           Type: Api
       FunctionName: !Sub ${AWS::StackName}-DashboardFunction
       Handler: main

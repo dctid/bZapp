@@ -16,6 +16,7 @@ func shutdown() {
 }
 
 func setup() {
+	// Set the running dir to the project root to support reading test json files
 	os.Chdir("..")
 }
 
