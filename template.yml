@@ -1,11 +1,6 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
 
-Conditions:
-  ApiDomainNameSpecified: !Not [!Equals [!Ref ApiDomainName, ""]]
-  WebDomainNameSpecified: !Not [!Equals [!Ref WebDomainName, ""]]
-  WebDomainNameUnspecified: !Equals [!Ref WebDomainName, ""]
-
 Globals:
   Api:
     MethodSettings:
@@ -16,71 +11,12 @@ Globals:
         ResourcePath: /*
 
   Function:
-    Environment:
-      Variables:
-        NOTIFICATION_TOPIC: "Something"
     Handler: main
     Runtime: go1.x
     Timeout: 5
     Tracing: Active
 
-Mappings:
-  RegionMap:
-    sa-east-1:
-      S3HostedZoneId: Z31GFT0UA1I2HV
-      S3WebsiteEndpoint: s3-website-sa-east-1.amazonaws.com
-
-
-Metadata:
-  AWS::CloudFormation::Interface:
-    ParameterGroups:
-      - Label:
-          default: Custom domains
-        Parameters:
-          - ApiDomainName
-          - WebDomainName
-      - Label:
-          default: Notifications
-        Parameters:
-          - NotificationEmail
-          - NotificationNumber
-
-Outputs:
-  ApiDistributionDomainName:
-    Condition: ApiDomainNameSpecified
-    Value: !GetAtt ApiGatewayDomainName.DistributionDomainName
-
-  ApiUrl:
-    Value:
-      !If
-      - ApiDomainNameSpecified
-      - !Sub https://${ApiDomainName}
-      - !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/${ServerlessRestApiProdStage}"
-
 Parameters:
-  ApiDomainName:
-    Default: ""
-    Description: "Domain or subdomain for the API Gateway distribution, e.g. api.bZapp.net"
-    Type: String
-
-  AuthDomainName:
-    Default: ""
-    Description: "The domain to restrict OAuth profiles to, e.g. bZapp.net"
-    Type: String
-
-  NotificationEmail:
-    Default: ""
-    Type: String
-
-  NotificationNumber:
-    Default: ""
-    Type: String
-
-  WebDomainName:
-    Default: ""
-    Description: "Domain or subdomain for the static website distribution, e.g. www.gofaas.net"
-    Type: String
-
   SlackToken:
     Default: "Slack token not set"
     Description: "Slack token"
@@ -95,89 +31,19 @@ Parameters:
     Type: String
 
 Resources:
-  ApiGatewayAccount:
-    Properties:
-      CloudWatchRoleArn: !GetAtt ApiGatewayRole.Arn
-    Type: AWS::ApiGateway::Account
-
-  ApiGatewayCertificate:
-    Condition: ApiDomainNameSpecified
-    Properties:
-      DomainName: !Ref ApiDomainName
-    Type: AWS::CertificateManager::Certificate
-
-  ApiGatewayDomainName:
-    Condition: ApiDomainNameSpecified
-    Properties:
-      CertificateArn: !Ref ApiGatewayCertificate
-      DomainName: !Ref ApiDomainName
-    Type: AWS::ApiGateway::DomainName
-
-  ApiGatewayMapping:
-    Condition: ApiDomainNameSpecified
-    Properties:
-      DomainName: !Ref ApiGatewayDomainName
-      RestApiId: !Ref ServerlessRestApi
-      Stage: !Ref ServerlessRestApiProdStage
-    Type: AWS::ApiGateway::BasePathMapping
-
-  ApiGatewayRole:
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Action:
-              - sts:AssumeRole
-            Effect: Allow
-            Principal:
-              Service:
-                - apigateway.amazonaws.com
-            Sid: AllowServiceToAssumeRole
-        Version: 2012-10-17
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
-      Path: /
-    Type: AWS::IAM::Role
-
-  Bucket:
-    Type: AWS::S3::Bucket
-
   DashboardFunction:
     Properties:
       CodeUri: ./handlers/dashboard
-      Environment:
-        Variables:
-          CLIENT_ID: "id"
-          CLIENT_SECRET: "secret"
-          SLACK_KEY: slack_key
-          SLACK_TOKEN: !Ref SlackToken
-          SLACK_SIGNING_SECRET: !Ref SlackSigningSecret
       Events:
         Request:
           Properties:
             Method: GET
             Path: /
-            RequestParameters:
-              method.request.querystring.something:
-                Required: true
           Type: Api
       FunctionName: !Sub ${AWS::StackName}-DashboardFunction
       Handler: main
       Runtime: go1.x
     Type: AWS::Serverless::Function
-
-  Key:
-    Properties:
-      KeyPolicy:
-        Id: default
-        Statement:
-          - Action: kms:*
-            Effect: Allow
-            Principal:
-              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
-            Resource: '*'
-            Sid: Enable IAM User Permissions
-        Version: 2012-10-17
-    Type: AWS::KMS::Key
 
   SlashFunction:
     Properties:
@@ -233,53 +99,5 @@ Resources:
         ReadCapacityUnits: 2
         WriteCapacityUnits: 2
     Type: AWS::Serverless::SimpleTable
-
-  WebBucket:
-    Properties:
-      BucketName: !If [WebDomainNameSpecified, !Ref WebDomainName, !Sub "${AWS::StackName}-webbucket-${AWS::AccountId}"]
-      WebsiteConfiguration:
-        ErrorDocument: 404.html
-        IndexDocument: index.html
-    Type: AWS::S3::Bucket
-
-  WebBucketPolicyPrivate:
-    Condition: WebDomainNameSpecified
-    Properties:
-      Bucket: !Ref WebBucket
-      PolicyDocument:
-        Statement:
-          - Action: s3:GetObject
-            Effect: Allow
-            Principal:
-              CanonicalUser: !GetAtt WebOriginAccessIdentity.S3CanonicalUserId
-            Resource: !Sub arn:aws:s3:::${WebBucket}/*
-            Sid: GetObjectsCloudFront
-    Type: AWS::S3::BucketPolicy
-
-  WebOriginAccessIdentity:
-    Condition: WebDomainNameSpecified
-    Properties:
-      CloudFrontOriginAccessIdentityConfig:
-        Comment: !Ref WebBucket
-    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
-
-  WebBucketPolicyPublic:
-    Condition: WebDomainNameUnspecified
-    Properties:
-      Bucket: !Ref WebBucket
-      PolicyDocument:
-        Statement:
-          - Action: s3:GetObject
-            Effect: Allow
-            Principal: "*"
-            Resource: !Sub arn:aws:s3:::${WebBucket}/*
-            Sid: GetObjectsPublic
-    Type: AWS::S3::BucketPolicy
-
-  WebCertificate:
-    Condition: WebDomainNameSpecified
-    Properties:
-      DomainName: !Ref WebDomainName
-    Type: AWS::CertificateManager::Certificate
 
 Transform: AWS::Serverless-2016-10-31
