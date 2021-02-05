@@ -32,8 +32,7 @@ HANDLERS=$(addsuffix main,$(wildcard handlers/*/))
 $(HANDLERS): handlers/%/main: *.go handlers/%/main.go
 	cd ./$(dir $@) && GOOS=linux go build -gcflags="${GCFLAGS}" -o main .
 
-handlers: handlers-go
-handlers-go: $(HANDLERS)
+handlers: $(HANDLERS)
 
 test:
 	go test -v ./...
